@@ -32,21 +32,21 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Define STORAGE_VERSION and STORAGE_KEYS
     - _Requirements: 8.1, 8.2, 9.1_
 
-- [ ] 3. Level data and loading system
-  - [ ] 3.1 Create `src/game/levels.ts` with 100 level definitions
+- [x] 3. Level data and loading system
+  - [x] 3.1 Create `src/game/levels.ts` with 100 level definitions
     - Define LEVELS array with 100 level objects
     - Each level includes: number, width, height, tiles (2D array), playerStart, enemyStarts, parTime
     - Start with 10 complete levels, add placeholders for remaining 90
     - _Requirements: 9.1, 9.2_
   
-  - [ ] 3.2 Implement level loading functions
+  - [x] 3.2 Implement level loading functions
     - Implement `loadLevel(state, levelNumber)` function
     - Implement `countGold(tiles)` helper function
     - Implement `isValidLevel(level)` validation function
     - Handle invalid level data by skipping to next level
     - _Requirements: 2.3, 20.4_
   
-  - [ ] 3.3 Write property test for level loading
+  - [x] 3.3 Write property test for level loading
     - **Property 2: Level Data Integrity**
     - **Validates: Requirements 2.3**
     - Test that loading any valid level produces correct tile grid, player position, and enemy positions

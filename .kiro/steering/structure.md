@@ -4,15 +4,39 @@
 
 ```
 lode-runner/
-├── src/                    # Application source code
-│   ├── main.tsx           # Application entry point (renders App in StrictMode)
-│   ├── App.tsx            # Root component
-│   ├── App.css            # App component styles
-│   ├── index.css          # Global styles
-│   └── assets/            # Static assets (images, icons)
-├── public/                # Public static files served at root
-├── dist/                  # Build output (gitignored)
-└── node_modules/          # Dependencies (gitignored)
+├── .kiro/
+│   └── specs/lode-runner-game/    # Specification documents
+│       ├── requirements.md         # 20 detailed requirements
+│       ├── design.md              # Architecture and design
+│       └── tasks.md               # Implementation plan (27 tasks)
+├── docs/                          # Documentation
+│   ├── getting-started.md         # Installation and setup
+│   ├── architecture.md            # System architecture
+│   ├── project-structure.md       # Directory organization
+│   ├── game-mechanics.md          # Gameplay documentation
+│   ├── testing.md                 # Testing strategy
+│   ├── api-reference.md           # API documentation
+│   ├── configuration.md           # Configuration guide
+│   └── contributing.md            # Development guide
+├── src/                           # Application source code
+│   ├── game/                      # Game engine (pure TypeScript)
+│   │   ├── types.ts              # Core type definitions
+│   │   ├── constants.ts          # Game constants
+│   │   ├── levels.ts             # 100 level definitions
+│   │   └── *.ts                  # Other game modules (planned)
+│   ├── components/               # React components (planned)
+│   ├── test/                     # Test setup
+│   │   ├── setup.ts             # Vitest configuration
+│   │   └── setup.test.ts        # Setup validation tests
+│   ├── main.tsx                  # Application entry point
+│   ├── App.tsx                   # Root component
+│   ├── App.css                   # App component styles
+│   ├── index.css                 # Global styles
+│   └── assets/                   # Static assets (images, icons)
+├── public/                       # Public static files served at root
+│   └── assets/                   # Game assets (sprites, sfx)
+├── dist/                         # Build output (gitignored)
+└── node_modules/                 # Dependencies (gitignored)
 ```
 
 ## Key Conventions
