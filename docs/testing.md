@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **134 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **148 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -33,12 +33,14 @@ Universal correctness properties validated across all inputs using fast-check.
 - Property 10: Non-Brick Dig Rejection - validates digging into non-brick tiles fails
 - Property 12: Hole Regeneration Restores Brick - validates holes regenerate back to brick after timer expires
 - Property 13: Trapped Enemy Elimination - validates enemies in regenerating holes are eliminated
+- Property 14: Enemy Chase Behavior - validates enemies move toward player over time
+- Property 16: Enemy Trapping in Holes - validates enemies in holes become trapped
 
 ### Unit Tests
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 134 tests
+**Currently Implemented**: 148 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -46,6 +48,7 @@ Specific examples and edge cases for individual functions and modules.
 - Animation system validation (22 tests)
 - Error handling validation (29 tests)
 - Digging system validation (16 tests)
+- AI system validation (14 tests)
 
 **Planned**:
 - AI behavior tests
@@ -75,7 +78,7 @@ Full game flow validation (planned):
 | Animation | 22 | ✅ Complete |
 | Error Handling | 29 | ✅ Complete |
 | Digging | 16 | ✅ Complete |
-| AI | 0 | ⏳ Pending |
+| AI | 14 | ✅ Complete |
 | Rules | 0 | ⏳ Pending |
 | Input | 0 | ⏳ Pending |
 | Storage | 0 | ⏳ Pending |
@@ -288,6 +291,34 @@ Comprehensive testing of hole creation and regeneration:
 - Property 12: Hole Regeneration Restores Brick - validates holes regenerate back to brick after timer expires across various timer values
 - Property 13: Trapped Enemy Elimination (in hole) - validates enemies positioned in regenerating holes are eliminated
 - Property 13: Trapped Enemy Elimination (outside hole) - validates enemies outside regenerating holes are not eliminated
+
+### AI System Suite (14 tests)
+
+Comprehensive testing of enemy AI and pathfinding:
+
+**calculateChaseDirection Tests (4)**:
+- Moves toward player horizontally when player is to the right
+- Moves toward player horizontally when player is to the left
+- Moves toward player vertically when player is above
+- Moves toward player vertically when player is below
+
+**moveEnemy Tests (3)**:
+- Sets velocity in chase direction
+- Stops when blocked by solid tile
+- Does not mutate original enemy object
+
+**checkEnemyTrapped Tests (3)**:
+- Marks enemy as trapped when in hole
+- Does not mark enemy as trapped when not in hole
+- Does not mutate original enemy object
+
+**updateAI Tests (2)**:
+- Updates all enemies
+- Does not mutate original state
+
+**Property-Based Tests (2)**:
+- Property 14: Enemy Chase Behavior - validates enemies move toward player over time across various positions
+- Property 16: Enemy Trapping in Holes - validates enemies in holes become trapped with zero velocity
 
 ## Running Tests
 

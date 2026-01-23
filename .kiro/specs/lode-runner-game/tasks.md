@@ -141,21 +141,21 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that enemies in regenerating holes are eliminated
     - _Requirements: 4.6_
 
-- [ ] 8. Enemy AI system
-  - [ ] 8.1 Create `src/game/ai.ts` with AI functions
+- [x] 8. Enemy AI system
+  - [x] 8.1 Create `src/game/ai.ts` with AI functions
     - Implement `updateAI(state, deltaTime)` function
     - Implement `calculateChaseDirection(enemy, player, tiles)` function
     - Implement `moveEnemy(enemy, direction, tiles, deltaTime)` function
     - Implement `checkEnemyTrapped(enemy, holes)` function
     - _Requirements: 5.2, 5.4_
   
-  - [ ] 8.2 Write property test for enemy chase behavior
+  - [x] 8.2 Write property test for enemy chase behavior
     - **Property 14: Enemy Chase Behavior**
     - **Validates: Requirements 5.2**
     - Test that enemies move toward player over time
     - _Requirements: 5.2_
   
-  - [ ] 8.3 Write property test for enemy trapping
+  - [x] 8.3 Write property test for enemy trapping
     - **Property 16: Enemy Trapping in Holes**
     - **Validates: Requirements 5.4**
     - Test that enemies in holes become trapped

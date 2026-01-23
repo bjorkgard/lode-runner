@@ -1,6 +1,6 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-134%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-148%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
@@ -37,17 +37,21 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Automatic hole regeneration with timers
   - Enemy elimination when trapped in regenerating holes
   - Immutable state updates with proper validation
-- **Test Infrastructure**: Comprehensive test suite with 134 passing tests
+- **Test Infrastructure**: Comprehensive test suite with 148 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
 
 ### In Progress 🚧
-- Enemy AI and pathfinding
-- Game rules and win/loss conditions
+- **Enemy AI System**: Complete AI pathfinding and chase behavior
+  - Simple Manhattan distance heuristic
+  - Enemy trapping in holes
+  - Trapped enemy elimination on hole regeneration
+  - 100% test coverage with property-based tests
 
 ### Planned 📋
-- **Classic Gameplay**: Enemy AI and level progression
+- **Game Rules**: Win/loss conditions and level progression
+- **Input System**: Keyboard and touch input handling
 - **Mobile Support**: Touch controls with responsive design
 - **Persistent Storage**: High scores and settings saved to localStorage
 - **Audio System**: Sound effects with volume control and mute toggle

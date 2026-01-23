@@ -480,6 +480,112 @@ isSupported(entity: Entity, tiles: TileType[][]): boolean
 canMoveTo(pos: Position, tiles: TileType[][]): boolean
 ```
 
+## AI System API
+
+Functions for enemy AI and pathfinding (implemented):
+
+### updateAI
+
+```typescript
+/**
+ * Updates AI for all enemies in the game state.
+ * Calculates chase directions and moves enemies toward the player.
+ * Returns a new state object with updated enemy positions and velocities.
+ * 
+ * This function is called every frame during the game loop. It processes each enemy:
+ * - Trapped enemies remain stationary
+ * - Active enemies calculate chase direction toward player
+ * - Enemies move in the calculated direction
+ * - Checks if enemies fell into holes and marks them as trapped
+ * 
+ * @param state - Current game state containing all entities
+ * @param deltaTime - Time elapsed since last update (in seconds)
+ * @returns New game state with updated enemy AI
+ * 
+ * @example
+ * const newState = updateAI(currentState, 0.016); // ~60 FPS
+ */
+updateAI(state: GameStateData, deltaTime: number): GameStateData
+```
+
+### calculateChaseDirection
+
+```typescript
+/**
+ * Calculates the direction an enemy should move to chase the player.
+ * Uses Manhattan distance heuristic - prioritizes horizontal movement over vertical.
+ * 
+ * This implements classic Lode Runner AI behavior where enemies prefer to move
+ * horizontally toward the player before attempting vertical movement.
+ * 
+ * @param enemy - Enemy entity calculating chase direction
+ * @param player - Player entity to chase
+ * @param tiles - Current tile grid for pathfinding (unused in simple AI)
+ * @returns Direction vector { x: -1/0/1, y: -1/0/1 }
+ * 
+ * @example
+ * // Enemy to the left of player
+ * const dir = calculateChaseDirection(enemy, player, tiles);
+ * // Returns { x: 1, y: 0 } to move right
+ */
+calculateChaseDirection(
+  enemy: Enemy,
+  player: Player,
+  tiles: TileType[][]
+): { x: number; y: number }
+```
+
+### moveEnemy
+
+```typescript
+/**
+ * Moves an enemy in the specified direction.
+ * Returns a new enemy object with updated velocity.
+ * Does not mutate the input enemy object.
+ * 
+ * Validates that the target position is accessible before setting velocity.
+ * If blocked by solid tiles, the enemy stops moving.
+ * 
+ * @param enemy - Enemy entity to move
+ * @param direction - Direction vector { x: -1/0/1, y: -1/0/1 }
+ * @param tiles - Current tile grid for collision checking
+ * @param deltaTime - Time elapsed since last update (unused in velocity calculation)
+ * @returns New enemy object with updated velocity
+ * 
+ * @example
+ * const movedEnemy = moveEnemy(enemy, { x: 1, y: 0 }, tiles, deltaTime);
+ */
+moveEnemy(
+  enemy: Enemy,
+  direction: { x: number; y: number },
+  tiles: TileType[][],
+  deltaTime: number
+): Enemy
+```
+
+### checkEnemyTrapped
+
+```typescript
+/**
+ * Checks if an enemy has fallen into a hole and should be trapped.
+ * Returns a new enemy object with isTrapped flag set if in a hole.
+ * Does not mutate the input enemy object.
+ * 
+ * Trapped enemies cannot move and will be eliminated when the hole regenerates.
+ * 
+ * @param enemy - Enemy entity to check
+ * @param holes - Array of all active holes
+ * @returns New enemy object with updated trapped state
+ * 
+ * @example
+ * const checkedEnemy = checkEnemyTrapped(enemy, state.holes);
+ * if (checkedEnemy.isTrapped) {
+ *   // Enemy is stuck in a hole
+ * }
+ */
+checkEnemyTrapped(enemy: Enemy, holes: Hole[]): Enemy
+```
+
 ## Input API
 
 Functions for handling user input (implementation in progress):
