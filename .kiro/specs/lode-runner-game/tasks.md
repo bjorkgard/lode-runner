@@ -66,8 +66,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that new game loads level 1
     - _Requirements: 7.1, 9.2, 17.2_
 
-- [ ] 5. Physics and movement system
-  - [ ] 5.1 Create `src/game/physics.ts` with physics functions
+- [x] 5. Physics and movement system
+  - [x] 5.1 Create `src/game/physics.ts` with physics functions
     - Implement `updatePhysics(state, deltaTime)` function
     - Implement `updatePlayerPhysics(player, tiles, deltaTime)` function
     - Implement `updateEnemyPhysics(enemy, tiles, deltaTime)` function
@@ -77,25 +77,25 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Implement `canMoveTo(pos, tiles)` helper
     - _Requirements: 3.2, 3.5, 5.3_
   
-  - [ ] 5.2 Write property test for gravity
+  - [x] 5.2 Write property test for gravity
     - **Property 4: Gravity Application**
     - **Validates: Requirements 3.2**
     - Test that unsupported player/enemy falls over time
     - _Requirements: 3.2_
   
-  - [ ] 5.3 Write property test for solid tile collision
+  - [x] 5.3 Write property test for solid tile collision
     - **Property 7: Solid Tile Collision**
     - **Validates: Requirements 3.5**
     - Test that player cannot move through solid tiles
     - _Requirements: 3.5_
   
-  - [ ] 5.4 Write property test for ladder movement
+  - [x] 5.4 Write property test for ladder movement
     - **Property 5: Ladder Movement Without Gravity**
     - **Validates: Requirements 3.3**
     - Test that player on ladder can move vertically without gravity
     - _Requirements: 3.3_
   
-  - [ ] 5.5 Write property test for rope movement
+  - [x] 5.5 Write property test for rope movement
     - **Property 6: Rope Movement Without Gravity**
     - **Validates: Requirements 3.4**
     - Test that player on rope can move horizontally without gravity
