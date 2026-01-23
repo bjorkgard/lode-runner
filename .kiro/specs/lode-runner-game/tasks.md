@@ -18,14 +18,14 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
   - Create test setup file for jsdom and Canvas mocks
   - _Requirements: 18.1, 18.6_
 
-- [ ] 2. Core type definitions and constants
-  - [ ] 2.1 Create `src/game/types.ts` with all game types
+- [x] 2. Core type definitions and constants
+  - [x] 2.1 Create `src/game/types.ts` with all game types
     - Define TileType enum, GameState enum
     - Define Position, Entity, Player, Enemy, Hole, Level, GameStateData, Particle interfaces
     - Define AudioSettings, InputState, SpriteSheet, Animation interfaces
     - _Requirements: 2.1, 17.1_
   
-  - [ ] 2.2 Create `src/game/constants.ts` with game constants
+  - [x] 2.2 Create `src/game/constants.ts` with game constants
     - Define TILE_SIZE, GRAVITY, PLAYER_SPEED, ENEMY_SPEED
     - Define HOLE_REGEN_TIME, GOLD_POINTS, TIME_BONUS_MULTIPLIER
     - Define COLLISION_THRESHOLD, MAX_LEVELS

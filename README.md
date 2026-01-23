@@ -4,6 +4,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
+![Progress](https://img.shields.io/badge/tasks-2%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -215,9 +216,60 @@ This project follows a requirements → design → tasks workflow:
 ### Implementation Status
 
 - ✅ Task 1: Project setup and dependencies (COMPLETE)
-- ⏳ Tasks 2-27: In progress (see tasks.md for details)
+- ✅ Task 2: Core type definitions and constants (COMPLETE)
+  - ✅ 2.1: Created `src/game/types.ts` with all game types
+  - ✅ 2.2: Created `src/game/constants.ts` with game constants
+- ⏳ Tasks 3-27: Pending (see tasks.md for details)
+
+**Current Progress**: 2/27 tasks complete (7.4%)
 
 ## Configuration
+
+### Game Constants
+
+All game constants are defined in `src/game/constants.ts`:
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `TILE_SIZE` | 16 | Size of each tile in pixels |
+| `GRAVITY` | 500 | Gravity acceleration (px/s²) |
+| `PLAYER_SPEED` | 100 | Player movement speed (px/s) |
+| `ENEMY_SPEED` | 80 | Enemy movement speed (px/s) |
+| `HOLE_REGEN_TIME` | 5 | Hole regeneration time (seconds) |
+| `GOLD_POINTS` | 100 | Points per gold piece |
+| `TIME_BONUS_MULTIPLIER` | 10 | Time bonus multiplier |
+| `COLLISION_THRESHOLD` | 0.5 | Collision detection threshold (tiles) |
+| `MAX_LEVELS` | 100 | Total number of levels |
+
+### Core Types
+
+The game uses TypeScript for type safety. Key types are defined in `src/game/types.ts`:
+
+#### Enums
+
+- **`TileType`**: Empty, Brick, Steel, Ladder, Rope, Gold, Exit
+- **`GameState`**: Menu, Playing, Paused, GameOver, Victory
+
+#### Interfaces
+
+- **`Position`**: Tile coordinates (x, y)
+- **`Entity`**: Base for player and enemies (position, velocity, animation)
+- **`Player`**: Player state (extends Entity, adds lives, digging)
+- **`Enemy`**: Enemy state (extends Entity, adds trapped state)
+- **`Hole`**: Dug hole with regeneration timer
+- **`Level`**: Level definition (tiles, spawns, par time)
+- **`GameStateData`**: Complete game state
+- **`Particle`**: Particle effect data
+- **`AudioSettings`**: Audio preferences (muted, volume)
+- **`InputState`**: Current input state
+- **`SpriteSheet`**: Loaded sprite image data
+- **`Animation`**: Animation sequence definition
+
+#### Classes
+
+- **`AnimationState`**: Manages entity animation state
+  - `update(deltaTime, animations)`: Advances animation frames
+  - `setAnimation(name)`: Switches to different animation
 
 ### Vite Configuration
 
@@ -262,6 +314,61 @@ export default {
 - **Delta Time Physics**: Frame-independent movement calculations
 - **Lazy Loading**: Assets loaded asynchronously at initialization
 
+## API Reference
+
+### Game Engine API
+
+The game engine will expose the following public methods (implementation in progress):
+
+```typescript
+class GameEngine {
+  constructor(canvas: HTMLCanvasElement)
+  
+  // Lifecycle methods
+  start(): void                    // Start game loop
+  stop(): void                     // Stop game loop
+  
+  // Game control methods
+  newGame(): void                  // Start new game from level 1
+  pauseGame(): void                // Pause current game
+  resumeGame(): void               // Resume paused game
+  resetHighScore(): void           // Clear high score from storage
+  
+  // Callbacks for UI updates
+  onScoreChange?: (score: number) => void
+  onLivesChange?: (lives: number) => void
+  onLevelChange?: (level: number) => void
+  onGameStateChange?: (state: GameState) => void
+}
+```
+
+### Storage API
+
+Functions for persisting game data (implementation in progress):
+
+```typescript
+// High score management
+saveHighScore(score: number): void
+loadHighScore(): number
+resetHighScore(): void
+
+// Audio settings
+saveAudioSettings(settings: AudioSettings): void
+loadAudioSettings(): AudioSettings
+```
+
+### Input API
+
+Functions for handling user input (implementation in progress):
+
+```typescript
+// Initialize input handlers
+initInput(): void
+
+// Touch input (for mobile controls)
+setTouchInput(direction: string, pressed: boolean): void
+```
+
 ## Browser Support
 
 - Modern browsers with Canvas 2D API support
@@ -270,13 +377,61 @@ export default {
 
 ## Contributing
 
-This project follows a spec-driven development approach. To contribute:
+This project follows a spec-driven development approach with comprehensive documentation and testing.
 
-1. Review requirements and design documents in `.kiro/specs/lode-runner-game/`
-2. Check tasks.md for current implementation status
-3. Write tests before implementation (TDD)
-4. Ensure all property-based tests pass
-5. Follow TypeScript strict mode guidelines
+### Development Process
+
+1. **Review Specifications**
+   - Read `.kiro/specs/lode-runner-game/requirements.md` for detailed requirements
+   - Review `.kiro/specs/lode-runner-game/design.md` for architecture and design decisions
+   - Check `.kiro/specs/lode-runner-game/tasks.md` for implementation plan and current status
+
+2. **Test-Driven Development**
+   - Write property-based tests for universal correctness properties
+   - Write unit tests for specific examples and edge cases
+   - Implement functionality to make tests pass
+   - All tests must pass before marking a task complete
+
+3. **Code Quality Standards**
+   - Follow TypeScript strict mode guidelines
+   - Add JSDoc comments for all public APIs
+   - Use meaningful variable and function names
+   - Keep functions small and focused (single responsibility)
+   - Avoid premature optimization
+
+4. **Testing Requirements**
+   - Property-based tests use `fast-check` library
+   - Unit tests use `vitest` and `@testing-library/react`
+   - Aim for high code coverage (>80%)
+   - Test both happy paths and error cases
+
+### Current Implementation Status
+
+**Completed Tasks (2/27)**:
+- ✅ Project setup with Vite, React, TypeScript, Tailwind, Vitest
+- ✅ Core type definitions and constants
+
+**Next Tasks**:
+- Level data and loading system (Task 3)
+- Game state management (Task 4)
+- Physics and movement system (Task 5)
+
+See `tasks.md` for complete task list with requirements traceability.
+
+### Code Style
+
+- Use functional programming patterns where appropriate
+- Prefer immutability for data structures
+- Use TypeScript interfaces over types for object shapes
+- Export types and interfaces for reusability
+- Keep game logic separate from React components
+
+### Commit Guidelines
+
+- Reference task numbers in commit messages (e.g., "Task 3.1: Add level data")
+- Keep commits focused on single tasks or subtasks
+- Run tests before committing
+- Update task status in tasks.md when completing work
 
 ## License
 
