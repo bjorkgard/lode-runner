@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **161 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **174 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -43,7 +43,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 161 tests
+**Currently Implemented**: 174 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -53,12 +53,37 @@ Specific examples and edge cases for individual functions and modules.
 - Digging system validation (16 tests)
 - AI system validation (14 tests)
 - Game rules validation (13 tests)
+- Input handling validation (13 tests)
 
 **Planned**:
-- Input handling tests
 - Storage persistence tests
 - Audio system tests
 - Rendering tests
+
+### Input Handling Suite (13 tests)
+
+Comprehensive testing of keyboard and touch input:
+
+**Input State Tests (5)**:
+- Arrow keys update input state
+- WASD keys update input state
+- Dig keys update input state
+- Pause keys update input state
+- Key release clears input state
+
+**updateInput Tests (4)**:
+- Horizontal movement sets player velocity
+- Vertical movement on ladders sets player velocity
+- Dig actions trigger hole creation
+- Pause toggle changes game state
+
+**Touch Input Tests (2)**:
+- setTouchInput updates input state
+- Touch input works for all directions
+
+**Helper Function Tests (2)**:
+- getCurrentInput returns current state
+- resetInput clears all input
 
 ### Integration Tests
 
@@ -82,7 +107,7 @@ Full game flow validation (planned):
 | Digging | 16 | ✅ Complete |
 | AI | 14 | ✅ Complete |
 | Rules | 13 | ✅ Complete |
-| Input | 0 | ⏳ Pending |
+| Input | 13 | ✅ Complete |
 | Storage | 0 | ⏳ Pending |
 | Audio | 0 | ⏳ Pending |
 | Rendering | 0 | ⏳ Pending |

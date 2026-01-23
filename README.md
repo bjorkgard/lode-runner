@@ -1,10 +1,10 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-161%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-174%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
-![Progress](https://img.shields.io/badge/tasks-10%2F27%20complete-yellow)
+![Progress](https://img.shields.io/badge/tasks-11%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -55,17 +55,24 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Death and respawn mechanics
   - Lives system with game over state
   - Time bonus calculation for fast completion
-- **Test Infrastructure**: Comprehensive test suite with 161 passing tests
+- **Input System**: Complete keyboard and touch input handling
+  - Arrow keys and WASD for directional movement
+  - Z/Q and X/E for dig left/right actions
+  - P/Escape for pause toggle
+  - Touch input support for mobile controls
+  - Button press detection (vs. button held)
+  - Immutable state updates
+- **Test Infrastructure**: Comprehensive test suite with 174 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
   - 100% pass rate across all test suites
+  - Complete JSDoc documentation for all public APIs
 
 ### In Progress 🚧
 - None currently
 
 ### Planned 📋
-- **Input System**: Keyboard and touch input handling
 - **Mobile Support**: Touch controls with responsive design
 - **Persistent Storage**: High scores and settings saved to localStorage
 - **Audio System**: Sound effects with volume control and mute toggle

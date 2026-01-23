@@ -215,8 +215,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
 - [x] 10. Checkpoint - Game mechanics complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Input handling system
-  - [ ] 11.1 Create `src/game/input.ts` with input functions
+- [x] 11. Input handling system
+  - [x] 11.1 Create `src/game/input.ts` with input functions
     - Implement `initInput()` function
     - Implement `handleKeyDown(event)` function
     - Implement `handleKeyUp(event)` function
@@ -225,7 +225,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Implement `togglePause(state)` function
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 13.5, 17.4, 17.5_
   
-  - [ ] 11.2 Write property tests for input mapping
+  - [x] 11.2 Write property tests for input mapping
     - **Property 31: Arrow Key Input Mapping**
     - **Property 32: WASD Input Mapping**
     - **Property 33: Dig Left Input Mapping**
@@ -235,7 +235,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that keyboard events update input state correctly
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
   
-  - [ ] 11.3 Write property test for directional input response
+  - [x] 11.3 Write property test for directional input response
     - **Property 3: Directional Input Response**
     - **Validates: Requirements 3.1**
     - Test that input moves player in correct direction
