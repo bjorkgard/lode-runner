@@ -368,6 +368,118 @@ saveAudioSettings(settings: AudioSettings): void
 loadAudioSettings(): AudioSettings
 ```
 
+## Digging System API
+
+Functions for managing hole creation and regeneration (implemented):
+
+### updateDigging
+
+```typescript
+/**
+ * Updates all active holes in the game state.
+ * Decrements regeneration timers and regenerates holes when timers expire.
+ * Returns a new state object with updated holes and tiles.
+ * 
+ * This function is called every frame during the game loop to manage hole lifecycle.
+ * When a hole's timer expires, it restores the brick tile and eliminates any trapped enemies.
+ * 
+ * @param state - Current game state containing holes and tiles
+ * @param deltaTime - Time elapsed since last update (in seconds)
+ * @returns New game state with updated holes, tiles, and enemies
+ * 
+ * @example
+ * const newState = updateDigging(currentState, 0.016); // ~60 FPS
+ */
+updateDigging(state: GameStateData, deltaTime: number): GameStateData
+```
+
+### digHole
+
+```typescript
+/**
+ * Creates a hole in a brick tile at the specified direction from the player.
+ * Returns a new state object with the hole added and tile changed to empty.
+ * Does nothing if the target tile is not brick or if a hole already exists there.
+ * 
+ * The dig position is calculated diagonally down-left or down-right from the player's
+ * current position. Only brick tiles can be dug - steel, ladder, rope, and other tiles
+ * are indestructible.
+ * 
+ * @param state - Current game state
+ * @param direction - Direction to dig ('left' or 'right')
+ * @returns New game state with hole created (or unchanged if dig failed)
+ * 
+ * @example
+ * // Player presses dig-left key
+ * const newState = digHole(currentState, 'left');
+ * 
+ * @example
+ * // Player presses dig-right key
+ * const newState = digHole(currentState, 'right');
+ */
+digHole(state: GameStateData, direction: 'left' | 'right'): GameStateData
+```
+
+## Physics System API
+
+Functions for physics simulation and collision detection (implemented):
+
+### updatePhysics
+
+```typescript
+/**
+ * Updates physics for all entities in the game state.
+ * Applies gravity, processes movement, and resolves collisions.
+ * 
+ * @param state - Current game state
+ * @param deltaTime - Time elapsed since last update (in seconds)
+ * @returns New game state with updated entity positions
+ */
+updatePhysics(state: GameStateData, deltaTime: number): GameStateData
+```
+
+### getTileAt
+
+```typescript
+/**
+ * Gets the tile type at a specific position.
+ * Returns Empty if position is out of bounds.
+ * 
+ * @param pos - Position to check (in tile coordinates)
+ * @param tiles - 2D array of tile types
+ * @returns The tile type at the position, or Empty if out of bounds
+ */
+getTileAt(pos: Position, tiles: TileType[][]): TileType
+```
+
+### isSupported
+
+```typescript
+/**
+ * Checks if an entity is supported by a tile below it.
+ * Entities are supported by solid tiles (brick, steel), ladders, or ropes.
+ * 
+ * @param entity - Entity to check
+ * @param tiles - 2D array of tile types
+ * @returns true if entity is supported, false otherwise
+ */
+isSupported(entity: Entity, tiles: TileType[][]): boolean
+```
+
+### canMoveTo
+
+```typescript
+/**
+ * Checks if an entity can move to a specific position.
+ * Movement is blocked by solid tiles (brick, steel).
+ * 
+ * @param pos - Target position (in tile coordinates)
+ * @param tiles - 2D array of tile types
+ * @returns true if position is accessible, false otherwise
+ */
+canMoveTo(pos: Position, tiles: TileType[][]): boolean
+```
+
 ## Input API
 
 Functions for handling user input (implementation in progress):

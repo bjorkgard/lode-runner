@@ -104,38 +104,38 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
 - [x] 6. Checkpoint - Core systems functional
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Digging system
-  - [ ] 7.1 Create `src/game/digging.ts` with digging functions
+- [x] 7. Digging system
+  - [x] 7.1 Create `src/game/digging.ts` with digging functions
     - Implement `updateDigging(state, deltaTime)` function
     - Implement `digHole(state, direction)` function
     - Implement `regenerateHole(state, hole, index)` function
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   
-  - [ ] 7.2 Write property test for dig left
+  - [x] 7.2 Write property test for dig left
     - **Property 8: Dig Left Creates Hole**
     - **Validates: Requirements 4.1**
     - Test that digging left creates hole at correct position
     - _Requirements: 4.1_
   
-  - [ ] 7.3 Write property test for dig right
+  - [x] 7.3 Write property test for dig right
     - **Property 9: Dig Right Creates Hole**
     - **Validates: Requirements 4.2**
     - Test that digging right creates hole at correct position
     - _Requirements: 4.2_
   
-  - [ ] 7.4 Write property test for non-brick dig rejection
+  - [x] 7.4 Write property test for non-brick dig rejection
     - **Property 10: Non-Brick Dig Rejection**
     - **Validates: Requirements 4.3**
     - Test that digging into non-brick tiles fails
     - _Requirements: 4.3_
   
-  - [ ] 7.5 Write property test for hole regeneration
+  - [x] 7.5 Write property test for hole regeneration
     - **Property 12: Hole Regeneration Restores Brick**
     - **Validates: Requirements 4.5**
     - Test that holes regenerate back to brick after timer expires
     - _Requirements: 4.5_
   
-  - [ ] 7.6 Write property test for trapped enemy elimination
+  - [x] 7.6 Write property test for trapped enemy elimination
     - **Property 13: Trapped Enemy Elimination**
     - **Validates: Requirements 4.6**
     - Test that enemies in regenerating holes are eliminated

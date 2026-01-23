@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **118 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **134 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -28,21 +28,26 @@ Universal correctness properties validated across all inputs using fast-check.
 - Property 5: Ladder Movement Without Gravity - validates vertical movement on ladders
 - Property 6: Rope Movement Without Gravity - validates horizontal movement on ropes
 - Property 7: Solid Tile Collision - validates entities cannot move through solid tiles
+- Property 8: Dig Left Creates Hole - validates digging left creates hole at correct position
+- Property 9: Dig Right Creates Hole - validates digging right creates hole at correct position
+- Property 10: Non-Brick Dig Rejection - validates digging into non-brick tiles fails
+- Property 12: Hole Regeneration Restores Brick - validates holes regenerate back to brick after timer expires
+- Property 13: Trapped Enemy Elimination - validates enemies in regenerating holes are eliminated
 
 ### Unit Tests
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 118 tests
+**Currently Implemented**: 134 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
 - Physics system validation (16 tests)
 - Animation system validation (22 tests)
 - Error handling validation (29 tests)
+- Digging system validation (16 tests)
 
 **Planned**:
-- Digging system tests
 - AI behavior tests
 - Rules and win/loss condition tests
 - Input handling tests
@@ -69,7 +74,7 @@ Full game flow validation (planned):
 | Physics | 16 | ✅ Complete |
 | Animation | 22 | ✅ Complete |
 | Error Handling | 29 | ✅ Complete |
-| Digging | 0 | ⏳ Pending |
+| Digging | 16 | ✅ Complete |
 | AI | 0 | ⏳ Pending |
 | Rules | 0 | ⏳ Pending |
 | Input | 0 | ⏳ Pending |
@@ -257,6 +262,32 @@ Comprehensive testing of error handling system:
 - safe returns result on success
 - safe returns default value on error
 - safe returns undefined on error without default
+
+### Digging System Suite (16 tests)
+
+Comprehensive testing of hole creation and regeneration:
+
+**digHole Tests (5)**:
+- Does not mutate original state
+- Returns new state object when hole is created
+- Digging into steel tile should not create hole
+- Digging into empty tile should not create hole
+- Cannot dig where hole already exists
+
+**updateDigging Tests (5)**:
+- Does not mutate original state
+- Returns new state object
+- Decrements hole regeneration timer
+- Hole regenerates after timer expires
+- Trapped enemy is eliminated when hole regenerates
+
+**Property-Based Tests (6)**:
+- Property 8: Dig Left Creates Hole - validates digging left creates hole at correct position with proper timer and player state
+- Property 9: Dig Right Creates Hole - validates digging right creates hole at correct position with proper timer and player state
+- Property 10: Non-Brick Dig Rejection - validates digging into non-brick tiles (steel, ladder, rope, gold, exit, empty) fails gracefully
+- Property 12: Hole Regeneration Restores Brick - validates holes regenerate back to brick after timer expires across various timer values
+- Property 13: Trapped Enemy Elimination (in hole) - validates enemies positioned in regenerating holes are eliminated
+- Property 13: Trapped Enemy Elimination (outside hole) - validates enemies outside regenerating holes are not eliminated
 
 ## Running Tests
 

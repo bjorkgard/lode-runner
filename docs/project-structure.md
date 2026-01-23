@@ -21,12 +21,18 @@ lode-runner/
 │   │   ├── types.ts              # ✅ Core type definitions
 │   │   ├── constants.ts          # ✅ Game constants
 │   │   ├── levels.ts             # ✅ 100 level definitions
-│   │   ├── levels.test.ts        # ✅ Level system tests
+│   │   ├── levels.test.ts        # ✅ Level system tests (28 tests)
 │   │   ├── state.ts              # ✅ State management
-│   │   ├── state.test.ts         # ✅ State management tests
+│   │   ├── state.test.ts         # ✅ State management tests (18 tests)
+│   │   ├── physics.ts            # ✅ Movement and collision detection
+│   │   ├── physics.test.ts       # ✅ Physics system tests (16 tests)
+│   │   ├── animation.ts          # ✅ Sprite animation system
+│   │   ├── animation.test.ts     # ✅ Animation tests (22 tests)
+│   │   ├── errors.ts             # ✅ Error handling system
+│   │   ├── errors.test.ts        # ✅ Error handling tests (29 tests)
+│   │   ├── digging.ts            # ✅ Hole creation/regeneration
+│   │   ├── digging.test.ts       # ✅ Digging system tests (16 tests)
 │   │   ├── engine.ts             # ⏳ Main game loop (planned)
-│   │   ├── physics.ts            # ⏳ Movement and collision (planned)
-│   │   ├── digging.ts            # ⏳ Hole creation/regeneration (planned)
 │   │   ├── ai.ts                 # ⏳ Enemy pathfinding (planned)
 │   │   ├── rules.ts              # ⏳ Win/loss conditions (planned)
 │   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
@@ -71,11 +77,13 @@ Pure TypeScript game engine, independent of React. Contains all game logic, phys
 - `constants.ts` - Game configuration constants
 - `levels.ts` - 100 level definitions with validation
 - `state.ts` - Game state initialization and management
+- `physics.ts` - Movement, gravity, and collision detection
+- `animation.ts` - Sprite animation state management
+- `errors.ts` - Comprehensive error handling system
+- `digging.ts` - Hole creation and regeneration mechanics
 
 **Planned Modules**:
 - `engine.ts` - Main game loop with requestAnimationFrame
-- `physics.ts` - Movement, gravity, and collision detection
-- `digging.ts` - Hole creation and regeneration system
 - `ai.ts` - Enemy pathfinding and behavior
 - `rules.ts` - Win/loss conditions and scoring
 - `render.ts` - Canvas 2D rendering

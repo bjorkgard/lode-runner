@@ -1,10 +1,10 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-118%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-134%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
-![Progress](https://img.shields.io/badge/tasks-4%2F27%20complete-yellow)
+![Progress](https://img.shields.io/badge/tasks-7%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -32,18 +32,22 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Frame-based animation with configurable frame rates
   - Animation transitions and looping
   - Delta time-based updates
-- **Test Infrastructure**: Comprehensive test suite with 118 passing tests
+- **Digging System**: Complete hole creation and regeneration mechanics
+  - Dig left/right to create holes in brick tiles
+  - Automatic hole regeneration with timers
+  - Enemy elimination when trapped in regenerating holes
+  - Immutable state updates with proper validation
+- **Test Infrastructure**: Comprehensive test suite with 134 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
 
 ### In Progress 🚧
-- Physics and collision detection
-- Player and enemy movement
-- Digging system
+- Enemy AI and pathfinding
+- Game rules and win/loss conditions
 
 ### Planned 📋
-- **Classic Gameplay**: Digging, hole regeneration, and enemy AI
+- **Classic Gameplay**: Enemy AI and level progression
 - **Mobile Support**: Touch controls with responsive design
 - **Persistent Storage**: High scores and settings saved to localStorage
 - **Audio System**: Sound effects with volume control and mute toggle
