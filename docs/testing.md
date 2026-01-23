@@ -35,6 +35,9 @@ Universal correctness properties validated across all inputs using fast-check.
 - Property 13: Trapped Enemy Elimination - validates enemies in regenerating holes are eliminated
 - Property 14: Enemy Chase Behavior - validates enemies move toward player over time
 - Property 16: Enemy Trapping in Holes - validates enemies in holes become trapped
+- Property 18: Gold Collection - validates collecting gold removes tile, increases score, and decrements count
+- Property 19: Exit Revelation - validates collecting all gold reveals exit
+- Property 20: Level Completion - validates reaching exit with all gold completes level
 
 ### Unit Tests
 

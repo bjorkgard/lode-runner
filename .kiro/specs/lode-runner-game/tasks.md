@@ -212,7 +212,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that death with 0 lives triggers GameOver state
     - _Requirements: 7.4_
 
-- [ ] 10. Checkpoint - Game mechanics complete
+- [x] 10. Checkpoint - Game mechanics complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 11. Input handling system

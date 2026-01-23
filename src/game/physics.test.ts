@@ -11,45 +11,12 @@ import {
   canMoveTo
 } from './physics';
 import { TileType, GameState } from './types';
-import { AnimationState } from './animation';
-import type { Player, Enemy, GameStateData } from './types';
-
-// Helper function to create a test player
-function createTestPlayer(overrides: Partial<Player> = {}): Player {
-  return {
-    pos: { x: 5, y: 5 },
-    velocity: { x: 0, y: 0 },
-    animation: new AnimationState('idle'),
-    isOnGround: false,
-    isOnLadder: false,
-    isOnRope: false,
-    lives: 3,
-    isDead: false,
-    isDigging: false,
-    digDirection: null,
-    ...overrides
-  };
-}
-
-// Helper function to create a test enemy
-function createTestEnemy(overrides: Partial<Enemy> = {}): Enemy {
-  return {
-    pos: { x: 10, y: 10 },
-    velocity: { x: 0, y: 0 },
-    animation: new AnimationState('run'),
-    isOnGround: false,
-    isOnLadder: false,
-    isOnRope: false,
-    isTrapped: false,
-    trapTimer: 0,
-    ...overrides
-  };
-}
-
-// Helper function to create a tile grid filled with empty tiles
-function createEmptyTiles(width: number = 28, height: number = 16): TileType[][] {
-  return Array(height).fill(null).map(() => Array(width).fill(TileType.Empty));
-}
+import type { GameStateData } from './types';
+import {
+  createTestPlayer,
+  createTestEnemy,
+  createEmptyTiles
+} from '../test/helpers';
 
 describe('Physics System', () => {
   describe('updatePhysics', () => {
@@ -65,6 +32,7 @@ describe('Physics System', () => {
         ],
         tiles: createEmptyTiles(),
         holes: [],
+        holePositions: new Set(),
         goldRemaining: 0,
         exitRevealed: false,
         levelTimer: 0,
@@ -96,6 +64,7 @@ describe('Physics System', () => {
         ],
         tiles: createEmptyTiles(),
         holes: [],
+        holePositions: new Set(),
         goldRemaining: 0,
         exitRevealed: false,
         levelTimer: 0,

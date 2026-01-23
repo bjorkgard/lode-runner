@@ -4,41 +4,14 @@ import { describe, test, expect } from 'vitest';
 import fc from 'fast-check';
 import { updateAI, calculateChaseDirection, moveEnemy, checkEnemyTrapped } from './ai';
 import type { GameStateData, Enemy, Player, Hole } from './types';
-import { TileType, GameState } from './types';
-import { AnimationState } from './animation';
+import { TileType } from './types';
 import { ENEMY_SPEED } from './constants';
-
-/**
- * Helper function to create a test game state with specified properties.
- */
-function createTestState(overrides: Partial<GameStateData> = {}): GameStateData {
-  return {
-    currentLevel: 1,
-    score: 0,
-    highScore: 0,
-    lives: 3,
-    player: {
-      pos: { x: 5, y: 5 },
-      velocity: { x: 0, y: 0 },
-      animation: new AnimationState('idle'),
-      isOnGround: true,
-      isOnLadder: false,
-      isOnRope: false,
-      lives: 3,
-      isDead: false,
-      isDigging: false,
-      digDirection: null
-    },
-    enemies: [],
-    tiles: Array(16).fill(null).map(() => Array(28).fill(TileType.Empty)),
-    holes: [],
-    goldRemaining: 0,
-    exitRevealed: false,
-    levelTimer: 0,
-    gameState: GameState.Playing,
-    ...overrides
-  };
-}
+import {
+  createTestPlayer,
+  createTestEnemy,
+  createTestState,
+  createTestHole
+} from '../test/helpers';
 
 /**
  * Helper function to create a test enemy with specified properties.

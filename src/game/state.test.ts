@@ -104,7 +104,7 @@ describe('createEnemy', () => {
 
 describe('resetLevel', () => {
   test('resets level to initial state', () => {
-    const state = createInitialState();
+    let state = createInitialState();
     
     // Modify state
     state.player.pos = { x: 10, y: 10 };
@@ -114,7 +114,7 @@ describe('resetLevel', () => {
     state.exitRevealed = true;
     
     // Reset level
-    resetLevel(state);
+    state = resetLevel(state);
     
     // Check that level-specific state is reset
     expect(state.player.pos).not.toEqual({ x: 10, y: 10 });
@@ -125,38 +125,38 @@ describe('resetLevel', () => {
   });
   
   test('resetLevel does not change score', () => {
-    const state = createInitialState();
+    let state = createInitialState();
     state.score = 1000;
     
-    resetLevel(state);
+    state = resetLevel(state);
     
     expect(state.score).toBe(1000);
   });
   
   test('resetLevel does not change lives', () => {
-    const state = createInitialState();
+    let state = createInitialState();
     state.lives = 2;
     state.player.lives = 2;
     
-    resetLevel(state);
+    state = resetLevel(state);
     
     expect(state.lives).toBe(2);
   });
   
   test('resetLevel does not change high score', () => {
-    const state = createInitialState();
+    let state = createInitialState();
     state.highScore = 5000;
     
-    resetLevel(state);
+    state = resetLevel(state);
     
     expect(state.highScore).toBe(5000);
   });
   
   test('resetLevel does not change current level number', () => {
-    const state = createInitialState();
+    let state = createInitialState();
     const originalLevel = state.currentLevel;
     
-    resetLevel(state);
+    state = resetLevel(state);
     
     expect(state.currentLevel).toBe(originalLevel);
   });

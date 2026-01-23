@@ -12,7 +12,7 @@ import { loadLevel } from './levels';
  * @returns A new GameStateData object with initial values
  */
 export function createInitialState(): GameStateData {
-  const state: GameStateData = {
+  const baseState: GameStateData = {
     currentLevel: 1,
     score: 0,
     highScore: 0,
@@ -21,6 +21,7 @@ export function createInitialState(): GameStateData {
     enemies: [],
     tiles: [],
     holes: [],
+    holePositions: new Set(),
     goldRemaining: 0,
     exitRevealed: false,
     levelTimer: 0,
@@ -28,9 +29,7 @@ export function createInitialState(): GameStateData {
   };
   
   // Load level 1 to initialize tiles and entities
-  loadLevel(state, 1);
-  
-  return state;
+  return loadLevel(baseState, 1);
 }
 
 /**
@@ -79,10 +78,12 @@ export function createEnemy(pos: Position): Enemy {
  * Resets the current level to its initial state.
  * Reloads the level, resetting player and enemy positions, holes, and timers.
  * Does not affect score, lives, or high score.
+ * Returns a new state object without modifying the input.
  * 
  * @param state - The game state to reset
+ * @returns New game state with level reset
  */
-export function resetLevel(state: GameStateData): void {
+export function resetLevel(state: GameStateData): GameStateData {
   // Reload the current level
-  loadLevel(state, state.currentLevel);
+  return loadLevel(state, state.currentLevel);
 }

@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import fc from 'fast-check';
 import { LEVELS, loadLevel, countGold, isValidLevel, getLevel } from './levels';
 import { TileType, GameState } from './types';
-import { AnimationState } from './animation';
 import type { GameStateData } from './types';
+import { createTestPlayer } from '../test/helpers';
 
 /**
  * Test suite for level data and loading system.
@@ -22,21 +22,11 @@ describe('Level System', () => {
       score: 0,
       highScore: 0,
       lives: 3,
-      player: {
-        pos: { x: 0, y: 0 },
-        velocity: { x: 0, y: 0 },
-        animation: new AnimationState('idle'),
-        isOnGround: false,
-        isOnLadder: false,
-        isOnRope: false,
-        lives: 3,
-        isDead: false,
-        isDigging: false,
-        digDirection: null
-      },
+      player: createTestPlayer({ pos: { x: 0, y: 0 } }),
       enemies: [],
       tiles: [],
       holes: [],
+      holePositions: new Set(),
       goldRemaining: 0,
       exitRevealed: false,
       levelTimer: 0,
@@ -222,7 +212,7 @@ describe('Level System', () => {
     });
 
     it('should load level 1 correctly', () => {
-      loadLevel(state, 1);
+      state = loadLevel(state, 1);
       
       expect(state.currentLevel).toBe(1);
       expect(state.tiles).toHaveLength(16);
@@ -235,7 +225,7 @@ describe('Level System', () => {
     });
 
     it('should deep copy tiles to avoid modifying original', () => {
-      loadLevel(state, 1);
+      state = loadLevel(state, 1);
       
       // Modify loaded tiles
       state.tiles[0][0] = TileType.Empty;
@@ -249,7 +239,7 @@ describe('Level System', () => {
       state.player.isDead = true;
       state.player.isDigging = true;
       
-      loadLevel(state, 1);
+      state = loadLevel(state, 1);
       
       expect(state.player.velocity).toEqual({ x: 0, y: 0 });
       expect(state.player.isDead).toBe(false);
@@ -258,7 +248,7 @@ describe('Level System', () => {
     });
 
     it('should create enemies at correct positions', () => {
-      loadLevel(state, 3); // Level 3 has 1 enemy
+      state = loadLevel(state, 3); // Level 3 has 1 enemy
       
       expect(state.enemies).toHaveLength(1);
       expect(state.enemies[0].pos).toEqual(LEVELS[2].enemyStarts[0]);
@@ -267,7 +257,7 @@ describe('Level System', () => {
     });
 
     it('should count gold correctly', () => {
-      loadLevel(state, 1);
+      state = loadLevel(state, 1);
       
       const expectedGold = countGold(LEVELS[0].tiles);
       expect(state.goldRemaining).toBe(expectedGold);
@@ -290,10 +280,10 @@ describe('Level System', () => {
         fc.property(
           fc.integer({ min: 1, max: 100 }),
           (levelNumber) => {
-            const state = createTestState();
+            let state = createTestState();
             const level = LEVELS[levelNumber - 1];
             
-            loadLevel(state, levelNumber);
+            state = loadLevel(state, levelNumber);
             
             // Verify level number is set correctly
             expect(state.currentLevel).toBe(levelNumber);

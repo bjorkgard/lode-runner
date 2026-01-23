@@ -9,6 +9,7 @@ import { getTileAt } from './physics';
  * Updates all active holes in the game state.
  * Decrements regeneration timers and regenerates holes when timers expire.
  * Returns a new state object with updated holes and tiles.
+ * Uses structural sharing to only copy modified tile rows.
  * 
  * @param state - Current game state containing holes and tiles
  * @param deltaTime - Time elapsed since last update (in seconds)
@@ -16,8 +17,10 @@ import { getTileAt } from './physics';
  */
 export function updateDigging(state: GameStateData, deltaTime: number): GameStateData {
   const updatedHoles: Hole[] = [];
-  let updatedTiles = state.tiles.map(row => [...row]); // Deep copy tiles
-  let updatedEnemies = [...state.enemies];
+  const updatedHolePositions = new Set<string>();
+  const tilesToUpdate = new Map<number, TileType[]>(); // Track only changed rows
+  let updatedEnemies = state.enemies;
+  let hasChanges = false;
   
   // Update each hole's regeneration timer
   for (let i = 0; i < state.holes.length; i++) {
@@ -26,9 +29,27 @@ export function updateDigging(state: GameStateData, deltaTime: number): GameStat
     
     if (newTimer <= 0) {
       // Hole should regenerate
-      const result = regenerateHole(state, hole, updatedTiles, updatedEnemies);
-      updatedTiles = result.tiles;
-      updatedEnemies = result.enemies;
+      hasChanges = true;
+      
+      // Only copy the row that needs updating
+      if (!tilesToUpdate.has(hole.pos.y)) {
+        tilesToUpdate.set(hole.pos.y, [...state.tiles[hole.pos.y]]);
+      }
+      tilesToUpdate.get(hole.pos.y)![hole.pos.x] = TileType.Brick;
+      
+      // Check for trapped enemies and eliminate them
+      const remainingEnemies = updatedEnemies.filter(enemy => {
+        const enemyTileX = Math.floor(enemy.pos.x);
+        const enemyTileY = Math.floor(enemy.pos.y);
+        
+        // If enemy is in the hole position, eliminate it
+        return !(enemyTileX === hole.pos.x && enemyTileY === hole.pos.y);
+      });
+      
+      if (remainingEnemies.length !== updatedEnemies.length) {
+        updatedEnemies = remainingEnemies;
+      }
+      
       // Don't add this hole to updatedHoles (it's removed)
     } else {
       // Hole still active, update timer
@@ -36,12 +57,19 @@ export function updateDigging(state: GameStateData, deltaTime: number): GameStat
         ...hole,
         regenerationTimer: newTimer
       });
+      updatedHolePositions.add(`${hole.pos.x},${hole.pos.y}`);
     }
   }
+  
+  // Only create new tiles array if changes were made (structural sharing)
+  const updatedTiles = hasChanges
+    ? state.tiles.map((row, y) => tilesToUpdate.get(y) || row)
+    : state.tiles;
   
   return {
     ...state,
     holes: updatedHoles,
+    holePositions: updatedHolePositions,
     tiles: updatedTiles,
     enemies: updatedEnemies
   };
@@ -51,6 +79,7 @@ export function updateDigging(state: GameStateData, deltaTime: number): GameStat
  * Creates a hole in a brick tile at the specified direction from the player.
  * Returns a new state object with the hole added and tile changed to empty.
  * Does nothing if the target tile is not brick or if a hole already exists there.
+ * Uses O(1) Set lookup for hole existence check.
  * 
  * @param state - Current game state
  * @param direction - Direction to dig ('left' or 'right')
@@ -71,16 +100,16 @@ export function digHole(state: GameStateData, direction: 'left' | 'right'): Game
     return state; // Can only dig brick tiles
   }
   
-  // Check if hole already exists at this position
-  const holeExists = state.holes.some(
-    h => h.pos.x === digPos.x && h.pos.y === digPos.y
-  );
-  if (holeExists) {
+  // Check if hole already exists at this position using O(1) Set lookup
+  const posKey = `${digPos.x},${digPos.y}`;
+  if (state.holePositions.has(posKey)) {
     return state; // Can't dig where hole already exists
   }
   
-  // Create the hole
-  const updatedTiles = state.tiles.map(row => [...row]); // Deep copy
+  // Create the hole - only copy the affected row (structural sharing)
+  const updatedTiles = state.tiles.map((row, y) => 
+    y === digPos.y ? [...row] : row
+  );
   updatedTiles[digPos.y][digPos.x] = TileType.Empty;
   
   const newHole: Hole = {
@@ -89,53 +118,19 @@ export function digHole(state: GameStateData, direction: 'left' | 'right'): Game
     maxRegenTime: HOLE_REGEN_TIME
   };
   
+  // Update hole positions Set
+  const updatedHolePositions = new Set(state.holePositions);
+  updatedHolePositions.add(posKey);
+  
   return {
     ...state,
     tiles: updatedTiles,
     holes: [...state.holes, newHole],
+    holePositions: updatedHolePositions,
     player: {
       ...state.player,
       isDigging: true,
       digDirection: direction
     }
-  };
-}
-
-/**
- * Regenerates a hole back to a brick tile.
- * Eliminates any enemies trapped in the hole position.
- * Returns updated tiles and enemies arrays.
- * 
- * @param state - Current game state
- * @param hole - Hole to regenerate
- * @param tiles - Current tile grid (will be modified)
- * @param enemies - Current enemies array (will be modified)
- * @returns Object with updated tiles and enemies arrays
- */
-function regenerateHole(
-  state: GameStateData,
-  hole: Hole,
-  tiles: TileType[][],
-  enemies: typeof state.enemies
-): { tiles: TileType[][]; enemies: typeof state.enemies } {
-  // Restore brick tile
-  tiles[hole.pos.y][hole.pos.x] = TileType.Brick;
-  
-  // Check for trapped enemies and eliminate them
-  const updatedEnemies = enemies.filter(enemy => {
-    const enemyTileX = Math.floor(enemy.pos.x);
-    const enemyTileY = Math.floor(enemy.pos.y);
-    
-    // If enemy is in the hole position, eliminate it
-    if (enemyTileX === hole.pos.x && enemyTileY === hole.pos.y) {
-      return false; // Remove this enemy
-    }
-    
-    return true; // Keep this enemy
-  });
-  
-  return {
-    tiles,
-    enemies: updatedEnemies
   };
 }

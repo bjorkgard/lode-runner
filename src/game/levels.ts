@@ -377,13 +377,15 @@ export const LEVELS: Level[] = [
 /**
  * Loads a level into the game state.
  * Initializes tiles, player position, enemies, and resets level-specific state.
+ * Returns a new state object without modifying the input.
  * 
- * @param state - The current game state to modify
+ * @param state - The current game state
  * @param levelNumber - The level number to load (1-100)
+ * @returns New game state with level loaded
  * @throws {LevelLoadError} If level number is out of range
  * @throws {LevelValidationError} If level data is invalid
  */
-export function loadLevel(state: GameStateData, levelNumber: number): void {
+export function loadLevel(state: GameStateData, levelNumber: number): GameStateData {
   // Validate level number
   if (levelNumber < 1 || levelNumber > LEVELS.length) {
     throw new LevelLoadError(
@@ -401,36 +403,39 @@ export function loadLevel(state: GameStateData, levelNumber: number): void {
     throw new LevelValidationError(levelNumber, validationErrors);
   }
   
-  // Update state with level data
-  state.currentLevel = levelNumber;
-  
-  // Deep copy tiles to avoid modifying original level data
-  state.tiles = level.tiles.map(row => [...row]);
-  
-  // Set player position
-  state.player.pos = { ...level.playerStart };
-  state.player.velocity = { x: 0, y: 0 };
-  state.player.isDead = false;
-  state.player.isDigging = false;
-  state.player.digDirection = null;
-  
-  // Create enemies at their start positions
-  state.enemies = level.enemyStarts.map(pos => ({
-    pos: { ...pos },
-    velocity: { x: 0, y: 0 },
-    animation: new AnimationState('run'),
-    isOnGround: false,
-    isOnLadder: false,
-    isOnRope: false,
-    isTrapped: false,
-    trapTimer: 0
-  }));
-  
-  // Reset level-specific state
-  state.holes = [];
-  state.goldRemaining = countGold(level.tiles);
-  state.exitRevealed = false;
-  state.levelTimer = 0;
+  // Return new state with level data
+  return {
+    ...state,
+    currentLevel: levelNumber,
+    // Deep copy tiles to avoid modifying original level data
+    tiles: level.tiles.map(row => [...row]),
+    // Reset player with new position
+    player: {
+      ...state.player,
+      pos: { ...level.playerStart },
+      velocity: { x: 0, y: 0 },
+      isDead: false,
+      isDigging: false,
+      digDirection: null
+    },
+    // Create enemies at their start positions
+    enemies: level.enemyStarts.map(pos => ({
+      pos: { ...pos },
+      velocity: { x: 0, y: 0 },
+      animation: new AnimationState('run'),
+      isOnGround: false,
+      isOnLadder: false,
+      isOnRope: false,
+      isTrapped: false,
+      trapTimer: 0
+    })),
+    // Reset level-specific state
+    holes: [],
+    holePositions: new Set(),
+    goldRemaining: countGold(level.tiles),
+    exitRevealed: false,
+    levelTimer: 0
+  };
 }
 
 /**

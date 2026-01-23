@@ -17,90 +17,96 @@ export interface Animation {
  * Manages the animation state for an entity.
  * Tracks current animation, frame, and timing for sprite rendering.
  * 
- * This class is immutable-friendly: the update method can be used
- * in a functional style by creating a new instance with updated values.
+ * This class is fully immutable: all methods return new instances
+ * rather than modifying the existing state.
  * 
  * @example
  * ```typescript
  * const animState = new AnimationState('idle');
  * const updated = animState.update(deltaTime, ANIMATIONS.player);
- * animState.setAnimation('run'); // Switch to run animation
+ * const running = updated.setAnimation('run'); // Switch to run animation
  * ```
  */
 export class AnimationState {
   /** Name of the currently playing animation */
-  currentAnimation: string;
+  readonly currentAnimation: string;
   /** Index of the current frame within the animation */
-  currentFrame: number;
+  readonly currentFrame: number;
   /** Time accumulated since last frame change (in seconds) */
-  frameTimer: number;
+  readonly frameTimer: number;
   
   /**
    * Creates a new animation state.
    * @param initialAnimation - Name of the animation to start with (default: 'idle')
+   * @param frame - Initial frame index (default: 0)
+   * @param timer - Initial frame timer (default: 0)
    */
-  constructor(initialAnimation: string = 'idle') {
+  constructor(initialAnimation: string = 'idle', frame: number = 0, timer: number = 0) {
     this.currentAnimation = initialAnimation;
-    this.currentFrame = 0;
-    this.frameTimer = 0;
+    this.currentFrame = frame;
+    this.frameTimer = timer;
   }
   
   /**
    * Updates the animation state based on elapsed time.
    * Advances to next frame when enough time has passed based on frameRate.
-   * 
-   * Note: This method mutates the instance. For immutable updates,
-   * create a new AnimationState and copy the updated values.
+   * Returns a new AnimationState instance with updated values.
    * 
    * @param deltaTime - Time elapsed since last update (in seconds)
    * @param animations - Map of animation names to Animation definitions
+   * @returns New AnimationState with updated frame timing
    */
-  update(deltaTime: number, animations: Record<string, Animation>): void {
+  update(deltaTime: number, animations: Record<string, Animation>): AnimationState {
     const anim = animations[this.currentAnimation];
-    if (!anim) return;
+    if (!anim) return this;
     
-    this.frameTimer += deltaTime;
+    const newFrameTimer = this.frameTimer + deltaTime;
     
-    if (this.frameTimer >= 1 / anim.frameRate) {
-      this.frameTimer = 0;
-      this.currentFrame++;
+    if (newFrameTimer >= 1 / anim.frameRate) {
+      const nextFrame = this.currentFrame + 1;
       
-      if (this.currentFrame >= anim.frames.length) {
+      if (nextFrame >= anim.frames.length) {
         if (anim.loop) {
-          this.currentFrame = 0;
+          // Loop back to first frame
+          return new AnimationState(this.currentAnimation, 0, 0);
         } else {
-          this.currentFrame = anim.frames.length - 1;
+          // Stay on last frame
+          return new AnimationState(this.currentAnimation, anim.frames.length - 1, 0);
         }
+      } else {
+        // Advance to next frame
+        return new AnimationState(this.currentAnimation, nextFrame, 0);
       }
     }
+    
+    // Not enough time elapsed, just update timer
+    return new AnimationState(this.currentAnimation, this.currentFrame, newFrameTimer);
   }
   
   /**
    * Changes to a different animation.
    * Resets frame counter and timer when switching animations.
-   * Does nothing if already playing the specified animation.
+   * Returns the same instance if already playing the specified animation.
    * 
    * @param name - Name of the animation to switch to
+   * @returns New AnimationState with the specified animation, or same instance if unchanged
    */
-  setAnimation(name: string): void {
+  setAnimation(name: string): AnimationState {
     if (this.currentAnimation !== name) {
-      this.currentAnimation = name;
-      this.currentFrame = 0;
-      this.frameTimer = 0;
+      return new AnimationState(name, 0, 0);
     }
+    return this;
   }
   
   /**
    * Creates a copy of this animation state.
-   * Useful for immutable update patterns.
+   * Since the class is immutable, this returns the same instance.
+   * Kept for backward compatibility.
    * 
-   * @returns A new AnimationState with the same values
+   * @returns This AnimationState instance
    */
   clone(): AnimationState {
-    const cloned = new AnimationState(this.currentAnimation);
-    cloned.currentFrame = this.currentFrame;
-    cloned.frameTimer = this.frameTimer;
-    return cloned;
+    return this;
   }
 }
 

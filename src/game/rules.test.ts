@@ -2,70 +2,11 @@
 
 import { describe, test, expect } from 'vitest';
 import fc from 'fast-check';
-import { checkGoldCollection, checkPlayerEnemyCollision, killPlayer, checkLevelCompletion, completeLevel, restartLevel, updateRules } from './rules';
-import { createInitialState, createPlayer, createEnemy } from './state';
+import { checkGoldCollection, checkPlayerEnemyCollision, killPlayer, checkLevelCompletion, restartLevel } from './rules';
+import { createPlayer, createEnemy } from './state';
 import { TileType, GameState } from './types';
-import type { GameStateData } from './types';
 import { GOLD_POINTS, COLLISION_THRESHOLD } from './constants';
-
-/**
- * Helper function to create a test state with custom properties.
- */
-function createTestState(overrides: Partial<GameStateData> = {}): GameStateData {
-  const baseState = createInitialState();
-  return {
-    ...baseState,
-    ...overrides
-  };
-}
-
-/**
- * Helper function to create a tile grid with gold at a specific position.
- */
-function createTilesWithGoldAt(pos: { x: number; y: number }): TileType[][] {
-  const tiles: TileType[][] = Array(16).fill(null).map(() => Array(28).fill(TileType.Empty));
-  
-  // Add borders
-  for (let x = 0; x < 28; x++) {
-    tiles[0][x] = TileType.Steel;
-    tiles[15][x] = TileType.Steel;
-  }
-  for (let y = 0; y < 16; y++) {
-    tiles[y][0] = TileType.Steel;
-    tiles[y][27] = TileType.Steel;
-  }
-  
-  // Place gold at specified position
-  if (pos.y >= 0 && pos.y < 16 && pos.x >= 0 && pos.x < 28) {
-    tiles[pos.y][pos.x] = TileType.Gold;
-  }
-  
-  return tiles;
-}
-
-/**
- * Helper function to create a tile grid with exit at a specific position.
- */
-function createTilesWithExitAt(pos: { x: number; y: number }): TileType[][] {
-  const tiles: TileType[][] = Array(16).fill(null).map(() => Array(28).fill(TileType.Empty));
-  
-  // Add borders
-  for (let x = 0; x < 28; x++) {
-    tiles[0][x] = TileType.Steel;
-    tiles[15][x] = TileType.Steel;
-  }
-  for (let y = 0; y < 16; y++) {
-    tiles[y][0] = TileType.Steel;
-    tiles[y][27] = TileType.Steel;
-  }
-  
-  // Place exit at specified position
-  if (pos.y >= 0 && pos.y < 16 && pos.x >= 0 && pos.x < 28) {
-    tiles[pos.y][pos.x] = TileType.Exit;
-  }
-  
-  return tiles;
-}
+import { createTestState, createTilesWithGoldAt, createTilesWithExitAt } from '../test/helpers';
 
 describe('Gold Collection', () => {
   // Feature: lode-runner-game, Property 18: Gold Collection

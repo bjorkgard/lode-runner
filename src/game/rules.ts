@@ -38,6 +38,7 @@ export function updateRules(state: GameStateData, deltaTime: number): GameStateD
  * Checks if the player is on a gold tile and collects it.
  * Updates score, removes gold tile, and reveals exit if all gold collected.
  * Returns a new state object with updated gold state.
+ * Uses structural sharing to only copy the affected tile row.
  * 
  * @param state - Current game state
  * @returns New game state with gold collected (or unchanged if no gold)
@@ -51,8 +52,10 @@ export function checkGoldCollection(state: GameStateData): GameStateData {
   const tile = getTileAt(playerTilePos, state.tiles);
   
   if (tile === TileType.Gold) {
-    // Collect gold
-    const updatedTiles = state.tiles.map(row => [...row]); // Deep copy
+    // Collect gold - only copy the affected row (structural sharing)
+    const updatedTiles = state.tiles.map((row, y) => 
+      y === playerTilePos.y ? [...row] : row
+    );
     updatedTiles[playerTilePos.y][playerTilePos.x] = TileType.Empty;
     
     const newGoldRemaining = state.goldRemaining - 1;
@@ -197,14 +200,12 @@ export function completeLevel(state: GameStateData): GameStateData {
   
   // Load next level
   const nextLevel = state.currentLevel + 1;
-  const newState = {
+  const stateWithScore = {
     ...state,
     score: newScore
   };
   
-  loadLevel(newState, nextLevel);
-  
-  return newState;
+  return loadLevel(stateWithScore, nextLevel);
 }
 
 /**
@@ -217,7 +218,5 @@ export function completeLevel(state: GameStateData): GameStateData {
  * @returns New game state with level restarted
  */
 export function restartLevel(state: GameStateData): GameStateData {
-  const newState = { ...state };
-  loadLevel(newState, state.currentLevel);
-  return newState;
+  return loadLevel(state, state.currentLevel);
 }

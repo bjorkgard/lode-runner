@@ -39,49 +39,49 @@ describe('AnimationState', () => {
     });
     
     test('advances frame when enough time has passed', () => {
-      animState.update(0.1, testAnimations); // Exactly one frame duration
+      animState = animState.update(0.1, testAnimations); // Exactly one frame duration
       
       expect(animState.currentFrame).toBe(1);
       expect(animState.frameTimer).toBe(0);
     });
     
     test('accumulates time across multiple updates', () => {
-      animState.update(0.05, testAnimations); // Half a frame
+      animState = animState.update(0.05, testAnimations); // Half a frame
       expect(animState.currentFrame).toBe(0);
       
-      animState.update(0.05, testAnimations); // Another half frame
+      animState = animState.update(0.05, testAnimations); // Another half frame
       expect(animState.currentFrame).toBe(1);
     });
     
     test('loops animation when reaching end', () => {
-      animState.currentFrame = 3; // Last frame
-      animState.update(0.1, testAnimations);
+      animState = new AnimationState('test', 3, 0); // Last frame
+      animState = animState.update(0.1, testAnimations);
       
       expect(animState.currentFrame).toBe(0); // Should loop back
     });
     
     test('stops at last frame for non-looping animation', () => {
       testAnimations.test.loop = false;
-      animState.currentFrame = 3; // Last frame
+      animState = new AnimationState('test', 3, 0); // Last frame
       
-      animState.update(0.1, testAnimations);
+      animState = animState.update(0.1, testAnimations);
       
       expect(animState.currentFrame).toBe(3); // Should stay at last frame
     });
     
     test('does nothing if animation not found', () => {
-      animState.currentAnimation = 'nonexistent';
+      animState = new AnimationState('nonexistent');
       const initialFrame = animState.currentFrame;
       const initialTimer = animState.frameTimer;
       
-      animState.update(0.1, testAnimations);
+      const updated = animState.update(0.1, testAnimations);
       
-      expect(animState.currentFrame).toBe(initialFrame);
-      expect(animState.frameTimer).toBe(initialTimer);
+      expect(updated.currentFrame).toBe(initialFrame);
+      expect(updated.frameTimer).toBe(initialTimer);
     });
     
     test('handles very small delta times', () => {
-      animState.update(0.001, testAnimations); // 1ms
+      animState = animState.update(0.001, testAnimations); // 1ms
       
       expect(animState.currentFrame).toBe(0);
       expect(animState.frameTimer).toBeCloseTo(0.001);
@@ -90,7 +90,7 @@ describe('AnimationState', () => {
     test('resets timer when advancing frame', () => {
       // The update method resets the timer to 0 when advancing a frame
       // This is by design - it doesn't carry over excess time
-      animState.update(0.25, testAnimations); // 2.5 frames worth of time
+      animState = animState.update(0.25, testAnimations); // 2.5 frames worth of time
       
       // Should advance 1 frame and reset timer to 0
       expect(animState.currentFrame).toBe(1);
@@ -102,13 +102,11 @@ describe('AnimationState', () => {
     let animState: AnimationState;
     
     beforeEach(() => {
-      animState = new AnimationState('idle');
-      animState.currentFrame = 5;
-      animState.frameTimer = 0.05;
+      animState = new AnimationState('idle', 5, 0.05);
     });
     
     test('changes animation and resets state', () => {
-      animState.setAnimation('run');
+      animState = animState.setAnimation('run');
       
       expect(animState.currentAnimation).toBe('run');
       expect(animState.currentFrame).toBe(0);
@@ -116,23 +114,22 @@ describe('AnimationState', () => {
     });
     
     test('does nothing if already playing specified animation', () => {
-      animState.setAnimation('idle');
+      const result = animState.setAnimation('idle');
       
-      expect(animState.currentAnimation).toBe('idle');
-      expect(animState.currentFrame).toBe(5); // Should not reset
-      expect(animState.frameTimer).toBe(0.05); // Should not reset
+      expect(result.currentAnimation).toBe('idle');
+      expect(result.currentFrame).toBe(5); // Should not reset
+      expect(result.frameTimer).toBe(0.05); // Should not reset
+      expect(result).toBe(animState); // Should return same instance
     });
   });
   
   describe('clone', () => {
     test('creates independent copy of animation state', () => {
-      const original = new AnimationState('run');
-      original.currentFrame = 3;
-      original.frameTimer = 0.05;
+      const original = new AnimationState('run', 3, 0.05);
       
       const cloned = original.clone();
       
-      expect(cloned).not.toBe(original);
+      expect(cloned).toBe(original); // Since immutable, clone returns same instance
       expect(cloned.currentAnimation).toBe(original.currentAnimation);
       expect(cloned.currentFrame).toBe(original.currentFrame);
       expect(cloned.frameTimer).toBe(original.frameTimer);
@@ -142,10 +139,10 @@ describe('AnimationState', () => {
       const original = new AnimationState('idle');
       const cloned = original.clone();
       
-      cloned.setAnimation('run');
+      const modified = cloned.setAnimation('run');
       
       expect(original.currentAnimation).toBe('idle');
-      expect(cloned.currentAnimation).toBe('run');
+      expect(modified.currentAnimation).toBe('run');
     });
   });
 });

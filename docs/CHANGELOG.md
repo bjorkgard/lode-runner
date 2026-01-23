@@ -2,6 +2,121 @@
 
 ## [Unreleased]
 
+### Added - AI and Game Rules Systems (2026-01-24)
+
+#### New Modules
+- **src/game/ai.ts** - Enemy AI pathfinding and chase behavior
+- **src/game/ai.test.ts** - 14 unit tests for AI system (100% pass rate)
+- **src/game/rules.ts** - Game rules, win/loss conditions, and level progression
+- **src/game/rules.test.ts** - 13 unit tests for game rules (100% pass rate)
+
+#### AI System Features
+- Simple Manhattan distance chase heuristic
+- Horizontal movement prioritization (classic Lode Runner behavior)
+- Enemy trapping in holes
+- Trapped enemy elimination on hole regeneration
+- Immutable state updates with structural sharing
+
+#### Game Rules Features
+- Gold collection with score tracking
+- Exit revelation when all gold collected
+- Level completion detection
+- Player-enemy collision detection
+- Death and respawn mechanics
+- Lives system with game over state
+- Time bonus calculation for fast completion
+- Level progression (1-100)
+- Victory state when all levels completed
+
+#### Test Coverage
+- 14 AI system tests covering chase behavior, movement, and trapping
+- 13 game rules tests covering gold, collisions, death, and level completion
+- 3 property-based tests for AI and rules systems
+- Total: 161 passing tests (100% pass rate)
+
+#### Property-Based Tests
+- Property 14: Enemy Chase Behavior - validates enemies move toward player
+- Property 16: Enemy Trapping in Holes - validates enemies become trapped in holes
+- Property 18: Gold Collection - validates gold collection mechanics
+- Property 19: Exit Revelation - validates exit reveals after all gold collected
+- Property 20: Level Completion - validates level completion conditions
+
+### Updated Documentation
+
+#### README.md
+- Updated progress badge: 9/27 → 10/27 tasks (37.0%)
+- Added AI System to implemented features
+- Added Game Rules System to implemented features
+- Updated test count: 161 passing tests
+
+#### docs/testing.md
+- Added AI System Suite (14 tests) documentation
+- Added Game Rules Suite (13 tests) documentation
+- Updated property-based test list with 3 new properties
+- Updated test coverage table
+
+#### docs/api-reference.md
+- Added complete AI System API section
+- Added complete Game Rules API section
+- Documented all functions with comprehensive JSDoc
+- Added usage examples for each function
+
+#### docs/project-structure.md
+- Moved ai.ts and rules.ts from "Planned" to "Implemented"
+- Updated module descriptions
+
+#### .kiro/steering/product.md
+- Updated implementation progress: 9/27 → 10/27 tasks (37.0%)
+- Added AI and rules to completed modules list
+
+### Technical Details
+
+#### AI System
+```typescript
+// Update all enemy AI
+updateAI(state: GameStateData, deltaTime: number): GameStateData
+
+// Calculate chase direction toward player
+calculateChaseDirection(enemy: Enemy, player: Player, tiles: TileType[][]): { x: number; y: number }
+
+// Move enemy in specified direction
+moveEnemy(enemy: Enemy, direction: { x: number; y: number }, tiles: TileType[][], deltaTime: number): Enemy
+
+// Check if enemy fell into hole
+checkEnemyTrapped(enemy: Enemy, holes: Hole[]): Enemy
+```
+
+#### Game Rules System
+```typescript
+// Update all game rules
+updateRules(state: GameStateData, deltaTime: number): GameStateData
+
+// Check and collect gold
+checkGoldCollection(state: GameStateData): GameStateData
+
+// Check player-enemy collisions
+checkPlayerEnemyCollision(state: GameStateData): GameStateData
+
+// Kill player and decrement lives
+killPlayer(state: GameStateData): GameStateData
+
+// Check level completion
+checkLevelCompletion(state: GameStateData): GameStateData
+
+// Complete level and load next
+completeLevel(state: GameStateData): GameStateData
+
+// Restart current level
+restartLevel(state: GameStateData): GameStateData
+```
+
+### Impact
+- Core game mechanics now complete
+- All game rules implemented and tested
+- Enemy AI provides challenge and gameplay depth
+- Level progression system fully functional
+- Ready for game engine integration
+
 ### Added - Error Handling System (2026-01-23)
 
 #### New Modules

@@ -172,6 +172,8 @@ export interface GameStateData {
   tiles: TileType[][];
   /** Array of all active holes with regeneration timers */
   holes: Hole[];
+  /** Set of hole positions for O(1) lookup (format: "x,y") */
+  holePositions: Set<string>;
   /** Number of gold pieces remaining in current level */
   goldRemaining: number;
   /** Whether exit ladder has been revealed (all gold collected) */

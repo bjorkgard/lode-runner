@@ -4,65 +4,15 @@ import { describe, test, expect } from 'vitest';
 import fc from 'fast-check';
 import { updateDigging, digHole } from './digging';
 import { TileType, GameState } from './types';
-import { AnimationState } from './animation';
-import type { Player, Enemy, GameStateData, Hole } from './types';
+import type { GameStateData, Hole } from './types';
 import { HOLE_REGEN_TIME } from './constants';
-
-// Helper function to create a test player
-function createTestPlayer(overrides: Partial<Player> = {}): Player {
-  return {
-    pos: { x: 5, y: 5 },
-    velocity: { x: 0, y: 0 },
-    animation: new AnimationState('idle'),
-    isOnGround: false,
-    isOnLadder: false,
-    isOnRope: false,
-    lives: 3,
-    isDead: false,
-    isDigging: false,
-    digDirection: null,
-    ...overrides
-  };
-}
-
-// Helper function to create a test enemy
-function createTestEnemy(overrides: Partial<Enemy> = {}): Enemy {
-  return {
-    pos: { x: 10, y: 10 },
-    velocity: { x: 0, y: 0 },
-    animation: new AnimationState('run'),
-    isOnGround: false,
-    isOnLadder: false,
-    isOnRope: false,
-    isTrapped: false,
-    trapTimer: 0,
-    ...overrides
-  };
-}
-
-// Helper function to create a tile grid filled with empty tiles
-function createEmptyTiles(width: number = 28, height: number = 16): TileType[][] {
-  return Array(height).fill(null).map(() => Array(width).fill(TileType.Empty));
-}
-
-// Helper function to create a basic game state for testing
-function createTestState(overrides: Partial<GameStateData> = {}): GameStateData {
-  return {
-    currentLevel: 1,
-    score: 0,
-    highScore: 0,
-    lives: 3,
-    player: createTestPlayer(),
-    enemies: [],
-    tiles: createEmptyTiles(),
-    holes: [],
-    goldRemaining: 0,
-    exitRevealed: false,
-    levelTimer: 0,
-    gameState: GameState.Playing,
-    ...overrides
-  };
-}
+import {
+  createTestPlayer,
+  createTestEnemy,
+  createTestState,
+  createEmptyTiles,
+  createTestHole
+} from '../test/helpers';
 
 describe('Digging System', () => {
   describe('digHole', () => {

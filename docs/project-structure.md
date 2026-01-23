@@ -32,9 +32,11 @@ lode-runner/
 │   │   ├── errors.test.ts        # ✅ Error handling tests (29 tests)
 │   │   ├── digging.ts            # ✅ Hole creation/regeneration
 │   │   ├── digging.test.ts       # ✅ Digging system tests (16 tests)
+│   │   ├── ai.ts                 # ✅ Enemy pathfinding
+│   │   ├── ai.test.ts            # ✅ AI system tests (14 tests)
+│   │   ├── rules.ts              # ✅ Win/loss conditions
+│   │   ├── rules.test.ts         # ✅ Game rules tests (13 tests)
 │   │   ├── engine.ts             # ⏳ Main game loop (planned)
-│   │   ├── ai.ts                 # ⏳ Enemy pathfinding (planned)
-│   │   ├── rules.ts              # ⏳ Win/loss conditions (planned)
 │   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
 │   │   ├── sprites.ts            # ⏳ Sprite/animation system (planned)
 │   │   ├── particles.ts          # ⏳ Particle effects (planned)
@@ -81,11 +83,11 @@ Pure TypeScript game engine, independent of React. Contains all game logic, phys
 - `animation.ts` - Sprite animation state management
 - `errors.ts` - Comprehensive error handling system
 - `digging.ts` - Hole creation and regeneration mechanics
+- `ai.ts` - Enemy pathfinding and chase behavior
+- `rules.ts` - Win/loss conditions and level progression
 
 **Planned Modules**:
 - `engine.ts` - Main game loop with requestAnimationFrame
-- `ai.ts` - Enemy pathfinding and behavior
-- `rules.ts` - Win/loss conditions and scoring
 - `render.ts` - Canvas 2D rendering
 - `sprites.ts` - Sprite sheet loading and animations
 - `particles.ts` - Particle effects system
