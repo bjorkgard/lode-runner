@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import fc from 'fast-check';
 import { LEVELS, loadLevel, countGold, isValidLevel, getLevel } from './levels';
-import { TileType, GameState, AnimationState } from './types';
+import { TileType, GameState } from './types';
+import { AnimationState } from './animation';
 import type { GameStateData } from './types';
 
 /**
@@ -89,6 +90,44 @@ describe('Level System', () => {
       LEVELS.forEach(level => {
         expect(level.parTime).toBeGreaterThan(0);
       });
+    });
+    
+    it('should have increasing par times for placeholder levels', () => {
+      // Check that placeholder levels (11-100) have gradually increasing par times
+      for (let i = 11; i < 100; i++) {
+        const currentLevel = LEVELS[i - 1];
+        const nextLevel = LEVELS[i];
+        expect(nextLevel.parTime).toBeGreaterThanOrEqual(currentLevel.parTime);
+      }
+    });
+    
+    it('should have increasing enemy counts for higher difficulty tiers', () => {
+      // Levels 11-40 (tier 0): 2 enemies
+      for (let i = 11; i <= 40; i++) {
+        const level = LEVELS[i - 1];
+        expect(level.enemyStarts.length).toBe(2);
+      }
+      
+      // Levels 41-70 (tier 1): 3 enemies
+      for (let i = 41; i <= 70; i++) {
+        const level = LEVELS[i - 1];
+        expect(level.enemyStarts.length).toBe(3);
+      }
+      
+      // Levels 71-100 (tier 2): 4 enemies
+      for (let i = 71; i <= 100; i++) {
+        const level = LEVELS[i - 1];
+        expect(level.enemyStarts.length).toBe(4);
+      }
+    });
+    
+    it('should have unique tile arrays for each level', () => {
+      // Ensure deep copying works - modifying one level shouldn't affect others
+      const level11 = LEVELS[10];
+      const level12 = LEVELS[11];
+      
+      expect(level11.tiles).not.toBe(level12.tiles);
+      expect(level11.tiles[0]).not.toBe(level12.tiles[0]);
     });
   });
 
@@ -236,9 +275,12 @@ describe('Level System', () => {
 
     it('should handle invalid level number gracefully', () => {
       const originalLevel = state.currentLevel;
-      loadLevel(state, 0);
       
-      // State should remain unchanged
+      // Should throw LevelLoadError for invalid level number
+      expect(() => loadLevel(state, 0)).toThrow('Failed to load level 0');
+      expect(() => loadLevel(state, 101)).toThrow('Failed to load level 101');
+      
+      // State should remain unchanged after error
       expect(state.currentLevel).toBe(originalLevel);
     });
 

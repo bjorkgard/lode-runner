@@ -1,8 +1,16 @@
 // Core type definitions for Lode Runner game
 
+import type { Animation, AnimationState } from './animation';
+
+// Re-export animation types for convenience
+export type { Animation, AnimationState };
+
 /**
  * Represents the different types of tiles in the game world.
  * Each tile type has unique collision and interaction properties.
+ * 
+ * Using const assertion pattern for type-safe enum-like behavior
+ * that's compatible with Vite's erasableSyntaxOnly mode.
  */
 export const TileType = {
   /** Empty space - no collision, player can fall through */
@@ -21,11 +29,18 @@ export const TileType = {
   Exit: 6
 } as const;
 
+/**
+ * Type representing a tile type value.
+ * Provides type safety for tile type values throughout the codebase.
+ */
 export type TileType = typeof TileType[keyof typeof TileType];
 
 /**
  * Represents the current state of the game application.
  * Controls which UI screens are shown and whether game logic updates.
+ * 
+ * Using const assertion pattern for type-safe enum-like behavior
+ * that's compatible with Vite's erasableSyntaxOnly mode.
  */
 export const GameState = {
   /** Main menu screen - game not started */
@@ -40,6 +55,10 @@ export const GameState = {
   Victory: 4
 } as const;
 
+/**
+ * Type representing a game state value.
+ * Provides type safety for game state values throughout the codebase.
+ */
 export type GameState = typeof GameState[keyof typeof GameState];
 
 /**
@@ -223,89 +242,4 @@ export interface SpriteSheet {
   frameWidth: number;
   /** Height of a single frame in pixels */
   frameHeight: number;
-}
-
-/**
- * Defines an animation sequence with frame indices and timing.
- * Used to configure sprite animations for entities.
- */
-export interface Animation {
-  /** Array of frame indices to display in sequence */
-  frames: number[];
-  /** Speed of animation in frames per second */
-  frameRate: number;
-  /** Whether animation should loop or stop at last frame */
-  loop: boolean;
-}
-
-/**
- * Manages the animation state for an entity.
- * Tracks current animation, frame, and timing for sprite rendering.
- * 
- * @example
- * ```typescript
- * const animState = new AnimationState('idle');
- * animState.update(deltaTime, ANIMATIONS.player);
- * animState.setAnimation('run'); // Switch to run animation
- * ```
- */
-export class AnimationState {
-  /** Name of the currently playing animation */
-  currentAnimation: string;
-  /** Index of the current frame within the animation */
-  currentFrame: number;
-  /** Time accumulated since last frame change (in seconds) */
-  frameTimer: number;
-  
-  /**
-   * Creates a new animation state.
-   * @param initialAnimation - Name of the animation to start with (default: 'idle')
-   */
-  constructor(initialAnimation: string = 'idle') {
-    this.currentAnimation = initialAnimation;
-    this.currentFrame = 0;
-    this.frameTimer = 0;
-  }
-  
-  /**
-   * Updates the animation state based on elapsed time.
-   * Advances to next frame when enough time has passed based on frameRate.
-   * 
-   * @param deltaTime - Time elapsed since last update (in seconds)
-   * @param animations - Map of animation names to Animation definitions
-   */
-  update(deltaTime: number, animations: Record<string, Animation>): void {
-    const anim = animations[this.currentAnimation];
-    if (!anim) return;
-    
-    this.frameTimer += deltaTime;
-    
-    if (this.frameTimer >= 1 / anim.frameRate) {
-      this.frameTimer = 0;
-      this.currentFrame++;
-      
-      if (this.currentFrame >= anim.frames.length) {
-        if (anim.loop) {
-          this.currentFrame = 0;
-        } else {
-          this.currentFrame = anim.frames.length - 1;
-        }
-      }
-    }
-  }
-  
-  /**
-   * Changes to a different animation.
-   * Resets frame counter and timer when switching animations.
-   * Does nothing if already playing the specified animation.
-   * 
-   * @param name - Name of the animation to switch to
-   */
-  setAnimation(name: string): void {
-    if (this.currentAnimation !== name) {
-      this.currentAnimation = name;
-      this.currentFrame = 0;
-      this.frameTimer = 0;
-    }
-  }
 }

@@ -1,7 +1,8 @@
 // Game state management for Lode Runner
 
 import type { GameStateData, Player, Enemy, Position } from './types';
-import { GameState, AnimationState } from './types';
+import { GameState } from './types';
+import { AnimationState } from './animation';
 import { loadLevel } from './levels';
 
 /**

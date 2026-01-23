@@ -143,11 +143,244 @@ getLevel(levelNumber: number): Level | undefined
 const LEVELS: Level[]
 ```
 
+## Error Handling API
+
+Comprehensive error handling system for graceful degradation (implemented):
+
+### Error Classes
+
+```typescript
+/**
+ * Base class for all game-specific errors.
+ * Extends Error with additional context for debugging and logging.
+ */
+class GameError extends Error {
+  readonly timestamp: Date;
+  readonly context?: Record<string, unknown>;
+  
+  constructor(message: string, context?: Record<string, unknown>)
+  
+  /**
+   * Converts error to a loggable object.
+   * Useful for structured logging and debugging.
+   */
+  toJSON(): Record<string, unknown>
+}
+
+/**
+ * Error thrown when attempting to load an invalid level.
+ */
+class LevelLoadError extends GameError {
+  readonly levelNumber: number;
+  
+  constructor(levelNumber: number, reason: string, context?: Record<string, unknown>)
+}
+
+/**
+ * Error thrown when level data validation fails.
+ */
+class LevelValidationError extends GameError {
+  readonly levelNumber: number;
+  readonly validationErrors: string[];
+  
+  constructor(levelNumber: number, validationErrors: string[])
+}
+
+/**
+ * Error thrown when localStorage operations fail.
+ */
+class StorageError extends GameError {
+  readonly operation: 'read' | 'write' | 'delete';
+  readonly key: string;
+  
+  constructor(operation: 'read' | 'write' | 'delete', key: string, originalError?: Error)
+}
+
+/**
+ * Error thrown when audio operations fail.
+ */
+class AudioError extends GameError {
+  readonly audioFile?: string;
+  
+  constructor(message: string, audioFile?: string, originalError?: Error)
+}
+
+/**
+ * Error thrown when sprite/asset loading fails.
+ */
+class AssetLoadError extends GameError {
+  readonly assetPath: string;
+  readonly assetType: 'sprite' | 'audio' | 'other';
+  
+  constructor(assetPath: string, assetType: 'sprite' | 'audio' | 'other', originalError?: Error)
+}
+
+/**
+ * Error thrown when game state becomes invalid.
+ */
+class InvalidStateError extends GameError {
+  readonly stateName: string;
+  
+  constructor(stateName: string, reason: string)
+}
+```
+
+### ErrorHandler
+
+```typescript
+/**
+ * Global error handler for the game.
+ * Provides centralized error logging, recovery, and user notification.
+ */
+class ErrorHandler {
+  constructor(config?: Partial<ErrorHandlerConfig>)
+  
+  /**
+   * Handles an error with appropriate logging and recovery.
+   * 
+   * @param error - The error to handle
+   * @param severity - Severity level of the error
+   * @param recoveryAction - Optional recovery function to attempt
+   * @returns Result of recovery action, or undefined if no recovery
+   */
+  handle<T>(
+    error: Error,
+    severity?: ErrorSeverity,
+    recoveryAction?: () => T
+  ): T | undefined
+  
+  /**
+   * Wraps a function with error handling.
+   * Useful for wrapping event handlers and callbacks.
+   * 
+   * @param fn - Function to wrap
+   * @param severity - Error severity if function throws
+   * @param recoveryValue - Value to return if function throws
+   * @returns Wrapped function that handles errors
+   */
+  wrap<T extends (...args: unknown[]) => unknown>(
+    fn: T,
+    severity?: ErrorSeverity,
+    recoveryValue?: ReturnType<T>
+  ): T
+  
+  /**
+   * Gets error statistics for debugging.
+   */
+  getErrorStats(): Record<string, number>
+  
+  /**
+   * Clears error statistics.
+   */
+  clearErrorStats(): void
+  
+  /**
+   * Updates error handler configuration.
+   */
+  updateConfig(config: Partial<ErrorHandlerConfig>): void
+}
+
+/**
+ * Global error handler instance.
+ * Can be configured at application startup.
+ */
+export const errorHandler: ErrorHandler
+```
+
+### Utility Functions
+
+```typescript
+/**
+ * Utility function for safe async operations.
+ * Wraps async functions with error handling.
+ * 
+ * @param fn - Async function to execute
+ * @param severity - Error severity if function throws
+ * @param defaultValue - Default value to return on error
+ * @returns Promise resolving to function result or default value
+ */
+async function safeAsync<T>(
+  fn: () => Promise<T>,
+  severity?: ErrorSeverity,
+  defaultValue?: T
+): Promise<T | undefined>
+
+/**
+ * Utility function for safe synchronous operations.
+ * Wraps functions with error handling.
+ * 
+ * @param fn - Function to execute
+ * @param severity - Error severity if function throws
+ * @param defaultValue - Default value to return on error
+ * @returns Function result or default value
+ */
+function safe<T>(
+  fn: () => T,
+  severity?: ErrorSeverity,
+  defaultValue?: T
+): T | undefined
+```
+
+### Error Severity
+
+```typescript
+const ErrorSeverity = {
+  /** Informational - no action needed */
+  Info: 'info',
+  /** Warning - degraded functionality but game continues */
+  Warning: 'warning',
+  /** Error - feature broken but game can continue */
+  Error: 'error',
+  /** Critical - game cannot continue */
+  Critical: 'critical'
+} as const;
+
+type ErrorSeverity = typeof ErrorSeverity[keyof typeof ErrorSeverity];
+```
+
+### ErrorHandlerConfig
+
+```typescript
+interface ErrorHandlerConfig {
+  /** Whether to log errors to console */
+  logToConsole: boolean;
+  /** Whether to show user-friendly error messages */
+  showUserMessages: boolean;
+  /** Custom error logger function */
+  logger?: (error: GameError, severity: ErrorSeverity) => void;
+  /** Custom user message handler */
+  userMessageHandler?: (message: string, severity: ErrorSeverity) => void;
+}
+```
+
 ## Storage API
 
 Functions for persisting game data (implementation in progress):
 
 ```typescript
+// High score management
+saveHighScore(score: number): void
+loadHighScore(): number
+resetHighScore(): void
+
+// Audio settings
+saveAudioSettings(settings: AudioSettings): void
+loadAudioSettings(): AudioSettings
+```
+
+## Input API
+
+Functions for handling user input (implementation in progress):
+
+```typescript
+// Initialize input handlers
+initInput(): void
+
+// Touch input (for mobile controls)
+setTouchInput(direction: string, pressed: boolean): void
+```
+
+## Type Definitions
 // High score management
 saveHighScore(score: number): void
 loadHighScore(): number

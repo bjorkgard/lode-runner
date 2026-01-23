@@ -101,7 +101,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that player on rope can move horizontally without gravity
     - _Requirements: 3.4_
 
-- [ ] 6. Checkpoint - Core systems functional
+- [x] 6. Checkpoint - Core systems functional
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 7. Digging system

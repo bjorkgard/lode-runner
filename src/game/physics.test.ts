@@ -7,12 +7,12 @@ import {
   updatePlayerPhysics,
   updateEnemyPhysics,
   isSupported,
-  resolveCollisions,
   getTileAt,
   canMoveTo
 } from './physics';
-import { TileType, AnimationState } from './types';
-import type { Player, Enemy, Position, GameStateData } from './types';
+import { TileType, GameState } from './types';
+import { AnimationState } from './animation';
+import type { Player, Enemy, GameStateData } from './types';
 
 // Helper function to create a test player
 function createTestPlayer(overrides: Partial<Player> = {}): Player {
@@ -47,20 +47,72 @@ function createTestEnemy(overrides: Partial<Enemy> = {}): Enemy {
 }
 
 // Helper function to create a tile grid filled with empty tiles
-function createEmptyTiles(width: number = 28, height: number = 16): number[][] {
+function createEmptyTiles(width: number = 28, height: number = 16): TileType[][] {
   return Array(height).fill(null).map(() => Array(width).fill(TileType.Empty));
 }
 
-// Helper function to create tiles with a specific tile at a position
-function createTilesWithTileAt(pos: Position, tileType: number, width: number = 28, height: number = 16): number[][] {
-  const tiles = createEmptyTiles(width, height);
-  if (pos.y >= 0 && pos.y < height && pos.x >= 0 && pos.x < width) {
-    tiles[pos.y][pos.x] = tileType;
-  }
-  return tiles;
-}
-
 describe('Physics System', () => {
+  describe('updatePhysics', () => {
+    test('returns new state with updated entities', () => {
+      const state: GameStateData = {
+        currentLevel: 1,
+        score: 0,
+        highScore: 0,
+        lives: 3,
+        player: createTestPlayer({ pos: { x: 5, y: 5 }, velocity: { x: 0, y: 0 } }),
+        enemies: [
+          createTestEnemy({ pos: { x: 10, y: 10 }, velocity: { x: 0, y: 0 } })
+        ],
+        tiles: createEmptyTiles(),
+        holes: [],
+        goldRemaining: 0,
+        exitRevealed: false,
+        levelTimer: 0,
+        gameState: GameState.Playing
+      };
+      
+      const updatedState = updatePhysics(state, 0.016);
+      
+      // Should return new state object
+      expect(updatedState).not.toBe(state);
+      // Should return new player object
+      expect(updatedState.player).not.toBe(state.player);
+      // Should return new enemies array
+      expect(updatedState.enemies).not.toBe(state.enemies);
+      // Original state should be unchanged
+      expect(state.player.pos.y).toBe(5);
+      expect(state.enemies[0].pos.y).toBe(10);
+    });
+    
+    test('does not mutate original state', () => {
+      const state: GameStateData = {
+        currentLevel: 1,
+        score: 0,
+        highScore: 0,
+        lives: 3,
+        player: createTestPlayer({ pos: { x: 5, y: 5 }, velocity: { x: 0, y: 0 } }),
+        enemies: [
+          createTestEnemy({ pos: { x: 10, y: 10 }, velocity: { x: 0, y: 0 } })
+        ],
+        tiles: createEmptyTiles(),
+        holes: [],
+        goldRemaining: 0,
+        exitRevealed: false,
+        levelTimer: 0,
+        gameState: GameState.Playing
+      };
+      
+      const originalPlayerY = state.player.pos.y;
+      const originalEnemyY = state.enemies[0].pos.y;
+      
+      updatePhysics(state, 0.016);
+      
+      // Original state should be completely unchanged
+      expect(state.player.pos.y).toBe(originalPlayerY);
+      expect(state.enemies[0].pos.y).toBe(originalEnemyY);
+    });
+  });
+  
   describe('getTileAt', () => {
     test('returns correct tile type at position', () => {
       const tiles = createEmptyTiles();
@@ -159,14 +211,17 @@ describe('Physics System', () => {
             const initialY = player.pos.y;
             const initialVelocityY = player.velocity.y;
             
-            updatePlayerPhysics(player, tiles, deltaTime);
+            const updatedPlayer = updatePlayerPhysics(player, tiles, deltaTime);
             
             // Player should have downward velocity (positive y)
-            expect(player.velocity.y).toBeGreaterThan(initialVelocityY);
+            expect(updatedPlayer.velocity.y).toBeGreaterThan(initialVelocityY);
             // Player should have moved down
-            expect(player.pos.y).toBeGreaterThan(initialY);
+            expect(updatedPlayer.pos.y).toBeGreaterThan(initialY);
             // Player should not be on ground
-            expect(player.isOnGround).toBe(false);
+            expect(updatedPlayer.isOnGround).toBe(false);
+            // Original player should be unchanged
+            expect(player.pos.y).toBe(initialY);
+            expect(player.velocity.y).toBe(initialVelocityY);
           }
         ),
         { numRuns: 100 }
@@ -192,14 +247,17 @@ describe('Physics System', () => {
             const initialY = enemy.pos.y;
             const initialVelocityY = enemy.velocity.y;
             
-            updateEnemyPhysics(enemy, tiles, deltaTime);
+            const updatedEnemy = updateEnemyPhysics(enemy, tiles, deltaTime);
             
             // Enemy should have downward velocity (positive y)
-            expect(enemy.velocity.y).toBeGreaterThan(initialVelocityY);
+            expect(updatedEnemy.velocity.y).toBeGreaterThan(initialVelocityY);
             // Enemy should have moved down
-            expect(enemy.pos.y).toBeGreaterThan(initialY);
+            expect(updatedEnemy.pos.y).toBeGreaterThan(initialY);
             // Enemy should not be on ground
-            expect(enemy.isOnGround).toBe(false);
+            expect(updatedEnemy.isOnGround).toBe(false);
+            // Original enemy should be unchanged
+            expect(enemy.pos.y).toBe(initialY);
+            expect(enemy.velocity.y).toBe(initialVelocityY);
           }
         ),
         { numRuns: 100 }
@@ -259,30 +317,29 @@ describe('Physics System', () => {
             });
             
             // Try to move toward solid tile
+            let velocity = { x: 0, y: 0 };
             switch (direction) {
               case 'left':
-                player.velocity.x = -50;
+                velocity.x = -50;
                 break;
               case 'right':
-                player.velocity.x = 50;
+                velocity.x = 50;
                 break;
               case 'up':
-                player.velocity.y = -50;
+                velocity.y = -50;
                 break;
               case 'down':
-                player.velocity.y = 50;
+                velocity.y = 50;
                 break;
             }
             
-            const initialX = player.pos.x;
-            const initialY = player.pos.y;
-            
-            updatePlayerPhysics(player, tiles, 0.1);
+            const playerWithVelocity = { ...player, velocity };
+            const updatedPlayer = updatePlayerPhysics(playerWithVelocity, tiles, 0.1);
             
             // Player should not have moved through the solid tile
             // Check that player didn't cross into the solid tile position
-            const finalTileX = Math.floor(player.pos.x);
-            const finalTileY = Math.floor(player.pos.y);
+            const finalTileX = Math.floor(updatedPlayer.pos.x);
+            const finalTileY = Math.floor(updatedPlayer.pos.y);
             
             // Player should not be inside the solid tile
             if (direction !== 'down') {
@@ -290,8 +347,12 @@ describe('Physics System', () => {
               expect(crossedIntoSolidTile).toBe(false);
             } else {
               // For down movement, player should not have moved significantly
-              expect(player.pos.y).toBeLessThanOrEqual(playerY + 0.5);
+              expect(updatedPlayer.pos.y).toBeLessThanOrEqual(playerY + 0.5);
             }
+            
+            // Original player should be unchanged
+            expect(player.pos.x).toBe(playerX);
+            expect(player.pos.y).toBe(playerY);
           }
         ),
         { numRuns: 100 }
@@ -322,15 +383,15 @@ describe('Physics System', () => {
               isOnLadder: true
             });
             
-            const initialVelocityY = player.velocity.y;
-            
-            updatePlayerPhysics(player, tiles, deltaTime);
+            const updatedPlayer = updatePlayerPhysics(player, tiles, deltaTime);
             
             // Velocity should not have changed due to gravity
             // (it stays the same as input velocity)
-            expect(player.velocity.y).toBe(0); // Physics sets to 0 when supported
+            expect(updatedPlayer.velocity.y).toBe(0); // Physics sets to 0 when supported
             // Player should still be on ladder
-            expect(player.isOnLadder).toBe(true);
+            expect(updatedPlayer.isOnLadder).toBe(true);
+            // Original player should be unchanged
+            expect(player.velocity.y).toBe(verticalVelocity);
           }
         ),
         { numRuns: 100 }
@@ -361,14 +422,17 @@ describe('Physics System', () => {
               isOnRope: true
             });
             
-            updatePlayerPhysics(player, tiles, deltaTime);
+            const updatedPlayer = updatePlayerPhysics(player, tiles, deltaTime);
             
             // Player should not fall (velocity.y should be 0)
-            expect(player.velocity.y).toBe(0);
+            expect(updatedPlayer.velocity.y).toBe(0);
             // Player should still be on rope
-            expect(player.isOnRope).toBe(true);
+            expect(updatedPlayer.isOnRope).toBe(true);
             // Player should be supported (not falling)
-            expect(isSupported(player, tiles)).toBe(true);
+            expect(isSupported(updatedPlayer, tiles)).toBe(true);
+            // Original player should be unchanged
+            expect(player.velocity.x).toBe(horizontalVelocity);
+            expect(player.velocity.y).toBe(0);
           }
         ),
         { numRuns: 100 }

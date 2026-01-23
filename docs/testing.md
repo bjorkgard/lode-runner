@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **48 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **118 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -24,19 +24,24 @@ Universal correctness properties validated across all inputs using fast-check.
 
 **Currently Implemented**:
 - Property 2: Level Data Integrity - validates loading any valid level produces correct state
+- Property 4: Gravity Application - validates unsupported entities fall over time
+- Property 5: Ladder Movement Without Gravity - validates vertical movement on ladders
+- Property 6: Rope Movement Without Gravity - validates horizontal movement on ropes
+- Property 7: Solid Tile Collision - validates entities cannot move through solid tiles
 
 ### Unit Tests
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 48 tests
+**Currently Implemented**: 118 tests
 - Test setup validation (5 tests)
-- Level system validation (25 tests)
+- Level system validation (28 tests)
 - State management validation (18 tests)
+- Physics system validation (16 tests)
+- Animation system validation (22 tests)
+- Error handling validation (29 tests)
 
 **Planned**:
-- State management tests
-- Physics and collision tests
 - Digging system tests
 - AI behavior tests
 - Rules and win/loss condition tests
@@ -59,9 +64,11 @@ Full game flow validation (planned):
 | Module | Tests | Status |
 |--------|-------|--------|
 | Test Setup | 5 | ✅ Complete |
-| Levels | 25 | ✅ Complete |
+| Levels | 28 | ✅ Complete |
 | State Management | 18 | ✅ Complete |
-| Physics | 0 | ⏳ Pending |
+| Physics | 16 | ✅ Complete |
+| Animation | 22 | ✅ Complete |
+| Error Handling | 29 | ✅ Complete |
 | Digging | 0 | ⏳ Pending |
 | AI | 0 | ⏳ Pending |
 | Rules | 0 | ⏳ Pending |
@@ -149,6 +156,107 @@ Comprehensive testing of game state initialization and lifecycle:
 - Does not change lives
 - Does not change high score
 - Does not change current level number
+
+### Physics System Suite (16 tests)
+
+Comprehensive testing of physics and collision detection:
+
+**Gravity Tests (3)**:
+- Applies gravity to unsupported player
+- Does not apply gravity to supported player
+- Property test: unsupported entities fall over time
+
+**Collision Tests (4)**:
+- Prevents movement through brick tiles
+- Prevents movement through steel tiles
+- Allows movement through empty tiles
+- Property test: entities cannot move through solid tiles
+
+**Ladder Movement Tests (3)**:
+- Allows vertical movement on ladders
+- Disables gravity on ladders
+- Property test: ladder movement without gravity
+
+**Rope Movement Tests (3)**:
+- Allows horizontal movement on ropes
+- Disables gravity on ropes
+- Property test: rope movement without gravity
+
+**Helper Function Tests (3)**:
+- getTileAt returns correct tile
+- isSupported detects ground support
+- canMoveTo validates movement
+
+### Animation System Suite (22 tests)
+
+Comprehensive testing of sprite animation:
+
+**AnimationState Tests (10)**:
+- Creates with initial animation
+- Updates frame timer
+- Advances frames
+- Loops animations
+- Stops at last frame for non-looping
+- Changes animation
+- Resets frame on animation change
+- Gets current frame index
+- Handles empty animation
+- Handles single-frame animation
+
+**Animation Definition Tests (12)**:
+- Player idle animation
+- Player run animation
+- Player climb animation
+- Player fall animation
+- Player dig animation
+- Enemy run animation
+- Enemy climb animation
+- Enemy fall animation
+- Enemy trapped animation
+- All animations have valid frames
+- All animations have positive frame rates
+- All animations have loop flag
+
+### Error Handling Suite (29 tests)
+
+Comprehensive testing of error handling system:
+
+**GameError Tests (3)**:
+- Creates error with message
+- Creates error with context
+- Converts to JSON
+
+**Specific Error Types (6)**:
+- LevelLoadError includes level number
+- LevelValidationError includes validation errors
+- StorageError includes operation and key
+- AudioError includes audio file
+- AssetLoadError includes asset path and type
+- InvalidStateError includes state name
+
+**ErrorHandler Tests (14)**:
+- Handles error without recovery
+- Handles error with recovery
+- Converts regular Error to GameError
+- Tracks error frequency
+- Wraps function with error handling
+- Returns function result when no error
+- Uses custom logger
+- Uses custom user message handler
+- Updates configuration
+- Tracks multiple different errors
+- Clears error statistics
+- Handles recovery action failure
+- Logs errors at appropriate severity
+- Shows user-friendly messages
+
+**Utility Function Tests (6)**:
+- safeAsync returns result on success
+- safeAsync returns default value on error
+- safeAsync returns undefined on error without default
+- safe returns result on success
+- safe returns default value on error
+- safe returns undefined on error without default
 
 ## Running Tests
 
