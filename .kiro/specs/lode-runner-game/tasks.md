@@ -241,8 +241,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that input moves player in correct direction
     - _Requirements: 3.1_
 
-- [ ] 12. Storage system
-  - [ ] 12.1 Create `src/game/storage.ts` with storage functions
+- [x] 12. Storage system
+  - [x] 12.1 Create `src/game/storage.ts` with storage functions
     - Implement `saveHighScore(score)` function
     - Implement `loadHighScore()` function
     - Implement `saveAudioSettings(settings)` function
@@ -251,19 +251,19 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - All functions should have try-catch error handling
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.6_
   
-  - [ ] 12.2 Write property test for high score persistence
+  - [x] 12.2 Write property test for high score persistence
     - **Property 26: High Score Persistence Round-Trip**
     - **Validates: Requirements 10.1, 10.2**
     - Test that saving and loading high score returns same value
     - _Requirements: 10.1, 10.2_
   
-  - [ ] 12.3 Write property test for audio settings persistence
+  - [x] 12.3 Write property test for audio settings persistence
     - **Property 27: Audio Settings Persistence Round-Trip**
     - **Validates: Requirements 10.3, 10.4**
     - Test that saving and loading audio settings returns same values
     - _Requirements: 10.3, 10.4_
   
-  - [ ] 12.4 Write property test for storage failure handling
+  - [x] 12.4 Write property test for storage failure handling
     - **Property 28: Storage Failure Graceful Handling**
     - **Validates: Requirements 10.6**
     - Test that storage failures return defaults without crashing

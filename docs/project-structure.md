@@ -36,13 +36,15 @@ lode-runner/
 │   │   ├── ai.test.ts            # ✅ AI system tests (14 tests)
 │   │   ├── rules.ts              # ✅ Win/loss conditions
 │   │   ├── rules.test.ts         # ✅ Game rules tests (13 tests)
+│   │   ├── input.ts              # ✅ Keyboard/touch input
+│   │   ├── input.test.ts         # ✅ Input handling tests (13 tests)
+│   │   ├── storage.ts            # ✅ localStorage persistence
+│   │   ├── storage.test.ts       # ✅ Storage system tests (15 tests)
 │   │   ├── engine.ts             # ⏳ Main game loop (planned)
 │   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
 │   │   ├── sprites.ts            # ⏳ Sprite/animation system (planned)
 │   │   ├── particles.ts          # ⏳ Particle effects (planned)
-│   │   ├── input.ts              # ⏳ Keyboard/touch input (planned)
-│   │   ├── audio.ts              # ⏳ Sound effects (planned)
-│   │   └── storage.ts            # ⏳ localStorage persistence (planned)
+│   │   └── audio.ts              # ⏳ Sound effects (planned)
 │   ├── components/               # React components (planned)
 │   │   ├── CanvasGame.tsx       # ⏳ Canvas wrapper
 │   │   ├── HUD.tsx              # ⏳ Score/lives display
@@ -85,15 +87,15 @@ Pure TypeScript game engine, independent of React. Contains all game logic, phys
 - `digging.ts` - Hole creation and regeneration mechanics
 - `ai.ts` - Enemy pathfinding and chase behavior
 - `rules.ts` - Win/loss conditions and level progression
+- `input.ts` - Keyboard and touch input handling
+- `storage.ts` - localStorage persistence for high scores and settings
 
 **Planned Modules**:
 - `engine.ts` - Main game loop with requestAnimationFrame
 - `render.ts` - Canvas 2D rendering
 - `sprites.ts` - Sprite sheet loading and animations
 - `particles.ts` - Particle effects system
-- `input.ts` - Keyboard and touch input handling
 - `audio.ts` - Sound effect management
-- `storage.ts` - localStorage persistence
 
 ### `src/components/`
 React components for UI, menus, and mobile controls. Uses Tailwind CSS for styling.

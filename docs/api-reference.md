@@ -355,17 +355,221 @@ interface ErrorHandlerConfig {
 
 ## Storage API
 
-Functions for persisting game data (implementation in progress):
+Functions for persisting game data to localStorage (implemented):
+
+### saveHighScore
 
 ```typescript
-// High score management
+/**
+ * Saves the high score to localStorage if it's higher than the current stored value.
+ * Includes error handling for localStorage failures (quota exceeded, disabled, etc.).
+ * 
+ * @param score - The score to potentially save as the new high score
+ * 
+ * @example
+ * saveHighScore(5000); // Saves if higher than current high score
+ */
 saveHighScore(score: number): void
-loadHighScore(): number
-resetHighScore(): void
+```
 
-// Audio settings
+### loadHighScore
+
+```typescript
+/**
+ * Loads the high score from localStorage.
+ * Returns 0 if no high score is stored or if loading fails.
+ * 
+ * @returns The stored high score, or 0 if not found or on error
+ * 
+ * @example
+ * const highScore = loadHighScore(); // Returns stored value or 0
+ */
+loadHighScore(): number
+```
+
+### resetHighScore
+
+```typescript
+/**
+ * Resets the high score by removing it from localStorage.
+ * Includes error handling for localStorage failures.
+ * 
+ * @example
+ * resetHighScore(); // Clears high score from storage
+ */
+resetHighScore(): void
+```
+
+### saveAudioSettings
+
+```typescript
+/**
+ * Saves audio settings (muted state and volume) to localStorage.
+ * Includes error handling for localStorage failures.
+ * 
+ * @param settings - The audio settings to persist
+ * 
+ * @example
+ * saveAudioSettings({ muted: false, volume: 0.7 });
+ */
 saveAudioSettings(settings: AudioSettings): void
+```
+
+### loadAudioSettings
+
+```typescript
+/**
+ * Loads audio settings from localStorage.
+ * Returns default settings (unmuted, 70% volume) if not found or on error.
+ * 
+ * @returns The stored audio settings, or default settings if not found or on error
+ * 
+ * @example
+ * const settings = loadAudioSettings(); // Returns stored or default settings
+ */
 loadAudioSettings(): AudioSettings
+```
+
+## Input API
+
+Functions for handling user input (implemented):
+
+### initInput
+
+```typescript
+/**
+ * Initializes the input system by attaching keyboard event listeners.
+ * Should be called once during game initialization.
+ * 
+ * @example
+ * initInput(); // Call once at game start
+ */
+initInput(): void
+```
+
+### handleKeyDown
+
+```typescript
+/**
+ * Handles keyboard key down events.
+ * Maps keyboard keys to input state flags and prevents default browser behavior.
+ * 
+ * Supported keys:
+ * - Arrow keys / WASD: Directional movement
+ * - Z/Q: Dig left
+ * - X/E: Dig right
+ * - P/Escape: Pause toggle
+ * 
+ * @param event - The keyboard event
+ * 
+ * @example
+ * window.addEventListener('keydown', handleKeyDown);
+ */
+handleKeyDown(event: KeyboardEvent): void
+```
+
+### handleKeyUp
+
+```typescript
+/**
+ * Handles keyboard key up events.
+ * Clears input state flags when keys are released.
+ * 
+ * @param event - The keyboard event
+ * 
+ * @example
+ * window.addEventListener('keyup', handleKeyUp);
+ */
+handleKeyUp(event: KeyboardEvent): void
+```
+
+### updateInput
+
+```typescript
+/**
+ * Updates game state based on current input state.
+ * Handles player movement, digging actions, and pause toggle.
+ * Returns a new state object with input-driven changes applied.
+ * 
+ * Movement rules:
+ * - Horizontal movement: Always applied when left/right pressed
+ * - Vertical movement on ladders: Up/down keys move player vertically
+ * - Digging: Only triggers on button press (not held)
+ * - Pause: Only triggers on button press (not held)
+ * 
+ * @param state - Current game state
+ * @param deltaTime - Time elapsed since last update (unused, for consistency)
+ * @returns New game state with input applied
+ * 
+ * @example
+ * const newState = updateInput(currentState, 0.016); // ~60 FPS
+ */
+updateInput(state: GameStateData, deltaTime: number): GameStateData
+```
+
+### setTouchInput
+
+```typescript
+/**
+ * Sets touch input state for mobile controls.
+ * Allows external components to simulate keyboard input via touch.
+ * 
+ * @param direction - The input direction to set ('left', 'right', 'up', 'down', 'digLeft', 'digRight')
+ * @param pressed - Whether the input is pressed (true) or released (false)
+ * 
+ * @example
+ * // Touch button pressed
+ * setTouchInput('left', true);
+ * 
+ * // Touch button released
+ * setTouchInput('left', false);
+ */
+setTouchInput(direction: string, pressed: boolean): void
+```
+
+### togglePause
+
+```typescript
+/**
+ * Toggles the game pause state.
+ * Transitions between Playing and Paused states.
+ * Returns a new state object with updated game state.
+ * 
+ * @param state - Current game state
+ * @returns New game state with pause toggled
+ * 
+ * @example
+ * const newState = togglePause(currentState);
+ */
+togglePause(state: GameStateData): GameStateData
+```
+
+### getCurrentInput
+
+```typescript
+/**
+ * Gets the current input state for testing purposes.
+ * 
+ * @returns Current input state
+ * 
+ * @example
+ * const input = getCurrentInput();
+ * console.log(input.left); // true if left key pressed
+ */
+getCurrentInput(): InputState
+```
+
+### resetInput
+
+```typescript
+/**
+ * Resets the input state to all false values.
+ * Useful for testing and cleanup.
+ * 
+ * @example
+ * resetInput(); // Clears all input flags
+ */
+resetInput(): void
 ```
 
 ## Digging System API
@@ -737,41 +941,6 @@ completeLevel(state: GameStateData): GameStateData
  * // Player and enemies back at start positions
  */
 restartLevel(state: GameStateData): GameStateData
-```
-
-## Input API
-
-Functions for handling user input (implementation in progress):
-
-```typescript
-// Initialize input handlers
-initInput(): void
-
-// Touch input (for mobile controls)
-setTouchInput(direction: string, pressed: boolean): void
-```
-
-## Type Definitions
-// High score management
-saveHighScore(score: number): void
-loadHighScore(): number
-resetHighScore(): void
-
-// Audio settings
-saveAudioSettings(settings: AudioSettings): void
-loadAudioSettings(): AudioSettings
-```
-
-## Input API
-
-Functions for handling user input (implementation in progress):
-
-```typescript
-// Initialize input handlers
-initInput(): void
-
-// Touch input (for mobile controls)
-setTouchInput(direction: string, pressed: boolean): void
 ```
 
 ## Type Definitions

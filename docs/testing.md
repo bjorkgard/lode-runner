@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **174 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **189 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -38,12 +38,15 @@ Universal correctness properties validated across all inputs using fast-check.
 - Property 18: Gold Collection - validates collecting gold removes tile, increases score, and decrements count
 - Property 19: Exit Revelation - validates collecting all gold reveals exit
 - Property 20: Level Completion - validates reaching exit with all gold completes level
+- Property 26: High Score Persistence Round-Trip - validates saving and loading high score returns same value
+- Property 27: Audio Settings Persistence Round-Trip - validates saving and loading audio settings returns same values
+- Property 28: Storage Failure Graceful Handling - validates storage failures return defaults without crashing
 
 ### Unit Tests
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 174 tests
+**Currently Implemented**: 189 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -54,6 +57,7 @@ Specific examples and edge cases for individual functions and modules.
 - AI system validation (14 tests)
 - Game rules validation (13 tests)
 - Input handling validation (13 tests)
+- Storage system validation (15 tests)
 
 **Planned**:
 - Storage persistence tests
@@ -108,7 +112,7 @@ Full game flow validation (planned):
 | AI | 14 | ✅ Complete |
 | Rules | 13 | ✅ Complete |
 | Input | 13 | ✅ Complete |
-| Storage | 0 | ⏳ Pending |
+| Storage | 15 | ✅ Complete |
 | Audio | 0 | ⏳ Pending |
 | Rendering | 0 | ⏳ Pending |
 
@@ -375,6 +379,37 @@ Comprehensive testing of game rules, win/loss conditions, and level progression:
 **Property-Based Tests (2)**:
 - Property 18: Gold Collection - validates collecting gold removes tile, increases score, and decrements count
 - Property 19: Exit Revelation - validates collecting all gold reveals exit
+
+### Storage System Suite (15 tests)
+
+Comprehensive testing of localStorage persistence:
+
+**saveHighScore Tests (3)**:
+- Saves new high score when higher than current
+- Does not save lower score
+- Handles localStorage errors gracefully
+
+**loadHighScore Tests (4)**:
+- Loads stored high score correctly
+- Returns 0 when no score stored
+- Returns 0 on parse error
+- Handles localStorage errors gracefully
+
+**saveAudioSettings Tests (2)**:
+- Saves audio settings to localStorage
+- Handles localStorage errors gracefully
+
+**loadAudioSettings Tests (3)**:
+- Loads stored audio settings correctly
+- Returns default settings when not stored
+- Handles localStorage errors gracefully
+
+**resetHighScore Tests (1)**:
+- Removes high score from localStorage
+
+**Property-Based Tests (2)**:
+- Property 26: High Score Persistence Round-Trip - validates saving and loading high score returns same value
+- Property 27: Audio Settings Persistence Round-Trip - validates saving and loading audio settings returns same values
 
 ## Running Tests
 
