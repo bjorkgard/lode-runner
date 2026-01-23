@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **30 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **48 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -29,9 +29,10 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 30 tests
+**Currently Implemented**: 48 tests
 - Test setup validation (5 tests)
 - Level system validation (25 tests)
+- State management validation (18 tests)
 
 **Planned**:
 - State management tests
@@ -59,7 +60,7 @@ Full game flow validation (planned):
 |--------|-------|--------|
 | Test Setup | 5 | ✅ Complete |
 | Levels | 25 | ✅ Complete |
-| State Management | 0 | ⏳ Pending |
+| State Management | 18 | ✅ Complete |
 | Physics | 0 | ⏳ Pending |
 | Digging | 0 | ⏳ Pending |
 | AI | 0 | ⏳ Pending |
@@ -118,6 +119,36 @@ Comprehensive testing of the level system:
 
 **Property-Based Test (1)**:
 - Level Data Integrity (Property 2)
+
+### State Management Suite (18 tests)
+
+Comprehensive testing of game state initialization and lifecycle:
+
+**State Initialization Tests (3)**:
+- New game starts with 3 lives
+- New game starts in Menu state
+- New game loads level 1
+
+**createPlayer Tests (6)**:
+- Creates player at specified position
+- Creates player with 3 lives
+- Creates player with zero velocity
+- Creates player that is not dead
+- Creates player that is not digging
+- Creates player with animation state
+
+**createEnemy Tests (4)**:
+- Creates enemy at specified position
+- Creates enemy with zero velocity
+- Creates enemy that is not trapped
+- Creates enemy with animation state
+
+**resetLevel Tests (5)**:
+- Resets level to initial state
+- Does not change score
+- Does not change lives
+- Does not change high score
+- Does not change current level number
 
 ## Running Tests
 

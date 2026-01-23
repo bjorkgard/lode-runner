@@ -1,5 +1,60 @@
 # API Reference
 
+## State Management API
+
+Functions for managing game state (implemented):
+
+### createInitialState
+
+```typescript
+/**
+ * Creates the initial game state for a new game.
+ * Initializes with default values: 3 lives, Menu state, level 1.
+ * 
+ * @returns A new GameStateData object with initial values
+ */
+createInitialState(): GameStateData
+```
+
+### createPlayer
+
+```typescript
+/**
+ * Creates a player entity at the specified position.
+ * Initializes with default values: 3 lives, idle animation, no movement.
+ * 
+ * @param pos - The starting position for the player
+ * @returns A new Player object
+ */
+createPlayer(pos: Position): Player
+```
+
+### createEnemy
+
+```typescript
+/**
+ * Creates an enemy entity at the specified position.
+ * Initializes with default values: run animation, no movement, not trapped.
+ * 
+ * @param pos - The starting position for the enemy
+ * @returns A new Enemy object
+ */
+createEnemy(pos: Position): Enemy
+```
+
+### resetLevel
+
+```typescript
+/**
+ * Resets the current level to its initial state.
+ * Reloads the level, resetting player and enemy positions, holes, and timers.
+ * Does not affect score, lives, or high score.
+ * 
+ * @param state - The game state to reset
+ */
+resetLevel(state: GameStateData): void
+```
+
 ## Game Engine API
 
 The game engine will expose the following public methods (implementation in progress):

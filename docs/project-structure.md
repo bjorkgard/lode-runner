@@ -18,29 +18,31 @@ lode-runner/
 │   └── contributing.md            # Development guide
 ├── src/
 │   ├── game/                      # Game engine (pure TypeScript)
-│   │   ├── types.ts              # Core type definitions
-│   │   ├── constants.ts          # Game constants
-│   │   ├── engine.ts             # Main game loop
-│   │   ├── state.ts              # State management
-│   │   ├── physics.ts            # Movement and collision
-│   │   ├── digging.ts            # Hole creation/regeneration
-│   │   ├── ai.ts                 # Enemy pathfinding
-│   │   ├── rules.ts              # Win/loss conditions
-│   │   ├── levels.ts             # 100 level definitions
-│   │   ├── render.ts             # Canvas 2D rendering
-│   │   ├── sprites.ts            # Sprite/animation system
-│   │   ├── particles.ts          # Particle effects
-│   │   ├── input.ts              # Keyboard/touch input
-│   │   ├── audio.ts              # Sound effects
-│   │   └── storage.ts            # localStorage persistence
-│   ├── components/               # React components
-│   │   ├── CanvasGame.tsx       # Canvas wrapper
-│   │   ├── HUD.tsx              # Score/lives display
-│   │   ├── Menu.tsx             # Menus and screens
-│   │   └── MobileControls.tsx   # Touch controls
+│   │   ├── types.ts              # ✅ Core type definitions
+│   │   ├── constants.ts          # ✅ Game constants
+│   │   ├── levels.ts             # ✅ 100 level definitions
+│   │   ├── levels.test.ts        # ✅ Level system tests
+│   │   ├── state.ts              # ✅ State management
+│   │   ├── state.test.ts         # ✅ State management tests
+│   │   ├── engine.ts             # ⏳ Main game loop (planned)
+│   │   ├── physics.ts            # ⏳ Movement and collision (planned)
+│   │   ├── digging.ts            # ⏳ Hole creation/regeneration (planned)
+│   │   ├── ai.ts                 # ⏳ Enemy pathfinding (planned)
+│   │   ├── rules.ts              # ⏳ Win/loss conditions (planned)
+│   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
+│   │   ├── sprites.ts            # ⏳ Sprite/animation system (planned)
+│   │   ├── particles.ts          # ⏳ Particle effects (planned)
+│   │   ├── input.ts              # ⏳ Keyboard/touch input (planned)
+│   │   ├── audio.ts              # ⏳ Sound effects (planned)
+│   │   └── storage.ts            # ⏳ localStorage persistence (planned)
+│   ├── components/               # React components (planned)
+│   │   ├── CanvasGame.tsx       # ⏳ Canvas wrapper
+│   │   ├── HUD.tsx              # ⏳ Score/lives display
+│   │   ├── Menu.tsx             # ⏳ Menus and screens
+│   │   └── MobileControls.tsx   # ⏳ Touch controls
 │   ├── test/                     # Test setup
-│   │   ├── setup.ts             # Vitest configuration
-│   │   └── setup.test.ts        # Setup validation tests
+│   │   ├── setup.ts             # ✅ Vitest configuration
+│   │   └── setup.test.ts        # ✅ Setup validation tests
 │   ├── App.tsx                   # Root component
 │   └── main.tsx                  # Entry point
 ├── public/
@@ -63,6 +65,25 @@ Project documentation organized by topic. See individual files for details.
 
 ### `src/game/`
 Pure TypeScript game engine, independent of React. Contains all game logic, physics, AI, and rendering code.
+
+**Implemented Modules**:
+- `types.ts` - Complete type definitions for all game entities
+- `constants.ts` - Game configuration constants
+- `levels.ts` - 100 level definitions with validation
+- `state.ts` - Game state initialization and management
+
+**Planned Modules**:
+- `engine.ts` - Main game loop with requestAnimationFrame
+- `physics.ts` - Movement, gravity, and collision detection
+- `digging.ts` - Hole creation and regeneration system
+- `ai.ts` - Enemy pathfinding and behavior
+- `rules.ts` - Win/loss conditions and scoring
+- `render.ts` - Canvas 2D rendering
+- `sprites.ts` - Sprite sheet loading and animations
+- `particles.ts` - Particle effects system
+- `input.ts` - Keyboard and touch input handling
+- `audio.ts` - Sound effect management
+- `storage.ts` - localStorage persistence
 
 ### `src/components/`
 React components for UI, menus, and mobile controls. Uses Tailwind CSS for styling.

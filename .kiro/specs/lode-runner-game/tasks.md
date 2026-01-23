@@ -52,15 +52,15 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that loading any valid level produces correct tile grid, player position, and enemy positions
     - _Requirements: 2.3_
 
-- [ ] 4. Game state management
-  - [ ] 4.1 Create `src/game/state.ts` with state initialization
+- [x] 4. Game state management
+  - [x] 4.1 Create `src/game/state.ts` with state initialization
     - Implement `createInitialState()` function
     - Implement `createPlayer(pos)` helper
     - Implement `createEnemy(pos)` helper
     - Implement `resetLevel(state)` function
     - _Requirements: 7.1, 9.2, 17.2_
   
-  - [ ] 4.2 Write unit tests for state initialization
+  - [x] 4.2 Write unit tests for state initialization
     - Test that new game starts with 3 lives
     - Test that new game starts in Menu state
     - Test that new game loads level 1
