@@ -269,8 +269,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that storage failures return defaults without crashing
     - _Requirements: 10.6_
 
-- [ ] 13. Audio system
-  - [ ] 13.1 Create `src/game/audio.ts` with audio functions
+- [x] 13. Audio system
+  - [x] 13.1 Create `src/game/audio.ts` with audio functions
     - Implement `initAudio()` async function
     - Implement `loadAudio(path)` helper function
     - Implement `playSound(soundName)` function
@@ -280,19 +280,19 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Add error handling for audio load failures
     - _Requirements: 11.1, 11.2, 11.3, 20.2_
   
-  - [ ] 13.2 Write property test for mute toggle
+  - [x] 13.2 Write property test for mute toggle
     - **Property 29: Mute Toggle**
     - **Validates: Requirements 11.2**
     - Test that toggling mute flips muted state
     - _Requirements: 11.2_
   
-  - [ ] 13.3 Write property test for volume setting
+  - [x] 13.3 Write property test for volume setting
     - **Property 30: Volume Setting**
     - **Validates: Requirements 11.3**
     - Test that setting volume updates audio settings
     - _Requirements: 11.3_
   
-  - [ ] 13.4 Write property test for audio load failure
+  - [x] 13.4 Write property test for audio load failure
     - **Property 44: Audio Load Failure Resilience**
     - **Validates: Requirements 20.2**
     - Test that failed audio load doesn't crash game

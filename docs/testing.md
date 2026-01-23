@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **189 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **197 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -46,7 +46,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 189 tests
+**Currently Implemented**: 197 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -56,7 +56,7 @@ Specific examples and edge cases for individual functions and modules.
 - Digging system validation (16 tests)
 - AI system validation (14 tests)
 - Game rules validation (13 tests)
-- Input handling validation (13 tests)
+- Input handling validation (21 tests)
 - Storage system validation (15 tests)
 
 **Planned**:
@@ -64,30 +64,38 @@ Specific examples and edge cases for individual functions and modules.
 - Audio system tests
 - Rendering tests
 
-### Input Handling Suite (13 tests)
+### Input Handling Suite (21 tests)
 
 Comprehensive testing of keyboard and touch input:
 
-**Input State Tests (5)**:
+**Input State Tests (10)**:
 - Arrow keys update input state
 - WASD keys update input state
 - Dig keys update input state
 - Pause keys update input state
 - Key release clears input state
+- Multiple simultaneous keys
+- Case-insensitive key handling
+- Prevents default browser behavior
+- Touch input updates state
+- Touch input for all directions
 
-**updateInput Tests (4)**:
+**updateInput Tests (6)**:
 - Horizontal movement sets player velocity
 - Vertical movement on ladders sets player velocity
 - Dig actions trigger hole creation
 - Pause toggle changes game state
+- Dig actions only trigger on press (not hold)
+- Pause only triggers on press (not hold)
 
 **Touch Input Tests (2)**:
 - setTouchInput updates input state
 - Touch input works for all directions
 
-**Helper Function Tests (2)**:
+**Helper Function Tests (3)**:
 - getCurrentInput returns current state
 - resetInput clears all input
+- togglePause transitions between Playing and Paused
 
 ### Integration Tests
 
@@ -111,7 +119,7 @@ Full game flow validation (planned):
 | Digging | 16 | ✅ Complete |
 | AI | 14 | ✅ Complete |
 | Rules | 13 | ✅ Complete |
-| Input | 13 | ✅ Complete |
+| Input | 21 | ✅ Complete |
 | Storage | 15 | ✅ Complete |
 | Audio | 0 | ⏳ Pending |
 | Rendering | 0 | ⏳ Pending |

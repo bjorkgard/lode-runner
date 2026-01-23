@@ -1,6 +1,6 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-189%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
@@ -68,7 +68,7 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Graceful error handling for storage failures
   - Default values on load failure
   - High score reset functionality
-- **Test Infrastructure**: Comprehensive test suite with 189 passing tests
+- **Test Infrastructure**: Comprehensive test suite with 197 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
