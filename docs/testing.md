@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **148 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **161 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -40,7 +40,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 148 tests
+**Currently Implemented**: 161 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -49,10 +49,9 @@ Specific examples and edge cases for individual functions and modules.
 - Error handling validation (29 tests)
 - Digging system validation (16 tests)
 - AI system validation (14 tests)
+- Game rules validation (13 tests)
 
 **Planned**:
-- AI behavior tests
-- Rules and win/loss condition tests
 - Input handling tests
 - Storage persistence tests
 - Audio system tests
@@ -79,7 +78,7 @@ Full game flow validation (planned):
 | Error Handling | 29 | ✅ Complete |
 | Digging | 16 | ✅ Complete |
 | AI | 14 | ✅ Complete |
-| Rules | 0 | ⏳ Pending |
+| Rules | 13 | ✅ Complete |
 | Input | 0 | ⏳ Pending |
 | Storage | 0 | ⏳ Pending |
 | Audio | 0 | ⏳ Pending |
@@ -319,6 +318,35 @@ Comprehensive testing of enemy AI and pathfinding:
 **Property-Based Tests (2)**:
 - Property 14: Enemy Chase Behavior - validates enemies move toward player over time across various positions
 - Property 16: Enemy Trapping in Holes - validates enemies in holes become trapped with zero velocity
+
+### Game Rules Suite (13 tests)
+
+Comprehensive testing of game rules, win/loss conditions, and level progression:
+
+**checkGoldCollection Tests (3)**:
+- Collects gold when player is on gold tile
+- Increases score by 100 points
+- Reveals exit when all gold collected
+
+**checkPlayerEnemyCollision Tests (2)**:
+- Kills player when colliding with enemy
+- Does not kill player when not colliding
+
+**killPlayer Tests (3)**:
+- Decrements lives by 1
+- Marks player as dead
+- Triggers game over when lives reach 0
+
+**checkLevelCompletion Tests (2)**:
+- Completes level when player reaches exit with all gold
+- Does not complete level when exit not revealed
+
+**completeLevel Tests (1)**:
+- Loads next level after completion
+
+**Property-Based Tests (2)**:
+- Property 18: Gold Collection - validates collecting gold removes tile, increases score, and decrements count
+- Property 19: Exit Revelation - validates collecting all gold reveals exit
 
 ## Running Tests
 

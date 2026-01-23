@@ -586,6 +586,159 @@ moveEnemy(
 checkEnemyTrapped(enemy: Enemy, holes: Hole[]): Enemy
 ```
 
+## Game Rules API
+
+Functions for game rules, win/loss conditions, and level progression (implemented):
+
+### updateRules
+
+```typescript
+/**
+ * Updates game rules and checks win/loss conditions.
+ * Processes gold collection, player-enemy collisions, and level completion.
+ * Returns a new state object with updated game state.
+ * 
+ * This function is called every frame during the game loop. It:
+ * - Updates the level timer
+ * - Checks for gold collection
+ * - Checks for player-enemy collisions
+ * - Checks for level completion
+ * 
+ * @param state - Current game state
+ * @param deltaTime - Time elapsed since last update (in seconds)
+ * @returns New game state with updated rules
+ * 
+ * @example
+ * const newState = updateRules(currentState, 0.016); // ~60 FPS
+ */
+updateRules(state: GameStateData, deltaTime: number): GameStateData
+```
+
+### checkGoldCollection
+
+```typescript
+/**
+ * Checks if the player is on a gold tile and collects it.
+ * Returns a new state object with gold removed, score increased, and gold count decremented.
+ * Reveals the exit when all gold is collected.
+ * 
+ * @param state - Current game state
+ * @returns New game state with gold collected (or unchanged if no gold)
+ * 
+ * @example
+ * const newState = checkGoldCollection(currentState);
+ * if (newState.goldRemaining === 0) {
+ *   // All gold collected, exit revealed
+ * }
+ */
+checkGoldCollection(state: GameStateData): GameStateData
+```
+
+### checkPlayerEnemyCollision
+
+```typescript
+/**
+ * Checks if the player is colliding with any enemy.
+ * Returns a new state object with player killed if collision detected.
+ * 
+ * Uses distance-based collision detection with COLLISION_THRESHOLD.
+ * 
+ * @param state - Current game state
+ * @returns New game state with player killed (or unchanged)
+ * 
+ * @example
+ * const newState = checkPlayerEnemyCollision(currentState);
+ * if (newState.player.isDead) {
+ *   // Player was killed by enemy
+ * }
+ */
+checkPlayerEnemyCollision(state: GameStateData): GameStateData
+```
+
+### killPlayer
+
+```typescript
+/**
+ * Kills the player and decrements lives.
+ * Returns a new state object with player marked as dead and lives decremented.
+ * Triggers game over state if lives reach 0.
+ * 
+ * @param state - Current game state
+ * @returns New game state with player killed
+ * 
+ * @example
+ * const newState = killPlayer(currentState);
+ * if (newState.gameState === GameState.GameOver) {
+ *   // Game over - no lives remaining
+ * }
+ */
+killPlayer(state: GameStateData): GameStateData
+```
+
+### checkLevelCompletion
+
+```typescript
+/**
+ * Checks if the player has reached the exit with all gold collected.
+ * Returns a new state object with level completed if conditions are met.
+ * 
+ * Level completion requires:
+ * - All gold collected (exitRevealed === true)
+ * - Player on exit tile
+ * 
+ * @param state - Current game state
+ * @returns New game state with level completed (or unchanged)
+ * 
+ * @example
+ * const newState = checkLevelCompletion(currentState);
+ * if (newState.currentLevel > currentState.currentLevel) {
+ *   // Level completed, next level loaded
+ * }
+ */
+checkLevelCompletion(state: GameStateData): GameStateData
+```
+
+### completeLevel
+
+```typescript
+/**
+ * Completes the current level and loads the next one.
+ * Returns a new state object with next level loaded and time bonus added to score.
+ * Triggers victory state if all 100 levels completed.
+ * 
+ * Time bonus calculation:
+ * bonus = max(0, (parTime - actualTime) * TIME_BONUS_MULTIPLIER)
+ * 
+ * @param state - Current game state
+ * @returns New game state with next level loaded
+ * 
+ * @example
+ * const newState = completeLevel(currentState);
+ * if (newState.gameState === GameState.Victory) {
+ *   // All 100 levels completed!
+ * }
+ */
+completeLevel(state: GameStateData): GameStateData
+```
+
+### restartLevel
+
+```typescript
+/**
+ * Restarts the current level from the beginning.
+ * Returns a new state object with level reloaded.
+ * Used when player dies with remaining lives.
+ * 
+ * @param state - Current game state
+ * @returns New game state with level restarted
+ * 
+ * @example
+ * const newState = restartLevel(currentState);
+ * // Player and enemies back at start positions
+ */
+restartLevel(state: GameStateData): GameStateData
+```
+
 ## Input API
 
 Functions for handling user input (implementation in progress):

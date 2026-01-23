@@ -1,10 +1,10 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-148%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-161%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
-![Progress](https://img.shields.io/badge/tasks-7%2F27%20complete-yellow)
+![Progress](https://img.shields.io/badge/tasks-9%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -32,30 +32,45 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Frame-based animation with configurable frame rates
   - Animation transitions and looping
   - Delta time-based updates
+- **Physics System**: Complete movement and collision detection
+  - Gravity application for unsupported entities
+  - Tile-based collision detection and resolution
+  - Ladder and rope movement mechanics
+  - Support detection for ground, ladders, and ropes
 - **Digging System**: Complete hole creation and regeneration mechanics
   - Dig left/right to create holes in brick tiles
   - Automatic hole regeneration with timers
   - Enemy elimination when trapped in regenerating holes
   - Immutable state updates with proper validation
-- **Test Infrastructure**: Comprehensive test suite with 148 passing tests
-  - Property-based testing with fast-check
-  - Unit tests for all implemented modules
-  - Canvas, localStorage, and Audio API mocks
-
-### In Progress 🚧
 - **Enemy AI System**: Complete AI pathfinding and chase behavior
   - Simple Manhattan distance heuristic
   - Enemy trapping in holes
   - Trapped enemy elimination on hole regeneration
   - 100% test coverage with property-based tests
+- **Game Rules System**: Win/loss conditions and level progression
+  - Gold collection with score tracking
+  - Exit revelation when all gold collected
+  - Level completion and progression
+  - Player-enemy collision detection
+  - Death and respawn mechanics
+  - Lives system with game over state
+- **Test Infrastructure**: Comprehensive test suite with 161 passing tests
+  - Property-based testing with fast-check
+  - Unit tests for all implemented modules
+  - Canvas, localStorage, and Audio API mocks
+
+### In Progress 🚧
+- None currently
 
 ### Planned 📋
-- **Game Rules**: Win/loss conditions and level progression
 - **Input System**: Keyboard and touch input handling
 - **Mobile Support**: Touch controls with responsive design
 - **Persistent Storage**: High scores and settings saved to localStorage
 - **Audio System**: Sound effects with volume control and mute toggle
 - **Particle Effects**: Visual feedback for gold collection
+- **Rendering System**: Canvas 2D rendering with sprite animations
+- **Game Engine**: Main game loop orchestration
+- **React Components**: UI components for HUD, menu, and mobile controls
 - **60 FPS Performance**: Optimized game loop with minimal React re-renders
 
 ## Quick Start

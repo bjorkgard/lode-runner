@@ -161,8 +161,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that enemies in holes become trapped
     - _Requirements: 5.4_
 
-- [ ] 9. Game rules and win/loss conditions
-  - [ ] 9.1 Create `src/game/rules.ts` with game rules
+- [x] 9. Game rules and win/loss conditions
+  - [x] 9.1 Create `src/game/rules.ts` with game rules
     - Implement `updateRules(state, deltaTime)` function
     - Implement `checkGoldCollection(state)` function
     - Implement `checkPlayerEnemyCollision(state)` function
@@ -172,43 +172,43 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Implement `restartLevel(state)` function
     - _Requirements: 6.1, 5.6, 6.4, 6.5, 7.2, 7.3, 8.2, 8.3_
   
-  - [ ] 9.2 Write property test for gold collection
+  - [x] 9.2 Write property test for gold collection
     - **Property 18: Gold Collection**
     - **Validates: Requirements 6.1, 8.1**
     - Test that collecting gold removes tile, increases score, decrements count
     - _Requirements: 6.1, 8.1_
   
-  - [ ] 9.3 Write property test for exit revelation
+  - [x] 9.3 Write property test for exit revelation
     - **Property 19: Exit Revelation**
     - **Validates: Requirements 6.4**
     - Test that collecting all gold reveals exit
     - _Requirements: 6.4_
   
-  - [ ] 9.4 Write property test for level completion
+  - [x] 9.4 Write property test for level completion
     - **Property 20: Level Completion**
     - **Validates: Requirements 6.5, 6.7**
     - Test that reaching exit with all gold completes level
     - _Requirements: 6.5, 6.7_
   
-  - [ ] 9.5 Write property test for player-enemy collision
+  - [x] 9.5 Write property test for player-enemy collision
     - **Property 17: Player-Enemy Collision Death**
     - **Validates: Requirements 5.6**
     - Test that player-enemy collision causes death
     - _Requirements: 5.6_
   
-  - [ ] 9.6 Write property test for death decrements lives
+  - [x] 9.6 Write property test for death decrements lives
     - **Property 21: Death Decrements Lives**
     - **Validates: Requirements 7.2**
     - Test that death reduces lives by 1
     - _Requirements: 7.2_
   
-  - [ ] 9.7 Write property test for death with lives restarts level
+  - [x] 9.7 Write property test for death with lives restarts level
     - **Property 22: Death With Lives Restarts Level**
     - **Validates: Requirements 7.3**
     - Test that death with lives > 0 restarts level
     - _Requirements: 7.3_
   
-  - [ ] 9.8 Write unit test for game over
+  - [x] 9.8 Write unit test for game over
     - Test that death with 0 lives triggers GameOver state
     - _Requirements: 7.4_
 
