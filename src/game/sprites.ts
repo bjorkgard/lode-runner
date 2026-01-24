@@ -3,6 +3,7 @@
 import type { SpriteSheet } from './types';
 import { PLAYER_ANIMATIONS, ENEMY_ANIMATIONS } from './animation';
 import type { Animation } from './animation';
+import { SPRITES } from '../constants/ui';
 
 /**
  * Collection of all loaded sprite sheets.
@@ -97,9 +98,9 @@ export class SpriteManager {
   async init(): Promise<void> {
     try {
       const [player, enemy, tiles] = await Promise.all([
-        this.loadSpriteSheet('/assets/sprites/player.png', 16, 16),
-        this.loadSpriteSheet('/assets/sprites/enemy.png', 16, 16),
-        this.loadSpriteSheet('/assets/sprites/tiles.png', 16, 16)
+        this.loadSpriteSheet('/assets/sprites/player.png', SPRITES.FRAME_WIDTH, SPRITES.FRAME_HEIGHT),
+        this.loadSpriteSheet('/assets/sprites/enemy.png', SPRITES.FRAME_WIDTH, SPRITES.FRAME_HEIGHT),
+        this.loadSpriteSheet('/assets/sprites/tiles.png', SPRITES.FRAME_WIDTH, SPRITES.FRAME_HEIGHT)
       ]);
       
       this.spriteSheets = { player, enemy, tiles };

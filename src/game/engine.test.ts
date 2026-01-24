@@ -4,7 +4,6 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import fc from 'fast-check';
 import { GameEngine } from './engine';
 import { GameState } from './types';
-import type { GameStateData } from './types';
 
 // Mock canvas for testing
 function createMockCanvas(): HTMLCanvasElement {
@@ -219,49 +218,83 @@ describe('GameEngine', () => {
     });
   });
   
-  describe('Callbacks', () => {
-    test('onScoreChange callback is triggered on newGame', () => {
+  describe('Observer Pattern', () => {
+    test('onScoreChange callback is triggered when score changes', () => {
       const callback = vi.fn();
-      engine.onScoreChange = callback;
+      const observable = engine.getStateObservable();
+      observable.onScoreChange(callback);
       
-      // Start a new game (score resets to 0)
-      engine.newGame();
-      expect(callback).toHaveBeenCalledWith(0);
+      // Capture current state
+      const prevState = (engine as any).captureStateSnapshot();
+      
+      // Manually update score to trigger callback
+      (engine as any).state = {
+        ...(engine as any).state,
+        score: 100
+      };
+      
+      // Manually notify observers with the previous state
+      (engine as any).notifyStateChanges(prevState);
+      
+      expect(callback).toHaveBeenCalledWith(100, 0);
     });
     
-    test('onLivesChange callback is triggered on newGame', () => {
+    test('onLivesChange callback is triggered when lives change', () => {
       const callback = vi.fn();
-      engine.onLivesChange = callback;
+      const observable = engine.getStateObservable();
+      observable.onLivesChange(callback);
       
-      // Start a new game (lives set to 3)
-      engine.newGame();
-      expect(callback).toHaveBeenCalledWith(3);
+      // Capture current state
+      const prevState = (engine as any).captureStateSnapshot();
+      
+      // Manually update lives to trigger callback
+      (engine as any).state = {
+        ...(engine as any).state,
+        lives: 2
+      };
+      
+      // Manually notify observers with the previous state
+      (engine as any).notifyStateChanges(prevState);
+      
+      expect(callback).toHaveBeenCalledWith(2, 3);
     });
     
-    test('onLevelChange callback is triggered on newGame', () => {
+    test('onLevelChange callback is triggered when level changes', () => {
       const callback = vi.fn();
-      engine.onLevelChange = callback;
+      const observable = engine.getStateObservable();
+      observable.onLevelChange(callback);
       
-      // Start a new game (level 1)
-      engine.newGame();
-      expect(callback).toHaveBeenCalledWith(1);
+      // Capture current state
+      const prevState = (engine as any).captureStateSnapshot();
+      
+      // Manually update level to trigger callback
+      (engine as any).state = {
+        ...(engine as any).state,
+        currentLevel: 2
+      };
+      
+      // Manually notify observers with the previous state
+      (engine as any).notifyStateChanges(prevState);
+      
+      expect(callback).toHaveBeenCalledWith(2, 1);
     });
     
     test('onGameStateChange callback is triggered when game state changes', () => {
       const callback = vi.fn();
-      engine.onGameStateChange = callback;
+      const observable = engine.getStateObservable();
+      observable.onGameStateChange(callback);
       
       // Start a new game (Menu -> Playing)
       engine.newGame();
-      expect(callback).toHaveBeenCalledWith(GameState.Playing);
+      expect(callback).toHaveBeenCalledWith(GameState.Playing, GameState.Menu);
       
       // Pause the game (Playing -> Paused)
       engine.pauseGame();
-      expect(callback).toHaveBeenCalledWith(GameState.Paused);
+      expect(callback).toHaveBeenCalledWith(GameState.Paused, GameState.Playing);
       
       // Resume the game (Paused -> Playing)
       engine.resumeGame();
-      expect(callback).toHaveBeenCalledWith(GameState.Playing);
+      expect(callback).toHaveBeenCalledWith(GameState.Playing, GameState.Paused);
     });
   });
 });

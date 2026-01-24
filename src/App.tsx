@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { CanvasGame } from './components/CanvasGame';
 import { HUD } from './components/HUD';
 import { Menu } from './components/Menu';
 import { MobileControls } from './components/MobileControls';
 import { GameState } from './game/types';
 import type { GameEngine } from './game/engine';
+import { PLAYER } from './constants/ui';
 
 /**
  * Main App component that integrates all game components.
@@ -23,86 +24,81 @@ import type { GameEngine } from './game/engine';
  */
 function App() {
   // React state for UI updates
-  const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
-  const [timer, setTimer] = useState(0);
+  const [score, setScore] = useState<number>(0);
+  const [lives, setLives] = useState<number>(PLAYER.INITIAL_LIVES);
+  const [level, setLevel] = useState<number>(1);
+  const [timer, setTimer] = useState<number>(0);
   const [gameState, setGameState] = useState<GameState>(GameState.Menu);
-  const [muted, setMuted] = useState(false);
-  const [highScore, setHighScore] = useState(0);
+  const [muted, setMuted] = useState<boolean>(false);
+  const [highScore, setHighScore] = useState<number>(0);
   
   // Ref to access game engine from CanvasGame component
   const engineRef = useRef<GameEngine | null>(null);
   
-  // Update timer periodically from engine state
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (engineRef.current && gameState === GameState.Playing) {
-        const state = engineRef.current.getState();
-        setTimer(state.levelTimer);
-      }
-    }, 100); // Update every 100ms for smooth timer display
-    
-    return () => clearInterval(interval);
-  }, [gameState]);
-  
   /**
    * Callback to update score in React state.
    * Called by game engine when score changes.
+   * Memoized to prevent child component re-renders.
    */
-  const handleScoreChange = (newScore: number) => {
+  const handleScoreChange = useCallback((newScore: number) => {
     setScore(newScore);
-  };
+  }, []);
   
   /**
    * Callback to update lives in React state.
    * Called by game engine when lives change.
+   * Memoized to prevent child component re-renders.
    */
-  const handleLivesChange = (newLives: number) => {
+  const handleLivesChange = useCallback((newLives: number) => {
     setLives(newLives);
-  };
+  }, []);
   
   /**
    * Callback to update level in React state.
    * Called by game engine when level changes.
+   * Memoized to prevent child component re-renders.
    */
-  const handleLevelChange = (newLevel: number) => {
+  const handleLevelChange = useCallback((newLevel: number) => {
     setLevel(newLevel);
-  };
+  }, []);
   
   /**
    * Callback to update game state in React state.
    * Called by game engine when game state changes.
+   * Memoized to prevent child component re-renders.
    */
-  const handleGameStateChange = (newState: GameState) => {
+  const handleGameStateChange = useCallback((newState: GameState) => {
     setGameState(newState);
-  };
+  }, []);
   
   /**
    * Starts a new game.
    * Resets to level 1 with 3 lives and transitions to Playing state.
+   * Memoized to prevent child component re-renders.
    */
-  const handleNewGame = () => {
+  const handleNewGame = useCallback(() => {
     if (engineRef.current) {
       engineRef.current.newGame();
     }
-  };
+  }, []);
   
   /**
    * Resumes the game from pause.
    * Transitions from Paused to Playing state.
+   * Memoized to prevent child component re-renders.
    */
-  const handleResume = () => {
+  const handleResume = useCallback(() => {
     if (engineRef.current) {
       engineRef.current.resumeGame();
     }
-  };
+  }, []);
   
   /**
    * Quits to main menu from pause.
    * Transitions to Menu state.
+   * Memoized to prevent child component re-renders.
    */
-  const handleQuit = () => {
+  const handleQuit = useCallback(() => {
     if (engineRef.current) {
       const engine = engineRef.current;
       const state = engine.getState();
@@ -111,49 +107,54 @@ function App() {
       state.gameState = GameState.Menu;
       setGameState(GameState.Menu);
     }
-  };
+  }, []);
   
   /**
    * Resets the high score to 0.
    * Clears the stored high score from localStorage.
+   * Memoized to prevent child component re-renders.
    */
-  const handleResetHighScore = () => {
+  const handleResetHighScore = useCallback(() => {
     if (engineRef.current) {
       engineRef.current.resetHighScore();
       setHighScore(0);
     }
-  };
+  }, []);
   
   /**
    * Toggles audio mute state.
    * Updates both React state and audio manager.
+   * Memoized to prevent child component re-renders.
    */
-  const handleToggleMute = () => {
+  const handleToggleMute = useCallback(() => {
     if (engineRef.current) {
       const audioManager = engineRef.current.getAudioManager();
       audioManager.toggleMute();
       setMuted(audioManager.getAudioSettings().muted);
     }
-  };
+  }, []);
   
   /**
    * Forwards touch input to the game engine.
    * Allows mobile controls to simulate keyboard input.
+   * Memoized to prevent child component re-renders.
    * 
    * @param direction - Input direction ('left', 'right', 'up', 'down', 'digLeft', 'digRight')
    * @param pressed - Whether the input is pressed (true) or released (false)
    */
-  const handleTouchInput = (direction: string, pressed: boolean) => {
+  const handleTouchInput = useCallback((direction: string, pressed: boolean) => {
     if (engineRef.current) {
       engineRef.current.handleTouchInput(direction, pressed);
     }
-  };
+  }, []);
   
   /**
    * Callback to store engine reference from CanvasGame component.
    * This allows App to call engine methods for UI interactions.
+   * Sets up timer observation using the Observer pattern.
+   * Memoized to prevent child component re-renders.
    */
-  const handleEngineReady = (engine: GameEngine) => {
+  const handleEngineReady = useCallback((engine: GameEngine) => {
     engineRef.current = engine;
     
     // Initialize UI state from engine
@@ -165,7 +166,13 @@ function App() {
     setGameState(state.gameState);
     setHighScore(state.highScore);
     setMuted(engine.getAudioManager().getAudioSettings().muted);
-  };
+    
+    // Subscribe to timer changes using Observer pattern
+    const observable = engine.getStateObservable();
+    observable.onTimerChange((timer) => {
+      setTimer(timer);
+    });
+  }, []);
   
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col">

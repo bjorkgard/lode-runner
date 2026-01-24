@@ -14,12 +14,7 @@ import { AudioManager } from './audio';
 import { SpriteManager } from './sprites';
 import { loadHighScore, saveHighScore, resetHighScore as resetStoredHighScore } from './storage';
 import { DEATH_RESPAWN_DELAY } from './constants';
-
-/**
- * Callback function types for UI updates
- */
-type StateCallback = (value: number) => void;
-type GameStateCallback = (state: GameState) => void;
+import { StateObservable, type StateSnapshot } from './StateObserver';
 
 /**
  * Main game engine class that orchestrates all game systems.
@@ -29,7 +24,7 @@ type GameStateCallback = (state: GameState) => void;
  * - Game loop: requestAnimationFrame-based with delta time
  * - Update phase: Processes input, physics, AI, rules
  * - Render phase: Draws game state to canvas
- * - Callbacks: Notifies React components of state changes
+ * - State observation: Observer pattern for state change notifications
  * - Managers: Encapsulated subsystems (input, audio, sprites, particles)
  */
 export class GameEngine {
@@ -46,11 +41,8 @@ export class GameEngine {
   private particleManager: ParticleManager;
   private cleanupInput: (() => void) | null = null;
   
-  // Callbacks for UI updates
-  public onScoreChange: StateCallback | null = null;
-  public onLivesChange: StateCallback | null = null;
-  public onLevelChange: StateCallback | null = null;
-  public onGameStateChange: GameStateCallback | null = null;
+  // State observable for observer pattern
+  private stateObservable: StateObservable;
   
   /**
    * Creates a new game engine instance.
@@ -73,6 +65,7 @@ export class GameEngine {
     this.audioManager = new AudioManager();
     this.spriteManager = new SpriteManager();
     this.particleManager = new ParticleManager();
+    this.stateObservable = new StateObservable();
     
     // Initialize all systems asynchronously
     this.initialize();
@@ -163,81 +156,149 @@ export class GameEngine {
   
   /**
    * Updates all game systems for the current frame.
-   * Only updates game logic when in Playing state.
-   * Handles death timer and respawn logic.
+   * Orchestrates input processing, gameplay updates, and UI callbacks.
    * 
    * @param deltaTime - Time elapsed since last frame in seconds
    */
   private update(deltaTime: number): void {
     if (!this.isInitialized) return;
     
-    // Track previous state for change detection
-    const prevScore = this.state.score;
-    const prevLives = this.state.lives;
-    const prevLevel = this.state.currentLevel;
-    const prevGameState = this.state.gameState;
+    // Capture previous state for change detection
+    const prevState = this.captureStateSnapshot();
     
-    // Always process input (for pause toggle)
-    this.state = this.inputManager.updateInput(this.state, deltaTime);
+    // Process input (always active for pause toggle)
+    this.processInput(deltaTime);
     
-    // Only update game logic when playing
+    // Update gameplay systems when playing
     if (this.state.gameState === GameState.Playing) {
-      // Handle death timer and respawn
-      if (this.state.player.isDead && this.state.lives > 0) {
-        const newDeathTimer = this.state.player.deathTimer + deltaTime;
-        
-        if (newDeathTimer >= DEATH_RESPAWN_DELAY) {
-          // Death delay elapsed, respawn player
-          this.state = resetLevel(this.state);
-          this.state = {
-            ...this.state,
-            player: {
-              ...this.state.player,
-              isDead: false,
-              deathTimer: -1
-            }
-          };
-        } else {
-          // Update death timer
-          this.state = {
-            ...this.state,
-            player: {
-              ...this.state.player,
-              deathTimer: newDeathTimer
-            }
-          };
-        }
-      } else if (!this.state.player.isDead) {
-        // Normal gameplay updates (only when player is alive)
-        this.state = updatePhysics(this.state, deltaTime);
-        this.state = updateDigging(this.state, deltaTime);
-        this.state = updateAI(this.state, deltaTime);
-        this.state = updateRules(this.state, deltaTime);
-      }
-      
-      // Always update particles
-      this.particleManager.update(deltaTime);
+      this.updateGameplay(deltaTime);
     }
     
-    // Update high score if current score exceeds it
+    // Update high score if needed
+    this.updateHighScore();
+    
+    // Notify UI of state changes
+    this.notifyStateChanges(prevState);
+  }
+  
+  /**
+   * Captures a snapshot of state values for change detection.
+   * Returns only the values we need to track for UI updates.
+   * 
+   * @returns Object containing previous state values
+   */
+  private captureStateSnapshot(): StateSnapshot {
+    return StateObservable.createSnapshot(this.state);
+  }
+  
+  /**
+   * Processes player input for the current frame.
+   * Input is always processed to allow pause toggle even when not playing.
+   * 
+   * @param deltaTime - Time elapsed since last frame in seconds
+   */
+  private processInput(deltaTime: number): void {
+    this.state = this.inputManager.updateInput(this.state, deltaTime);
+  }
+  
+  /**
+   * Updates all gameplay systems when in Playing state.
+   * Handles death/respawn logic and normal gameplay updates.
+   * 
+   * @param deltaTime - Time elapsed since last frame in seconds
+   */
+  private updateGameplay(deltaTime: number): void {
+    if (this.state.player.isDead && this.state.lives > 0) {
+      this.handleDeathRespawn(deltaTime);
+    } else if (!this.state.player.isDead) {
+      this.updateGameSystems(deltaTime);
+    }
+    
+    // Always update particles during gameplay
+    this.particleManager.update(deltaTime);
+  }
+  
+  /**
+   * Handles death timer and respawn logic.
+   * Waits for DEATH_RESPAWN_DELAY before respawning the player.
+   * 
+   * @param deltaTime - Time elapsed since last frame in seconds
+   */
+  private handleDeathRespawn(deltaTime: number): void {
+    const newDeathTimer = this.state.player.deathTimer + deltaTime;
+    
+    if (newDeathTimer >= DEATH_RESPAWN_DELAY) {
+      // Death delay elapsed, respawn player
+      this.respawnPlayer();
+    } else {
+      // Update death timer
+      this.updateDeathTimer(newDeathTimer);
+    }
+  }
+  
+  /**
+   * Respawns the player after death delay.
+   * Resets the level and clears death state.
+   */
+  private respawnPlayer(): void {
+    this.state = resetLevel(this.state);
+    this.state = {
+      ...this.state,
+      player: {
+        ...this.state.player,
+        isDead: false,
+        deathTimer: -1
+      }
+    };
+  }
+  
+  /**
+   * Updates the death timer without respawning.
+   * 
+   * @param newDeathTimer - New death timer value
+   */
+  private updateDeathTimer(newDeathTimer: number): void {
+    this.state = {
+      ...this.state,
+      player: {
+        ...this.state.player,
+        deathTimer: newDeathTimer
+      }
+    };
+  }
+  
+  /**
+   * Updates all core game systems during normal gameplay.
+   * Processes physics, digging, AI, and game rules in order.
+   * 
+   * @param deltaTime - Time elapsed since last frame in seconds
+   */
+  private updateGameSystems(deltaTime: number): void {
+    this.state = updatePhysics(this.state, deltaTime);
+    this.state = updateDigging(this.state, deltaTime);
+    this.state = updateAI(this.state, deltaTime);
+    this.state = updateRules(this.state, deltaTime);
+  }
+  
+  /**
+   * Updates and persists the high score if current score exceeds it.
+   */
+  private updateHighScore(): void {
     if (this.state.score > this.state.highScore) {
       this.state.highScore = this.state.score;
       saveHighScore(this.state.score);
     }
-    
-    // Trigger callbacks for state changes
-    if (prevScore !== this.state.score && this.onScoreChange) {
-      this.onScoreChange(this.state.score);
-    }
-    if (prevLives !== this.state.lives && this.onLivesChange) {
-      this.onLivesChange(this.state.lives);
-    }
-    if (prevLevel !== this.state.currentLevel && this.onLevelChange) {
-      this.onLevelChange(this.state.currentLevel);
-    }
-    if (prevGameState !== this.state.gameState && this.onGameStateChange) {
-      this.onGameStateChange(this.state.gameState);
-    }
+  }
+  
+  /**
+   * Notifies all observers of state changes.
+   * Uses the Observer pattern to notify subscribers of changes.
+   * 
+   * @param prevState - Previous state snapshot for comparison
+   */
+  private notifyStateChanges(prevState: StateSnapshot): void {
+    const currentState = this.captureStateSnapshot();
+    this.stateObservable.notify(prevState, currentState);
   }
   
   /**
@@ -254,15 +315,14 @@ export class GameEngine {
    * Resets to level 1 with 3 lives and transitions to Playing state.
    */
   public newGame(): void {
+    const prevState = this.captureStateSnapshot();
+    
     this.state = createInitialState();
     this.state.highScore = loadHighScore();
     this.state.gameState = GameState.Playing;
     
-    // Trigger callbacks
-    if (this.onScoreChange) this.onScoreChange(this.state.score);
-    if (this.onLivesChange) this.onLivesChange(this.state.lives);
-    if (this.onLevelChange) this.onLevelChange(this.state.currentLevel);
-    if (this.onGameStateChange) this.onGameStateChange(this.state.gameState);
+    // Notify observers of all changes
+    this.notifyStateChanges(prevState);
   }
   
   /**
@@ -271,14 +331,14 @@ export class GameEngine {
    */
   public pauseGame(): void {
     if (this.state.gameState === GameState.Playing) {
+      const prevState = this.captureStateSnapshot();
+      
       this.state = {
         ...this.state,
         gameState: GameState.Paused
       };
       
-      if (this.onGameStateChange) {
-        this.onGameStateChange(this.state.gameState);
-      }
+      this.notifyStateChanges(prevState);
     }
   }
   
@@ -288,14 +348,14 @@ export class GameEngine {
    */
   public resumeGame(): void {
     if (this.state.gameState === GameState.Paused) {
+      const prevState = this.captureStateSnapshot();
+      
       this.state = {
         ...this.state,
         gameState: GameState.Playing
       };
       
-      if (this.onGameStateChange) {
-        this.onGameStateChange(this.state.gameState);
-      }
+      this.notifyStateChanges(prevState);
     }
   }
   
@@ -304,12 +364,29 @@ export class GameEngine {
    * Clears the stored high score from localStorage.
    */
   public resetHighScore(): void {
+    const prevState = this.captureStateSnapshot();
+    
     resetStoredHighScore();
     this.state.highScore = 0;
     
-    if (this.onScoreChange) {
-      this.onScoreChange(this.state.score);
-    }
+    this.notifyStateChanges(prevState);
+  }
+  
+  /**
+   * Gets the state observable for subscribing to state changes.
+   * Allows external components to observe state changes using the Observer pattern.
+   * 
+   * @returns StateObservable instance for subscribing to changes
+   * 
+   * @example
+   * ```typescript
+   * const unsubscribe = engine.getStateObservable().onScoreChange((score, prevScore) => {
+   *   console.log(`Score: ${prevScore} → ${score}`);
+   * });
+   * ```
+   */
+  public getStateObservable(): StateObservable {
+    return this.stateObservable;
   }
   
   /**
@@ -357,5 +434,8 @@ export class GameEngine {
     
     // Clear particles
     this.particleManager.clear();
+    
+    // Clear all observers
+    this.stateObservable.clear();
   }
 }

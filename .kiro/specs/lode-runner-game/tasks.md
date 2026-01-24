@@ -458,15 +458,15 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Use simple beep sounds as placeholders
     - _Requirements: 11.6_
 
-- [ ] 25. Complete level data
-  - [ ] 25.1 Add remaining 90 levels to `src/game/levels.ts`
+- [x] 25. Complete level data
+  - [x] 25.1 Add remaining 90 levels to `src/game/levels.ts`
     - Design or import level data for levels 11-100
     - Ensure all levels are valid and playable
     - Set appropriate par times for each level
     - _Requirements: 9.1_
 
-- [ ] 26. Final integration testing
-  - [ ] 26.1 Write integration tests
+- [x] 26. Final integration testing
+  - [x] 26.1 Write integration tests
     - Test full game flow: start game, collect gold, complete level
     - Test death and restart flow
     - Test game over flow
@@ -474,7 +474,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test high score persistence across sessions
     - _Requirements: 6.5, 7.3, 7.4, 10.1, 17.4, 17.5_
 
-- [ ] 27. Final checkpoint - Complete game
+- [x] 27. Final checkpoint - Complete game
   - Run all tests and ensure 100% pass
   - Test game manually in browser
   - Test on mobile device or emulator

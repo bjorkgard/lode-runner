@@ -4,6 +4,7 @@ import type { GameStateData, Player, Enemy, Position } from './types';
 import { GameState } from './types';
 import { AnimationState } from './animation';
 import { loadLevel } from './levels';
+import { PLAYER, LEVELS } from '../constants/ui';
 
 /**
  * Creates the initial game state for a new game.
@@ -13,10 +14,10 @@ import { loadLevel } from './levels';
  */
 export function createInitialState(): GameStateData {
   const baseState: GameStateData = {
-    currentLevel: 1,
+    currentLevel: LEVELS.FIRST_LEVEL,
     score: 0,
     highScore: 0,
-    lives: 3,
+    lives: PLAYER.INITIAL_LIVES,
     player: createPlayer({ x: 1, y: 14 }),
     enemies: [],
     tiles: [],
@@ -29,7 +30,7 @@ export function createInitialState(): GameStateData {
   };
   
   // Load level 1 to initialize tiles and entities
-  return loadLevel(baseState, 1);
+  return loadLevel(baseState, LEVELS.FIRST_LEVEL);
 }
 
 /**
@@ -47,7 +48,7 @@ export function createPlayer(pos: Position): Player {
     isOnGround: false,
     isOnLadder: false,
     isOnRope: false,
-    lives: 3,
+    lives: PLAYER.INITIAL_LIVES,
     isDead: false,
     deathTimer: -1,
     isDigging: false,

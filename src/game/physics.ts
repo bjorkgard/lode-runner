@@ -27,6 +27,70 @@ export function updatePhysics(state: GameStateData, deltaTime: number): GameStat
 }
 
 /**
+ * Core physics update logic shared by all entities.
+ * Calculates new position, velocity, and state flags based on gravity and collisions.
+ * 
+ * @param entity - Entity to update (player or enemy)
+ * @param tiles - Current tile grid for collision detection
+ * @param deltaTime - Time elapsed since last update (in seconds)
+ * @returns Object with updated position, velocity, and state flags
+ */
+function updateEntityPhysicsCore(
+  entity: Entity,
+  tiles: TileType[][],
+  deltaTime: number
+): {
+  pos: Position;
+  velocity: { x: number; y: number };
+  isOnLadder: boolean;
+  isOnRope: boolean;
+  isOnGround: boolean;
+} {
+  // Update tile state flags first
+  const isOnLadder = getTileAt(entity.pos, tiles) === TileType.Ladder;
+  const isOnRope = getTileAt(entity.pos, tiles) === TileType.Rope;
+  
+  // Create entity with updated flags for support check
+  const entityWithFlags: Entity = {
+    ...entity,
+    isOnLadder,
+    isOnRope
+  };
+  
+  // Calculate new velocity based on support
+  let newVelocity = { ...entity.velocity };
+  let isOnGround = false;
+  
+  if (!isSupported(entityWithFlags, tiles)) {
+    newVelocity.y += GRAVITY * deltaTime;
+    isOnGround = false;
+  } else {
+    newVelocity.y = 0;
+    isOnGround = true;
+  }
+  
+  // Calculate new position
+  const newPos = {
+    x: entity.pos.x + newVelocity.x * deltaTime,
+    y: entity.pos.y + newVelocity.y * deltaTime
+  };
+  
+  // Resolve collisions and get adjusted position and velocity
+  const resolved = resolveCollisions(
+    { ...entity, pos: newPos, velocity: newVelocity, isOnLadder, isOnRope, isOnGround },
+    tiles
+  );
+  
+  return {
+    pos: resolved.pos,
+    velocity: resolved.velocity,
+    isOnLadder,
+    isOnRope,
+    isOnGround
+  };
+}
+
+/**
  * Updates physics for the player entity.
  * Returns a new player object with updated position, velocity, and state flags.
  * Does not mutate the input player object.
@@ -41,48 +105,11 @@ export function updatePlayerPhysics(
   tiles: TileType[][],
   deltaTime: number
 ): Player {
-  // Update tile state flags first
-  const isOnLadder = getTileAt(player.pos, tiles) === TileType.Ladder;
-  const isOnRope = getTileAt(player.pos, tiles) === TileType.Rope;
-  
-  // Create entity with updated flags for support check
-  const entityWithFlags: Entity = {
-    ...player,
-    isOnLadder,
-    isOnRope
-  };
-  
-  // Calculate new velocity based on support
-  let newVelocity = { ...player.velocity };
-  let isOnGround = false;
-  
-  if (!isSupported(entityWithFlags, tiles)) {
-    newVelocity.y += GRAVITY * deltaTime;
-    isOnGround = false;
-  } else {
-    newVelocity.y = 0;
-    isOnGround = true;
-  }
-  
-  // Calculate new position
-  let newPos = {
-    x: player.pos.x + newVelocity.x * deltaTime,
-    y: player.pos.y + newVelocity.y * deltaTime
-  };
-  
-  // Resolve collisions and get adjusted position and velocity
-  const resolved = resolveCollisions(
-    { ...player, pos: newPos, velocity: newVelocity, isOnLadder, isOnRope, isOnGround },
-    tiles
-  );
+  const updated = updateEntityPhysicsCore(player, tiles, deltaTime);
   
   return {
     ...player,
-    pos: resolved.pos,
-    velocity: resolved.velocity,
-    isOnLadder,
-    isOnRope,
-    isOnGround
+    ...updated
   };
 }
 
@@ -109,48 +136,11 @@ export function updateEnemyPhysics(
     };
   }
   
-  // Update tile state flags
-  const isOnLadder = getTileAt(enemy.pos, tiles) === TileType.Ladder;
-  const isOnRope = getTileAt(enemy.pos, tiles) === TileType.Rope;
-  
-  // Create entity with updated flags for support check
-  const entityWithFlags: Entity = {
-    ...enemy,
-    isOnLadder,
-    isOnRope
-  };
-  
-  // Calculate new velocity based on support
-  let newVelocity = { ...enemy.velocity };
-  let isOnGround = false;
-  
-  if (!isSupported(entityWithFlags, tiles)) {
-    newVelocity.y += GRAVITY * deltaTime;
-    isOnGround = false;
-  } else {
-    newVelocity.y = 0;
-    isOnGround = true;
-  }
-  
-  // Calculate new position
-  let newPos = {
-    x: enemy.pos.x + newVelocity.x * deltaTime,
-    y: enemy.pos.y + newVelocity.y * deltaTime
-  };
-  
-  // Resolve collisions and get adjusted position and velocity
-  const resolved = resolveCollisions(
-    { ...enemy, pos: newPos, velocity: newVelocity, isOnLadder, isOnRope, isOnGround },
-    tiles
-  );
+  const updated = updateEntityPhysicsCore(enemy, tiles, deltaTime);
   
   return {
     ...enemy,
-    pos: resolved.pos,
-    velocity: resolved.velocity,
-    isOnLadder,
-    isOnRope,
-    isOnGround
+    ...updated
   };
 }
 

@@ -1,3 +1,6 @@
+import { memo } from 'react';
+import { PLAYER } from '../constants/ui';
+
 interface HUDProps {
   level: number;
   score: number;
@@ -12,6 +15,9 @@ interface HUDProps {
  * HUD (Heads-Up Display) component that shows game information.
  * Displays level, score, high score, timer, lives, and mute toggle.
  * 
+ * Memoized to prevent unnecessary re-renders when parent updates.
+ * Only re-renders when props actually change.
+ * 
  * Uses Tailwind CSS for responsive styling and layout.
  * 
  * @param level - Current level number
@@ -22,7 +28,7 @@ interface HUDProps {
  * @param muted - Whether audio is muted
  * @param onToggleMute - Callback to toggle mute state
  */
-export function HUD({
+export const HUD = memo(function HUD({
   level,
   score,
   highScore,
@@ -64,7 +70,7 @@ export function HUD({
           Time: <span className="font-bold">{formatTime(timer)}</span>
         </div>
         <div className="flex gap-1" aria-label={`${lives} lives remaining`}>
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: PLAYER.MAX_LIVES_DISPLAY }).map((_, i) => (
             <span 
               key={i} 
               className={i < lives ? 'text-red-500' : 'text-gray-600'}
@@ -84,4 +90,4 @@ export function HUD({
       </div>
     </div>
   );
-}
+});

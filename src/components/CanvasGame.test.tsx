@@ -127,6 +127,75 @@ describe('CanvasGame Component', () => {
     expect(document.querySelector('canvas')).toBeTruthy();
   });
 
+  test('callbacks should work even when parent re-renders with new callback references', () => {
+    let scoreChangeCount = 0;
+    let livesChangeCount = 0;
+    
+    // Initial callbacks
+    const initialOnScoreChange = vi.fn(() => scoreChangeCount++);
+    const initialOnLivesChange = vi.fn(() => livesChangeCount++);
+    const onLevelChange = vi.fn();
+    const onGameStateChange = vi.fn();
+    const onEngineReady = vi.fn();
+
+    const { rerender } = render(
+      <CanvasGame
+        onScoreChange={initialOnScoreChange}
+        onLivesChange={initialOnLivesChange}
+        onLevelChange={onLevelChange}
+        onGameStateChange={onGameStateChange}
+        onEngineReady={onEngineReady}
+      />
+    );
+
+    // Verify engine is ready
+    expect(onEngineReady).toHaveBeenCalledTimes(1);
+    const engine = onEngineReady.mock.calls[0][0];
+    
+    // Create new callback references (simulating parent re-render)
+    const newOnScoreChange = vi.fn(() => scoreChangeCount++);
+    const newOnLivesChange = vi.fn(() => livesChangeCount++);
+    
+    // Re-render with new callback references
+    rerender(
+      <CanvasGame
+        onScoreChange={newOnScoreChange}
+        onLivesChange={newOnLivesChange}
+        onLevelChange={onLevelChange}
+        onGameStateChange={onGameStateChange}
+        onEngineReady={onEngineReady}
+      />
+    );
+    
+    // Engine should NOT be re-initialized (onEngineReady should still be called only once)
+    expect(onEngineReady).toHaveBeenCalledTimes(1);
+    
+    // Trigger actual state changes in the engine to verify new callbacks are used
+    // Capture the previous state before making changes
+    const prevState = (engine as any).captureStateSnapshot();
+    
+    // Manually update the engine's state
+    (engine as any).state = {
+      ...(engine as any).state,
+      score: 100,
+      lives: 2
+    };
+    
+    // Manually notify observers with the previous state
+    (engine as any).notifyStateChanges(prevState);
+    
+    // New callbacks should have been called (not the initial ones)
+    // Note: CanvasGame only forwards the new value, not the old value
+    expect(newOnScoreChange).toHaveBeenCalledWith(100);
+    expect(newOnLivesChange).toHaveBeenCalledWith(2);
+    expect(scoreChangeCount).toBe(1);
+    expect(livesChangeCount).toBe(1);
+    
+    // Initial callbacks should NOT have been called
+    expect(initialOnScoreChange).not.toHaveBeenCalled();
+    expect(initialOnLivesChange).not.toHaveBeenCalled();
+  });
+
   // Feature: lode-runner-game, Property 38: Canvas Resize Recalculation
   test('Property 38: resize events update canvas dimensions', () => {
     fc.assert(

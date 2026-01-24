@@ -7,7 +7,7 @@ The game features 100 levels with progressive difficulty, enemy AI, property-bas
 ## Current Status
 
 - **Implementation Progress**: 24/27 tasks complete (88.9%)
-- **Test Coverage**: 279 passing tests (100% pass rate)
+- **Test Coverage**: 316 passing tests (100% pass rate)
 - **Completed Modules**: 
   - Core Systems: Type system, constants, level system (100 levels), state management
   - Game Mechanics: Physics system, digging system, AI system, game rules system
@@ -17,7 +17,7 @@ The game features 100 levels with progressive difficulty, enemy AI, property-bas
   - React Components: CanvasGame, HUD, Menu, MobileControls
   - Error Handling: Comprehensive error handling with custom error types
   - Animation System: Sprite animation state management
-  - Testing: 279 tests with property-based testing using fast-check
+  - Testing: 316 tests with property-based testing using fast-check
 
 ## Documentation
 
@@ -26,7 +26,7 @@ All documentation is organized in the `docs/` folder:
 - Architecture - System design and patterns
 - Project Structure - Directory organization
 - Game Mechanics - Gameplay and controls
-- Testing - Testing strategy and coverage (279 tests)
+- Testing - Testing strategy and coverage (316 tests)
 - API Reference - Complete API documentation with JSDoc
 - Configuration - Settings and configuration
 - Contributing - Development workflow

@@ -2,12 +2,13 @@
 
 import type { Particle, Position } from './types';
 import { TILE_SIZE } from './constants';
+import { PARTICLES } from '../constants/ui';
 
 /**
  * Size of the particle object pool.
  * Pre-allocates particles to avoid garbage collection during gameplay.
  */
-const PARTICLE_POOL_SIZE = 100;
+const PARTICLE_POOL_SIZE = PARTICLES.POOL_SIZE;
 
 /**
  * Particle manager class that handles particle effects.
@@ -70,7 +71,7 @@ export class ParticleManager {
       
       // Calculate radial direction for this particle
       const angle = (Math.PI * 2 * i) / count;
-      const speed = 50 + Math.random() * 50; // Random speed between 50-100 px/s
+      const speed = PARTICLES.MIN_SPEED + Math.random() * PARTICLES.SPEED_RANGE;
       
       // Initialize particle properties
       particle.pos = { ...pixelPos };

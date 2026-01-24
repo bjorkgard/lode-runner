@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **279 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **316 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -50,7 +50,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 279 tests
+**Currently Implemented**: 316 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -137,7 +137,8 @@ Full game flow validation (planned):
 | CanvasGame | 8 | ✅ Complete |
 | HUD | 6 | ✅ Complete |
 | MobileControls | 5 | ✅ Complete |
-| **Total** | **279** | **100% Pass Rate** |
+| ErrorBoundary | 6 | ✅ Complete |
+| **Total** | **316** | **100% Pass Rate** |
 
 ## Test Suites
 
@@ -574,7 +575,7 @@ Comprehensive testing of game loop orchestration:
 **Property-Based Tests (0)**:
 - Property 1: Paused State Immutability (implemented in engine.test.ts)
 
-### React Component Suites (19 tests)
+### React Component Suites (25 tests)
 
 Comprehensive testing of React UI components:
 
@@ -602,6 +603,14 @@ Comprehensive testing of React UI components:
 - Renders directional buttons
 - Renders dig action buttons
 - Handles touch events correctly
+
+**ErrorBoundary Component Suite (6 tests)**:
+- Renders children when no error
+- Catches errors in child components
+- Displays error message when error occurs
+- Displays error details in development mode
+- Provides reset button to recover
+- Resets error state when reset button clicked
 
 ## Running Tests
 

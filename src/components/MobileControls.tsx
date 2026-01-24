@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 
 interface MobileControlsProps {
   onInput: (direction: string, pressed: boolean) => void;
@@ -7,6 +7,9 @@ interface MobileControlsProps {
 /**
  * MobileControls component that provides on-screen touch controls for mobile devices.
  * Automatically detects touch devices and only renders controls when appropriate.
+ * 
+ * Memoized to prevent unnecessary re-renders when parent updates.
+ * Only re-renders when onInput callback reference changes.
  * 
  * Features:
  * - D-pad for directional movement (up, down, left, right)
@@ -23,7 +26,7 @@ interface MobileControlsProps {
  * 
  * @param onInput - Callback function to handle input events (direction, pressed)
  */
-export function MobileControls({ onInput }: MobileControlsProps) {
+export const MobileControls = memo(function MobileControls({ onInput }: MobileControlsProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   
   /**
@@ -155,4 +158,4 @@ export function MobileControls({ onInput }: MobileControlsProps) {
       </div>
     </div>
   );
-}
+});

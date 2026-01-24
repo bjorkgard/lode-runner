@@ -1,4 +1,6 @@
+import { memo } from 'react';
 import { GameState } from '../game/types';
+import { LEVELS } from '../constants/ui';
 
 interface MenuProps {
   gameState: GameState;
@@ -14,6 +16,9 @@ interface MenuProps {
  * Menu component that displays different screens based on game state.
  * Handles main menu, pause menu, game over screen, and victory screen.
  * 
+ * Memoized to prevent unnecessary re-renders when parent updates.
+ * Only re-renders when props actually change.
+ * 
  * Uses Tailwind CSS for styling and responsive layout.
  * 
  * @param gameState - Current game state (Menu, Paused, GameOver, Victory)
@@ -24,7 +29,7 @@ interface MenuProps {
  * @param onResume - Optional callback to resume from pause
  * @param onQuit - Optional callback to quit to main menu
  */
-export function Menu({
+export const Menu = memo(function Menu({
   gameState,
   finalScore,
   onNewGame,
@@ -118,7 +123,7 @@ export function Menu({
               VICTORY!
             </h2>
             <p className="text-xl mb-4 text-center">
-              You completed all 100 levels!
+              You completed all {LEVELS.TOTAL_LEVELS} levels!
             </p>
             <p className="text-xl mb-6 text-center">
               Final Score: <span className="font-bold text-yellow-400">{finalScore}</span>
@@ -134,4 +139,4 @@ export function Menu({
       </div>
     </div>
   );
-}
+});

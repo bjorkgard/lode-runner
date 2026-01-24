@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import { GameEngine } from '../game/engine';
 import { GameState } from '../game/types';
+import { CANVAS } from '../constants/ui';
 
 interface CanvasGameProps {
   onScoreChange: (score: number) => void;
@@ -14,10 +15,14 @@ interface CanvasGameProps {
  * CanvasGame component that wraps the game engine and canvas.
  * Handles initialization, cleanup, and window resize events.
  * 
+ * Memoized to prevent unnecessary re-renders when parent updates.
  * The component maintains the game engine in a ref to avoid re-renders
  * and uses callbacks to notify parent components of state changes.
+ * 
+ * Uses a callback ref pattern to ensure callbacks are always up-to-date
+ * without causing the effect to re-run on every parent re-render.
  */
-export function CanvasGame({
+export const CanvasGame = memo(function CanvasGame({
   onScoreChange,
   onLivesChange,
   onLevelChange,
@@ -27,6 +32,27 @@ export function CanvasGame({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   
+  // Store callbacks in a ref to avoid effect re-runs when they change
+  const callbacksRef = useRef({
+    onScoreChange,
+    onLivesChange,
+    onLevelChange,
+    onGameStateChange,
+    onEngineReady
+  });
+  
+  // Update callback refs whenever props change (doesn't trigger effect re-run)
+  useEffect(() => {
+    callbacksRef.current = {
+      onScoreChange,
+      onLivesChange,
+      onLevelChange,
+      onGameStateChange,
+      onEngineReady
+    };
+  });
+  
+  // Initialize engine only once on mount
   useEffect(() => {
     if (!canvasRef.current) return;
     
@@ -34,15 +60,28 @@ export function CanvasGame({
     const engine = new GameEngine(canvasRef.current);
     engineRef.current = engine;
     
-    // Set up callbacks to update React state
-    engine.onScoreChange = onScoreChange;
-    engine.onLivesChange = onLivesChange;
-    engine.onLevelChange = onLevelChange;
-    engine.onGameStateChange = onGameStateChange;
+    // Subscribe to state changes using Observer pattern
+    const observable = engine.getStateObservable();
+    
+    const unsubscribeScore = observable.onScoreChange((score) => {
+      callbacksRef.current.onScoreChange(score);
+    });
+    
+    const unsubscribeLives = observable.onLivesChange((lives) => {
+      callbacksRef.current.onLivesChange(lives);
+    });
+    
+    const unsubscribeLevel = observable.onLevelChange((level) => {
+      callbacksRef.current.onLevelChange(level);
+    });
+    
+    const unsubscribeGameState = observable.onGameStateChange((state) => {
+      callbacksRef.current.onGameStateChange(state);
+    });
     
     // Notify parent that engine is ready
-    if (onEngineReady) {
-      onEngineReady(engine);
+    if (callbacksRef.current.onEngineReady) {
+      callbacksRef.current.onEngineReady(engine);
     }
     
     // Start game loop
@@ -60,10 +99,14 @@ export function CanvasGame({
     
     // Cleanup on unmount
     return () => {
+      unsubscribeScore();
+      unsubscribeLives();
+      unsubscribeLevel();
+      unsubscribeGameState();
       engine.stop();
       window.removeEventListener('resize', handleResize);
     };
-  }, [onScoreChange, onLivesChange, onLevelChange, onGameStateChange, onEngineReady]);
+  }, []); // Empty deps - only run once on mount
   
   return (
     <canvas
@@ -72,7 +115,7 @@ export function CanvasGame({
       style={{ imageRendering: 'pixelated' }}
     />
   );
-}
+});
 
 /**
  * Resizes the canvas to fit the viewport while maintaining the game's aspect ratio.
@@ -81,13 +124,13 @@ export function CanvasGame({
  * @param canvas - The canvas element to resize
  */
 function resizeCanvas(canvas: HTMLCanvasElement): void {
-  const aspectRatio = 28 / 16; // Game world aspect ratio
-  const minWidth = 280; // Minimum canvas width
-  const minHeight = 160; // Minimum canvas height
+  const aspectRatio = CANVAS.ASPECT_RATIO;
+  const minWidth = CANVAS.MIN_WIDTH;
+  const minHeight = CANVAS.MIN_HEIGHT;
   
   // Calculate available space with margins
-  const maxWidth = Math.max(minWidth, window.innerWidth - 40); // Leave margin
-  const maxHeight = Math.max(minHeight, window.innerHeight - 200); // Leave room for HUD
+  const maxWidth = Math.max(minWidth, window.innerWidth - CANVAS.MARGIN_HORIZONTAL);
+  const maxHeight = Math.max(minHeight, window.innerHeight - CANVAS.MARGIN_VERTICAL);
   
   let width = maxWidth;
   let height = width / aspectRatio;
