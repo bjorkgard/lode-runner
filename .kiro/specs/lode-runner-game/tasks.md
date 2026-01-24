@@ -395,8 +395,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that resize events update canvas dimensions
     - _Requirements: 19.4_
 
-- [ ] 20. React components - HUD
-  - [ ] 20.1 Create `src/components/HUD.tsx`
+- [x] 20. React components - HUD
+  - [x] 20.1 Create `src/components/HUD.tsx`
     - Implement HUD component with props for level, score, highScore, lives, timer, muted
     - Display all game information using Tailwind CSS
     - Implement `formatTime(seconds)` helper

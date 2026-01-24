@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+### Documentation Update (2026-01-24)
+
+#### Updated Test Counts
+- Updated test count from 253 to 269 passing tests across all documentation
+- All tests passing at 100% pass rate
+- 18 test suites covering all implemented modules
+
+#### Documentation Files Updated
+- **README.md** - Updated test badge to show 269 passing tests
+- **docs/testing.md** - Updated test count and suite descriptions
+- **.kiro/steering/product.md** - Updated test coverage statistics
+
+#### Test Suite Breakdown
+- Test Setup: 5 tests
+- Levels: 28 tests
+- State Management: 18 tests
+- Physics: 16 tests
+- Animation: 22 tests
+- Error Handling: 29 tests
+- Digging: 16 tests
+- AI: 14 tests
+- Rules: 13 tests
+- Input: 21 tests
+- Storage: 15 tests
+- Sprites: 8 tests
+- Audio: 11 tests
+- Particles: 15 tests
+- Rendering: 10 tests
+- Engine: 8 tests
+- **Total: 269 tests**
+
 ### Added - AI and Game Rules Systems (2026-01-24)
 
 #### New Modules
