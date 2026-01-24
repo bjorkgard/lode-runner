@@ -298,8 +298,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that failed audio load doesn't crash game
     - _Requirements: 20.2_
 
-- [ ] 14. Sprite and animation system
-  - [ ] 14.1 Create `src/game/sprites.ts` with sprite functions
+- [x] 14. Sprite and animation system
+  - [x] 14.1 Create `src/game/sprites.ts` with sprite functions
     - Implement `loadSpriteSheet(path, frameWidth, frameHeight)` function
     - Implement `loadSprites()` async function
     - Define ANIMATIONS object with player and enemy animations
@@ -307,7 +307,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Add error handling for sprite load failures
     - _Requirements: 14.3, 14.6, 20.3_
   
-  - [ ] 14.2 Write property test for sprite load failure
+  - [x] 14.2 Write property test for sprite load failure
     - **Property 45: Sprite Load Failure Resilience**
     - **Validates: Requirements 20.3**
     - Test that failed sprite load doesn't crash rendering

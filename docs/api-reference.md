@@ -430,6 +430,144 @@ saveAudioSettings(settings: AudioSettings): void
 loadAudioSettings(): AudioSettings
 ```
 
+## Sprite System API
+
+Functions for loading and managing sprite sheets and animations (implemented):
+
+### loadSpriteSheet
+
+```typescript
+/**
+ * Loads a single sprite sheet from a file path.
+ * Creates an HTMLImageElement and waits for it to load.
+ * 
+ * @param path - Path to the sprite sheet image file
+ * @param frameWidth - Width of a single frame in pixels
+ * @param frameHeight - Height of a single frame in pixels
+ * @returns Promise that resolves to a SpriteSheet object
+ * @throws Error if image fails to load
+ * 
+ * @example
+ * const playerSheet = await loadSpriteSheet('/assets/sprites/player.png', 16, 16);
+ */
+loadSpriteSheet(
+  path: string,
+  frameWidth: number,
+  frameHeight: number
+): Promise<SpriteSheet>
+```
+
+### loadSprites
+
+```typescript
+/**
+ * Loads all sprite sheets required for the game.
+ * Attempts to load player, enemy, and tile sprite sheets.
+ * 
+ * If loading fails, sets spriteSheets to null to enable fallback rendering.
+ * The game will continue to function with colored rectangles instead of sprites.
+ * 
+ * @returns Promise that resolves when all sprites are loaded (or fails gracefully)
+ * 
+ * @example
+ * await loadSprites();
+ * if (getSpriteSheets()) {
+ *   // Sprites loaded successfully
+ * } else {
+ *   // Using fallback rendering
+ * }
+ */
+loadSprites(): Promise<void>
+```
+
+### getSpriteSheets
+
+```typescript
+/**
+ * Gets the currently loaded sprite sheets.
+ * Returns null if sprites failed to load or haven't been loaded yet.
+ * 
+ * @returns The loaded sprite sheets, or null if unavailable
+ * 
+ * @example
+ * const sheets = getSpriteSheets();
+ * if (sheets) {
+ *   renderSprite(ctx, sheets.player, 0, x, y);
+ * } else {
+ *   renderFallbackRect(ctx, x, y);
+ * }
+ */
+getSpriteSheets(): SpriteSheets | null
+```
+
+### resetSpriteSheets
+
+```typescript
+/**
+ * Resets the sprite sheets to null.
+ * Useful for testing or forcing a reload.
+ * 
+ * @example
+ * resetSpriteSheets();
+ * await loadSprites(); // Reload sprites
+ */
+resetSpriteSheets(): void
+```
+
+### getAnimations
+
+```typescript
+/**
+ * Gets animation definitions for a specific entity type.
+ * 
+ * @param entityType - Type of entity ('player' or 'enemy')
+ * @returns Record of animation names to Animation definitions
+ * 
+ * @example
+ * const playerAnims = getAnimations('player');
+ * const runAnim = playerAnims.run;
+ */
+getAnimations(entityType: 'player' | 'enemy'): Record<string, Animation>
+```
+
+### ANIMATIONS
+
+```typescript
+/**
+ * Collection of all animation definitions.
+ * Organized by entity type (player, enemy).
+ */
+const ANIMATIONS: {
+  player: {
+    idle: Animation;
+    run: Animation;
+    climb: Animation;
+    fall: Animation;
+    dig: Animation;
+  };
+  enemy: {
+    run: Animation;
+    climb: Animation;
+    fall: Animation;
+    trapped: Animation;
+  };
+}
+```
+
+### SpriteSheets Interface
+
+```typescript
+/**
+ * Collection of all loaded sprite sheets.
+ * Null if sprites failed to load (triggers fallback rendering).
+ */
+interface SpriteSheets {
+  player: SpriteSheet;
+  enemy: SpriteSheet;
+  tiles: SpriteSheet;
+}
+```
+
 ## Input API
 
 Functions for handling user input (implemented):

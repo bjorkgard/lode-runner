@@ -252,3 +252,40 @@ const localStorageMock = (() => {
 Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
 });
+
+/**
+ * Mock Image API implementation.
+ * 
+ * Provides a mock Image constructor for testing sprite loading
+ * without actual image files.
+ * 
+ * @class MockImage
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement}
+ */
+class MockImage {
+  /** Image source URL */
+  src = '';
+  
+  /** Image width */
+  width = 16;
+  
+  /** Image height */
+  height = 16;
+  
+  /** Onload event handler */
+  onload: (() => void) | null = null;
+  
+  /** Onerror event handler */
+  onerror: (() => void) | null = null;
+  
+  /** Mock event listener registration */
+  addEventListener = vi.fn();
+  
+  /** Mock event listener removal */
+  removeEventListener = vi.fn();
+}
+
+/**
+ * Replace global Image constructor with mock implementation.
+ */
+(globalThis as any).Image = MockImage as any;
