@@ -441,15 +441,15 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Add any custom global styles
     - _Requirements: 16.6_
 
-- [ ] 24. Asset creation and integration
-  - [ ] 24.1 Create placeholder sprite sheets
+- [x] 24. Asset creation and integration
+  - [x] 24.1 Create placeholder sprite sheets
     - Create `public/assets/sprites/player.png` (16x16 frames)
     - Create `public/assets/sprites/enemy.png` (16x16 frames)
     - Create `public/assets/sprites/tiles.png` (16x16 frames)
     - Use simple colored rectangles as placeholders
     - _Requirements: 14.6_
   
-  - [ ] 24.2 Create placeholder sound effects
+  - [x] 24.2 Create placeholder sound effects
     - Create `public/assets/sfx/dig.mp3`
     - Create `public/assets/sfx/gold.mp3`
     - Create `public/assets/sfx/death.mp3`

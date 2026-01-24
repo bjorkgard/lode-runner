@@ -122,14 +122,46 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
 - **Level Completion**: Remaining 90 levels (task 25)
 - **Final Testing**: Integration tests and manual testing (tasks 26-27)
 
-### In Progress 🚧
-- **Asset Creation**: Sprite sheets and sound effects (task 24)
+## JSDoc Documentation
 
-### Planned 📋
-- **React Integration**: Complete App.tsx integration with all components
-- **Asset Creation**: Sprite sheets and sound effects
-- **Level Completion**: Remaining 90 levels
-- **Final Testing**: Integration tests and manual testing
+All public APIs are documented with comprehensive JSDoc comments including:
+- Function/class descriptions
+- Parameter types and descriptions
+- Return value descriptions
+- Usage examples where appropriate
+- Error handling notes
+
+### Documented Modules
+
+**Game Engine Layer**:
+- `engine.ts` - GameEngine class with full API documentation
+- `state.ts` - State management functions
+- `rules.ts` - Game rules and win/loss conditions
+- `physics.ts` - Movement and collision detection
+- `digging.ts` - Hole creation and regeneration
+- `ai.ts` - Enemy pathfinding and behavior
+- `levels.ts` - Level data and loading
+- `types.ts` - Type definitions with descriptions
+- `constants.ts` - Game constants with explanations
+
+**Rendering & Effects Layer**:
+- `render.ts` - Canvas rendering functions
+- `sprites.ts` - Sprite loading and animation
+- `particles.ts` - Particle system with object pooling
+
+**Infrastructure Layer**:
+- `input.ts` - Keyboard and touch input handling
+- `audio.ts` - AudioManager class with full API
+- `storage.ts` - localStorage persistence functions
+
+**React Components**:
+- `CanvasGame.tsx` - Canvas wrapper component
+- `HUD.tsx` - Heads-up display component
+- `Menu.tsx` - Menu screens component
+- `MobileControls.tsx` - Touch controls component
+
+**Test Infrastructure**:
+- `setup.ts` - Comprehensive test setup documentation
 
 ## Quick Start
 
