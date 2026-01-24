@@ -15,16 +15,16 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import fc from 'fast-check';
 import {
-  getSpriteSheets,
-  resetSpriteSheets,
-  getAnimations,
+  SpriteManager,
   ANIMATIONS
 } from './sprites';
 
 describe('Sprite Loading System', () => {
+  let spriteManager: SpriteManager;
+  
   beforeEach(() => {
-    // Reset sprite sheets before each test to ensure clean state
-    resetSpriteSheets();
+    // Create a fresh sprite manager before each test
+    spriteManager = new SpriteManager();
   });
 
   describe('getSpriteSheets', () => {
@@ -34,7 +34,7 @@ describe('Sprite Loading System', () => {
      * detect when sprites haven't been loaded yet.
      */
     test('should return null before sprites are loaded', () => {
-      const sheets = getSpriteSheets();
+      const sheets = spriteManager.getSpriteSheets();
       expect(sheets).toBeNull();
     });
   });
@@ -45,7 +45,7 @@ describe('Sprite Loading System', () => {
      * Player requires: idle, run, climb, fall, and dig animations.
      */
     test('should return player animations', () => {
-      const anims = getAnimations('player');
+      const anims = spriteManager.getAnimations('player');
       expect(anims).toBe(ANIMATIONS.player);
       expect(anims.idle).toBeDefined();
       expect(anims.run).toBeDefined();
@@ -59,7 +59,7 @@ describe('Sprite Loading System', () => {
      * Enemy requires: run, climb, fall, and trapped animations.
      */
     test('should return enemy animations', () => {
-      const anims = getAnimations('enemy');
+      const anims = spriteManager.getAnimations('enemy');
       expect(anims).toBe(ANIMATIONS.enemy);
       expect(anims.run).toBeDefined();
       expect(anims.climb).toBeDefined();
@@ -123,8 +123,10 @@ describe('Sprite Loading System', () => {
  * - Multiple resets don't break the system
  */
 describe('Property-Based Tests', () => {
+  let spriteManager: SpriteManager;
+  
   beforeEach(() => {
-    resetSpriteSheets();
+    spriteManager = new SpriteManager();
   });
 
   /**
@@ -147,17 +149,17 @@ describe('Property-Based Tests', () => {
       fc.property(
         fc.boolean(), // Arbitrary boolean to generate test cases
         () => {
-          // Reset to ensure clean state
-          resetSpriteSheets();
+          // Create fresh manager to ensure clean state
+          const manager = new SpriteManager();
           
           // The core property: the system should be functional
           // regardless of whether sprites are loaded or not
           
           // getSpriteSheets should never throw
-          expect(() => getSpriteSheets()).not.toThrow();
+          expect(() => manager.getSpriteSheets()).not.toThrow();
           
           // The result can be null (not loaded) or an object (loaded)
-          const sheets = getSpriteSheets();
+          const sheets = manager.getSpriteSheets();
           expect(sheets === null || typeof sheets === 'object').toBe(true);
           
           // Rendering code can safely check: if (sheets) { use sprites } else { use fallback }
@@ -165,13 +167,13 @@ describe('Property-Based Tests', () => {
           expect(typeof canRender).toBe('boolean');
           
           // System functions should work regardless of sprite load state
-          expect(() => getAnimations('player')).not.toThrow();
-          expect(() => getAnimations('enemy')).not.toThrow();
-          expect(() => resetSpriteSheets()).not.toThrow();
+          expect(() => manager.getAnimations('player')).not.toThrow();
+          expect(() => manager.getAnimations('enemy')).not.toThrow();
+          expect(() => manager.reset()).not.toThrow();
           
           // Animation data should always be available
-          const playerAnims = getAnimations('player');
-          const enemyAnims = getAnimations('enemy');
+          const playerAnims = manager.getAnimations('player');
+          const enemyAnims = manager.getAnimations('enemy');
           expect(playerAnims).toBeDefined();
           expect(enemyAnims).toBeDefined();
           expect(playerAnims.idle).toBeDefined();
@@ -195,23 +197,25 @@ describe('Property-Based Tests', () => {
    * This ensures the system can be safely reinitialized or reset
    * during testing, error recovery, or asset reloading.
    */
-  test('Property 45: resetSpriteSheets always succeeds', () => {
+  test('Property 45: reset always succeeds', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 0, max: 10 }), // Number of times to reset
         (resetCount) => {
+          const manager = new SpriteManager();
+          
           // Resetting multiple times should never throw
           for (let i = 0; i < resetCount; i++) {
-            expect(() => resetSpriteSheets()).not.toThrow();
+            expect(() => manager.reset()).not.toThrow();
           }
           
           // After resetting, sheets should be null
-          const sheets = getSpriteSheets();
+          const sheets = manager.getSpriteSheets();
           expect(sheets).toBeNull();
           
           // System should still be functional
-          expect(() => getAnimations('player')).not.toThrow();
-          expect(() => getAnimations('enemy')).not.toThrow();
+          expect(() => manager.getAnimations('player')).not.toThrow();
+          expect(() => manager.getAnimations('enemy')).not.toThrow();
         }
       ),
       { numRuns: 100 }
@@ -236,10 +240,12 @@ describe('Property-Based Tests', () => {
       fc.property(
         fc.constantFrom('player', 'enemy'), // Entity type
         (entityType) => {
-          // Getting animations should never throw
-          expect(() => getAnimations(entityType as 'player' | 'enemy')).not.toThrow();
+          const manager = new SpriteManager();
           
-          const anims = getAnimations(entityType as 'player' | 'enemy');
+          // Getting animations should never throw
+          expect(() => manager.getAnimations(entityType as 'player' | 'enemy')).not.toThrow();
+          
+          const anims = manager.getAnimations(entityType as 'player' | 'enemy');
           
           // Animations should always be defined
           expect(anims).toBeDefined();

@@ -370,7 +370,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test new game state transition
     - _Requirements: 17.3, 17.4, 17.5_
 
-- [ ] 18. Checkpoint - Engine complete
+- [x] 18. Checkpoint - Engine complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 19. React components - CanvasGame

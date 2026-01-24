@@ -3,16 +3,17 @@
 import type { GameStateData } from './types';
 import { GameState } from './types';
 import { createInitialState, resetLevel } from './state';
-import { updateInput, initInput, setTouchInput } from './input';
+import { InputManager } from './input';
 import { updatePhysics } from './physics';
 import { updateDigging } from './digging';
 import { updateAI } from './ai';
 import { updateRules } from './rules';
-import { initParticleSystem, updateParticles } from './particles';
+import { ParticleManager } from './particles';
 import { renderGame } from './render';
-import { initAudio } from './audio';
-import { loadSprites } from './sprites';
+import { AudioManager } from './audio';
+import { SpriteManager } from './sprites';
 import { loadHighScore, saveHighScore, resetHighScore as resetStoredHighScore } from './storage';
+import { DEATH_RESPAWN_DELAY } from './constants';
 
 /**
  * Callback function types for UI updates
@@ -29,14 +30,21 @@ type GameStateCallback = (state: GameState) => void;
  * - Update phase: Processes input, physics, AI, rules
  * - Render phase: Draws game state to canvas
  * - Callbacks: Notifies React components of state changes
+ * - Managers: Encapsulated subsystems (input, audio, sprites, particles)
  */
 export class GameEngine {
   private state: GameStateData;
-  private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private lastFrameTime: number = 0;
   private animationFrameId: number | null = null;
   private isInitialized: boolean = false;
+  
+  // Manager instances
+  private inputManager: InputManager;
+  private audioManager: AudioManager;
+  private spriteManager: SpriteManager;
+  private particleManager: ParticleManager;
+  private cleanupInput: (() => void) | null = null;
   
   // Callbacks for UI updates
   public onScoreChange: StateCallback | null = null;
@@ -51,7 +59,6 @@ export class GameEngine {
    * @param canvas - The HTML canvas element to render the game on
    */
   constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
     const ctx = canvas.getContext('2d');
     
     if (!ctx) {
@@ -60,6 +67,12 @@ export class GameEngine {
     
     this.ctx = ctx;
     this.state = createInitialState();
+    
+    // Initialize managers
+    this.inputManager = new InputManager();
+    this.audioManager = new AudioManager();
+    this.spriteManager = new SpriteManager();
+    this.particleManager = new ParticleManager();
     
     // Initialize all systems asynchronously
     this.initialize();
@@ -71,14 +84,22 @@ export class GameEngine {
    */
   private async initialize(): Promise<void> {
     try {
-      // Initialize systems
-      initInput();
-      initParticleSystem();
+      // Clean up any existing input listeners before initializing new ones
+      if (this.cleanupInput) {
+        this.cleanupInput();
+        this.cleanupInput = null;
+      }
+      
+      // Initialize input system and store cleanup function
+      this.cleanupInput = this.inputManager.init();
+      
+      // Initialize particle system
+      this.particleManager.init();
       
       // Load assets (async)
       await Promise.all([
-        loadSprites(),
-        initAudio()
+        this.spriteManager.init(),
+        this.audioManager.init()
       ]);
       
       // Load high score from storage
@@ -106,12 +127,18 @@ export class GameEngine {
   
   /**
    * Stops the game loop.
-   * Cancels the animation frame request.
+   * Cancels the animation frame request and cleans up resources.
    */
   public stop(): void {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
+    }
+    
+    // Clean up input event listeners
+    if (this.cleanupInput) {
+      this.cleanupInput();
+      this.cleanupInput = null;
     }
   }
   
@@ -137,6 +164,7 @@ export class GameEngine {
   /**
    * Updates all game systems for the current frame.
    * Only updates game logic when in Playing state.
+   * Handles death timer and respawn logic.
    * 
    * @param deltaTime - Time elapsed since last frame in seconds
    */
@@ -150,26 +178,45 @@ export class GameEngine {
     const prevGameState = this.state.gameState;
     
     // Always process input (for pause toggle)
-    this.state = updateInput(this.state, deltaTime);
+    this.state = this.inputManager.updateInput(this.state, deltaTime);
     
     // Only update game logic when playing
     if (this.state.gameState === GameState.Playing) {
-      this.state = updatePhysics(this.state, deltaTime);
-      this.state = updateDigging(this.state, deltaTime);
-      this.state = updateAI(this.state, deltaTime);
-      this.state = updateRules(this.state, deltaTime);
-      updateParticles(deltaTime);
-      
-      // Check if player died and needs respawn
-      if (this.state.player.isDead && this.state.lives > 0 && this.state.gameState === GameState.Playing) {
-        // Schedule level restart after a short delay
-        setTimeout(() => {
-          if (this.state.player.isDead && this.state.lives > 0) {
-            this.state = resetLevel(this.state);
-            this.state.player.isDead = false;
-          }
-        }, 2000);
+      // Handle death timer and respawn
+      if (this.state.player.isDead && this.state.lives > 0) {
+        const newDeathTimer = this.state.player.deathTimer + deltaTime;
+        
+        if (newDeathTimer >= DEATH_RESPAWN_DELAY) {
+          // Death delay elapsed, respawn player
+          this.state = resetLevel(this.state);
+          this.state = {
+            ...this.state,
+            player: {
+              ...this.state.player,
+              isDead: false,
+              deathTimer: -1
+            }
+          };
+        } else {
+          // Update death timer
+          this.state = {
+            ...this.state,
+            player: {
+              ...this.state.player,
+              deathTimer: newDeathTimer
+            }
+          };
+        }
+      } else if (!this.state.player.isDead) {
+        // Normal gameplay updates (only when player is alive)
+        this.state = updatePhysics(this.state, deltaTime);
+        this.state = updateDigging(this.state, deltaTime);
+        this.state = updateAI(this.state, deltaTime);
+        this.state = updateRules(this.state, deltaTime);
       }
+      
+      // Always update particles
+      this.particleManager.update(deltaTime);
     }
     
     // Update high score if current score exceeds it
@@ -199,7 +246,7 @@ export class GameEngine {
   private render(): void {
     if (!this.isInitialized) return;
     
-    renderGame(this.state, this.ctx);
+    renderGame(this.state, this.ctx, this.spriteManager, this.particleManager);
   }
   
   /**
@@ -266,14 +313,14 @@ export class GameEngine {
   }
   
   /**
-   * Forwards touch input to the input system.
+   * Forwards touch input to the input manager.
    * Allows mobile controls to simulate keyboard input.
    * 
    * @param direction - Input direction ('left', 'right', 'up', 'down', 'digLeft', 'digRight')
    * @param pressed - Whether the input is pressed (true) or released (false)
    */
   public handleTouchInput(direction: string, pressed: boolean): void {
-    setTouchInput(direction, pressed);
+    this.inputManager.setTouchInput(direction, pressed);
   }
   
   /**
@@ -284,5 +331,31 @@ export class GameEngine {
    */
   public getState(): GameStateData {
     return this.state;
+  }
+  
+  /**
+   * Gets the audio manager instance.
+   * Useful for UI components that need to control audio.
+   * 
+   * @returns Audio manager instance
+   */
+  public getAudioManager(): AudioManager {
+    return this.audioManager;
+  }
+  
+  /**
+   * Cleans up all resources and event listeners.
+   * Should be called when the engine is no longer needed (e.g., component unmount).
+   * This is automatically called by stop(), but can be called explicitly for cleanup.
+   */
+  public cleanup(): void {
+    // Stop the game loop
+    this.stop();
+    
+    // Reset input state
+    this.inputManager.reset();
+    
+    // Clear particles
+    this.particleManager.clear();
   }
 }

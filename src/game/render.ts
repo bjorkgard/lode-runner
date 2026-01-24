@@ -1,10 +1,9 @@
 // Rendering system for Lode Runner game using Canvas 2D API
 
-import type { GameStateData, Player, Enemy, Hole, SpriteSheet } from './types';
+import type { GameStateData, Player, Enemy, Hole } from './types';
 import { TileType } from './types';
 import { TILE_SIZE } from './constants';
-import { getSpriteSheets, getAnimations } from './sprites';
-import { renderParticles } from './particles';
+import type { SpriteManager } from './sprites';
 
 /**
  * Main rendering function that draws the entire game state to the canvas.
@@ -20,9 +19,16 @@ import { renderParticles } from './particles';
  * 
  * @param state - Current game state containing all entities and tiles
  * @param ctx - Canvas 2D rendering context to draw on
+ * @param spriteManager - Sprite manager instance for accessing sprite sheets
+ * @param particleManager - Particle manager instance for rendering particles
  */
-export function renderGame(state: GameStateData, ctx: CanvasRenderingContext2D): void {
-  const spriteSheets = getSpriteSheets();
+export function renderGame(
+  state: GameStateData,
+  ctx: CanvasRenderingContext2D,
+  spriteManager: SpriteManager,
+  particleManager: { render: (ctx: CanvasRenderingContext2D) => void }
+): void {
+  const spriteSheets = spriteManager.getSpriteSheets();
   
   // Disable image smoothing for pixel-perfect rendering
   ctx.imageSmoothingEnabled = false;
@@ -47,15 +53,15 @@ export function renderGame(state: GameStateData, ctx: CanvasRenderingContext2D):
   renderHoles(state.holes, ctx);
   
   // Render gold particles
-  renderParticles(ctx);
+  particleManager.render(ctx);
   
   // Render enemies
   for (const enemy of state.enemies) {
-    renderEnemy(enemy, ctx, spriteSheets);
+    renderEnemy(enemy, ctx, spriteSheets, spriteManager);
   }
   
   // Render player (always on top)
-  renderPlayer(state.player, ctx, spriteSheets);
+  renderPlayer(state.player, ctx, spriteSheets, spriteManager);
   
   // Restore transform
   ctx.restore();
@@ -73,7 +79,7 @@ export function renderGame(state: GameStateData, ctx: CanvasRenderingContext2D):
 export function renderTiles(
   tiles: TileType[][],
   ctx: CanvasRenderingContext2D,
-  spriteSheets: ReturnType<typeof getSpriteSheets>
+  spriteSheets: ReturnType<SpriteManager['getSpriteSheets']>
 ): void {
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
@@ -107,14 +113,16 @@ export function renderTiles(
  * @param player - Player entity with position and animation state
  * @param ctx - Canvas 2D rendering context
  * @param spriteSheets - Loaded sprite sheets, or null for fallback rendering
+ * @param spriteManager - Sprite manager for accessing animations
  */
 export function renderPlayer(
   player: Player,
   ctx: CanvasRenderingContext2D,
-  spriteSheets: ReturnType<typeof getSpriteSheets>
+  spriteSheets: ReturnType<SpriteManager['getSpriteSheets']>,
+  spriteManager: SpriteManager
 ): void {
   if (spriteSheets) {
-    const animations = getAnimations('player');
+    const animations = spriteManager.getAnimations('player');
     const anim = animations[player.animation.currentAnimation];
     const frameIndex = anim.frames[player.animation.currentFrame];
     
@@ -145,14 +153,16 @@ export function renderPlayer(
  * @param enemy - Enemy entity with position and animation state
  * @param ctx - Canvas 2D rendering context
  * @param spriteSheets - Loaded sprite sheets, or null for fallback rendering
+ * @param spriteManager - Sprite manager for accessing animations
  */
 export function renderEnemy(
   enemy: Enemy,
   ctx: CanvasRenderingContext2D,
-  spriteSheets: ReturnType<typeof getSpriteSheets>
+  spriteSheets: ReturnType<SpriteManager['getSpriteSheets']>,
+  spriteManager: SpriteManager
 ): void {
   if (spriteSheets) {
-    const animations = getAnimations('enemy');
+    const animations = spriteManager.getAnimations('enemy');
     const anim = animations[enemy.animation.currentAnimation];
     const frameIndex = anim.frames[enemy.animation.currentFrame];
     
@@ -190,7 +200,7 @@ export function renderEnemy(
  */
 export function renderSprite(
   ctx: CanvasRenderingContext2D,
-  sheet: SpriteSheet,
+  sheet: { image: HTMLImageElement; frameWidth: number; frameHeight: number },
   frameIndex: number,
   x: number,
   y: number

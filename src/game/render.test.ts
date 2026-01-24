@@ -26,7 +26,8 @@ import {
 import { TileType, GameState } from './types';
 import type { GameStateData, Player, Enemy, Hole, SpriteSheet } from './types';
 import { TILE_SIZE } from './constants';
-import { resetSpriteSheets } from './sprites';
+import { SpriteManager } from './sprites';
+import { ParticleManager } from './particles';
 import { AnimationState } from './animation';
 
 /**
@@ -94,6 +95,7 @@ function createTestPlayer(overrides: Partial<Player> = {}): Player {
     isOnRope: false,
     lives: 3,
     isDead: false,
+    deathTimer: -1,
     isDigging: false,
     digDirection: null,
     ...overrides
@@ -134,8 +136,13 @@ function createMockSpriteSheet(): SpriteSheet {
 }
 
 describe('Rendering System', () => {
+  let spriteManager: SpriteManager;
+  let particleManager: ParticleManager;
+  
   beforeEach(() => {
-    resetSpriteSheets();
+    spriteManager = new SpriteManager();
+    particleManager = new ParticleManager();
+    particleManager.init();
   });
 
   describe('renderGame', () => {
@@ -147,7 +154,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const state = createTestState();
       
-      renderGame(state, ctx);
+      renderGame(state, ctx, spriteManager, particleManager);
       
       expect(ctx.imageSmoothingEnabled).toBe(false);
     });
@@ -159,12 +166,12 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const state = createTestState();
       
-      renderGame(state, ctx);
+      renderGame(state, ctx, spriteManager, particleManager);
       
       // Check that fillRect was called with full canvas dimensions
       // (fillStyle may change during rendering, so we just check the call)
-      const fillRectCalls = ctx._calls.filter(c => c.method === 'fillRect');
-      const clearCall = fillRectCalls.find(c => 
+      const fillRectCalls = (ctx as any)._calls.filter((c: any) => c.method === 'fillRect');
+      const clearCall = fillRectCalls.find((c: any) => 
         c.args[0] === 0 && c.args[1] === 0 && c.args[2] === 448 && c.args[3] === 256
       );
       expect(clearCall).toBeDefined();
@@ -177,7 +184,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const state = createTestState();
       
-      renderGame(state, ctx);
+      renderGame(state, ctx, spriteManager, particleManager);
       
       expect(ctx.save).toHaveBeenCalled();
       expect(ctx.scale).toHaveBeenCalled();
@@ -197,7 +204,7 @@ describe('Rendering System', () => {
         holes: [{ pos: { x: 5, y: 6 }, regenerationTimer: 2.5, maxRegenTime: 5 }]
       });
       
-      renderGame(state, ctx);
+      renderGame(state, ctx, spriteManager, particleManager);
       
       // Should have drawn something (tiles, holes, enemies, player)
       expect(ctx.fillRect).toHaveBeenCalled();
@@ -217,7 +224,7 @@ describe('Rendering System', () => {
       renderTiles(tiles, ctx, null);
       
       // Should only clear canvas, not draw any tiles
-      const fillRectCalls = ctx._calls.filter(c => c.method === 'fillRect');
+      const fillRectCalls = (ctx as any)._calls.filter((c: any) => c.method === 'fillRect');
       expect(fillRectCalls.length).toBe(0);
     });
 
@@ -235,7 +242,7 @@ describe('Rendering System', () => {
       renderTiles(tiles, ctx, null);
       
       // Should draw at least 2 tiles (brick and steel)
-      const fillRectCalls = ctx._calls.filter(c => c.method === 'fillRect');
+      const fillRectCalls = (ctx as any)._calls.filter((c: any) => c.method === 'fillRect');
       expect(fillRectCalls.length).toBeGreaterThanOrEqual(2);
     });
 
@@ -274,7 +281,7 @@ describe('Rendering System', () => {
       renderTiles(tiles, ctx, null);
       
       // Should use fillRect for fallback rendering
-      const fillRectCalls = ctx._calls.filter(c => c.method === 'fillRect');
+      const fillRectCalls = (ctx as any)._calls.filter((c: any) => c.method === 'fillRect');
       expect(fillRectCalls.length).toBeGreaterThan(0);
     });
   });
@@ -292,7 +299,7 @@ describe('Rendering System', () => {
         tiles: createMockSpriteSheet()
       };
       
-      renderPlayer(player, ctx, mockSheets);
+      renderPlayer(player, ctx, mockSheets, spriteManager);
       
       expect(ctx.drawImage).toHaveBeenCalled();
     });
@@ -304,7 +311,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const player = createTestPlayer({ pos: { x: 5, y: 5 } });
       
-      renderPlayer(player, ctx, null);
+      renderPlayer(player, ctx, null, spriteManager);
       
       // Should draw blue rectangle for player
       expect(ctx.fillStyle).toBe('#0000FF');
@@ -323,7 +330,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const player = createTestPlayer({ pos: { x: 10, y: 8 } });
       
-      renderPlayer(player, ctx, null);
+      renderPlayer(player, ctx, null, spriteManager);
       
       expect(ctx.fillRect).toHaveBeenCalledWith(
         10 * TILE_SIZE,
@@ -347,7 +354,7 @@ describe('Rendering System', () => {
         tiles: createMockSpriteSheet()
       };
       
-      renderEnemy(enemy, ctx, mockSheets);
+      renderEnemy(enemy, ctx, mockSheets, spriteManager);
       
       expect(ctx.drawImage).toHaveBeenCalled();
     });
@@ -359,7 +366,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const enemy = createTestEnemy({ pos: { x: 10, y: 10 } });
       
-      renderEnemy(enemy, ctx, null);
+      renderEnemy(enemy, ctx, null, spriteManager);
       
       // Should draw red rectangle for enemy
       expect(ctx.fillStyle).toBe('#FF0000');
@@ -378,7 +385,7 @@ describe('Rendering System', () => {
       const ctx = createMockContext();
       const enemy = createTestEnemy({ pos: { x: 15, y: 12 } });
       
-      renderEnemy(enemy, ctx, null);
+      renderEnemy(enemy, ctx, null, spriteManager);
       
       expect(ctx.fillRect).toHaveBeenCalledWith(
         15 * TILE_SIZE,
@@ -515,8 +522,13 @@ describe('Rendering System', () => {
  * arbitrary game states without crashing or throwing errors.
  */
 describe('Property-Based Tests', () => {
+  let spriteManager: SpriteManager;
+  let particleManager: ParticleManager;
+  
   beforeEach(() => {
-    resetSpriteSheets();
+    spriteManager = new SpriteManager();
+    particleManager = new ParticleManager();
+    particleManager.init();
   });
 
   /**
@@ -551,13 +563,13 @@ describe('Property-Based Tests', () => {
           });
           
           // None of these should throw
-          expect(() => renderGame(state, ctx)).not.toThrow();
+          expect(() => renderGame(state, ctx, spriteManager, particleManager)).not.toThrow();
           expect(() => renderTiles(state.tiles, ctx, null)).not.toThrow();
-          expect(() => renderPlayer(state.player, ctx, null)).not.toThrow();
+          expect(() => renderPlayer(state.player, ctx, null, spriteManager)).not.toThrow();
           expect(() => renderHoles(state.holes, ctx)).not.toThrow();
           
           for (const enemy of enemies) {
-            expect(() => renderEnemy(enemy, ctx, null)).not.toThrow();
+            expect(() => renderEnemy(enemy, ctx, null, spriteManager)).not.toThrow();
           }
         }
       ),

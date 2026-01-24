@@ -31,6 +31,12 @@ export const ENEMY_SPEED = 80; // pixels per second
 export const HOLE_REGEN_TIME = 5; // seconds
 
 /**
+ * Time in seconds to wait after player death before respawning.
+ * Gives player time to see the death animation.
+ */
+export const DEATH_RESPAWN_DELAY = 2; // seconds
+
+/**
  * Points awarded for collecting a single gold piece.
  */
 export const GOLD_POINTS = 100; // points per gold

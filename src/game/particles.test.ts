@@ -2,27 +2,22 @@
 
 import { describe, test, expect, beforeEach } from 'vitest';
 import fc from 'fast-check';
-import {
-  initParticleSystem,
-  createGoldParticles,
-  updateParticles,
-  renderParticles,
-  getActiveParticleCount,
-  getPoolSize,
-  clearParticles
-} from './particles';
+import { ParticleManager } from './particles';
 import type { Position } from './types';
 
 describe('Particle System', () => {
+  let particleManager: ParticleManager;
+  
   beforeEach(() => {
     // Initialize particle system before each test
-    initParticleSystem();
+    particleManager = new ParticleManager();
+    particleManager.init();
   });
 
   describe('Initialization', () => {
     test('should initialize with empty active particles and full pool', () => {
-      expect(getActiveParticleCount()).toBe(0);
-      expect(getPoolSize()).toBe(100);
+      expect(particleManager.getActiveParticleCount()).toBe(0);
+      expect(particleManager.getPoolSize()).toBe(100);
     });
   });
 
@@ -38,18 +33,18 @@ describe('Particle System', () => {
           }),
           (tilePos: Position) => {
             // Clear any existing particles
-            clearParticles();
+            particleManager.clear();
             
             // Create gold particles at the position
-            createGoldParticles(tilePos);
+            particleManager.createGoldParticles(tilePos);
             
             // Should have created 8-12 particles
-            const particleCount = getActiveParticleCount();
+            const particleCount = particleManager.getActiveParticleCount();
             expect(particleCount).toBeGreaterThanOrEqual(8);
             expect(particleCount).toBeLessThanOrEqual(12);
             
             // Pool should have fewer particles
-            const poolSize = getPoolSize();
+            const poolSize = particleManager.getPoolSize();
             expect(poolSize).toBe(100 - particleCount);
           }
         ),
@@ -59,20 +54,20 @@ describe('Particle System', () => {
 
     test('should create particles with valid properties', () => {
       const tilePos = { x: 5, y: 5 };
-      createGoldParticles(tilePos);
+      particleManager.createGoldParticles(tilePos);
       
       // Particles should be created
-      expect(getActiveParticleCount()).toBeGreaterThan(0);
+      expect(particleManager.getActiveParticleCount()).toBeGreaterThan(0);
     });
 
     test('should handle pool exhaustion gracefully', () => {
       // Exhaust the pool by creating many particle bursts
       for (let i = 0; i < 20; i++) {
-        createGoldParticles({ x: i, y: i });
+        particleManager.createGoldParticles({ x: i, y: i });
       }
       
       // Should not crash, just stop creating particles when pool is empty
-      expect(getActiveParticleCount()).toBeLessThanOrEqual(100);
+      expect(particleManager.getActiveParticleCount()).toBeLessThanOrEqual(100);
     });
   });
 
@@ -91,17 +86,17 @@ describe('Particle System', () => {
           }),
           ({ tilePos, deltaTime }) => {
             // Clear and create particles
-            clearParticles();
-            createGoldParticles(tilePos);
+            particleManager.clear();
+            particleManager.createGoldParticles(tilePos);
             
-            const initialCount = getActiveParticleCount();
+            const initialCount = particleManager.getActiveParticleCount();
             
             // Update particles for a short time (less than min lifetime of 0.5s)
-            updateParticles(deltaTime);
+            particleManager.update(deltaTime);
             
             // Particles should still be active (not expired yet)
             // since deltaTime < 0.5 and min maxLife is 0.5
-            expect(getActiveParticleCount()).toBe(initialCount);
+            expect(particleManager.getActiveParticleCount()).toBe(initialCount);
           }
         ),
         { numRuns: 100 }
@@ -109,14 +104,14 @@ describe('Particle System', () => {
     });
 
     test('should update particle positions based on velocity', () => {
-      createGoldParticles({ x: 5, y: 5 });
-      const initialCount = getActiveParticleCount();
+      particleManager.createGoldParticles({ x: 5, y: 5 });
+      const initialCount = particleManager.getActiveParticleCount();
       
       // Update particles for a short time
-      updateParticles(0.1);
+      particleManager.update(0.1);
       
       // Particles should still be active (not expired yet)
-      expect(getActiveParticleCount()).toBe(initialCount);
+      expect(particleManager.getActiveParticleCount()).toBe(initialCount);
     });
   });
 
@@ -132,20 +127,20 @@ describe('Particle System', () => {
           }),
           (tilePos: Position) => {
             // Clear and create particles
-            clearParticles();
-            createGoldParticles(tilePos);
+            particleManager.clear();
+            particleManager.createGoldParticles(tilePos);
             
-            const initialCount = getActiveParticleCount();
+            const initialCount = particleManager.getActiveParticleCount();
             expect(initialCount).toBeGreaterThan(0);
             
             // Update particles for longer than max lifetime (1.0 seconds)
-            updateParticles(1.5);
+            particleManager.update(1.5);
             
             // All particles should be expired and removed
-            expect(getActiveParticleCount()).toBe(0);
+            expect(particleManager.getActiveParticleCount()).toBe(0);
             
             // Particles should be returned to pool
-            expect(getPoolSize()).toBe(100);
+            expect(particleManager.getPoolSize()).toBe(100);
           }
         ),
         { numRuns: 100 }
@@ -153,17 +148,17 @@ describe('Particle System', () => {
     });
 
     test('should remove expired particles', () => {
-      createGoldParticles({ x: 5, y: 5 });
-      const initialCount = getActiveParticleCount();
+      particleManager.createGoldParticles({ x: 5, y: 5 });
+      const initialCount = particleManager.getActiveParticleCount();
       
       // Update particles for longer than max lifetime (1.0 seconds)
-      updateParticles(1.5);
+      particleManager.update(1.5);
       
       // All particles should be expired and removed
-      expect(getActiveParticleCount()).toBe(0);
+      expect(particleManager.getActiveParticleCount()).toBe(0);
       
       // Particles should be returned to pool
-      expect(getPoolSize()).toBe(100);
+      expect(particleManager.getPoolSize()).toBe(100);
     });
   });
 
@@ -176,10 +171,10 @@ describe('Particle System', () => {
         fillRect: () => {}
       } as unknown as CanvasRenderingContext2D;
       
-      createGoldParticles({ x: 5, y: 5 });
+      particleManager.createGoldParticles({ x: 5, y: 5 });
       
       // Should not throw
-      expect(() => renderParticles(mockCtx)).not.toThrow();
+      expect(() => particleManager.render(mockCtx)).not.toThrow();
     });
 
     test('should reset global alpha after rendering', () => {
@@ -189,8 +184,8 @@ describe('Particle System', () => {
         fillRect: () => {}
       } as unknown as CanvasRenderingContext2D;
       
-      createGoldParticles({ x: 5, y: 5 });
-      renderParticles(mockCtx);
+      particleManager.createGoldParticles({ x: 5, y: 5 });
+      particleManager.render(mockCtx);
       
       // Global alpha should be reset to 1
       expect(mockCtx.globalAlpha).toBe(1);
@@ -199,13 +194,13 @@ describe('Particle System', () => {
 
   describe('Utility Functions', () => {
     test('should clear all active particles', () => {
-      createGoldParticles({ x: 5, y: 5 });
-      expect(getActiveParticleCount()).toBeGreaterThan(0);
+      particleManager.createGoldParticles({ x: 5, y: 5 });
+      expect(particleManager.getActiveParticleCount()).toBeGreaterThan(0);
       
-      clearParticles();
+      particleManager.clear();
       
-      expect(getActiveParticleCount()).toBe(0);
-      expect(getPoolSize()).toBe(100);
+      expect(particleManager.getActiveParticleCount()).toBe(0);
+      expect(particleManager.getPoolSize()).toBe(100);
     });
   });
 });

@@ -100,6 +100,8 @@ export interface Player extends Entity {
   lives: number;
   /** Whether player is currently dead (triggers respawn or game over) */
   isDead: boolean;
+  /** Time elapsed since death in seconds, or -1 if alive */
+  deathTimer: number;
   /** Whether player is currently performing a dig action */
   isDigging: boolean;
   /** Direction of current dig action, or null if not digging */

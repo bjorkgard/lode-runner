@@ -49,6 +49,7 @@ export function createPlayer(pos: Position): Player {
     isOnRope: false,
     lives: 3,
     isDead: false,
+    deathTimer: -1,
     isDigging: false,
     digDirection: null
   };

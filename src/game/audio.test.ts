@@ -2,7 +2,7 @@
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import fc from 'fast-check';
-import { initAudio, playSound, setMuted, setVolume, toggleMute, getAudioSettings } from './audio';
+import { AudioManager } from './audio';
 import * as storage from './storage';
 
 // Mock localStorage
@@ -49,9 +49,12 @@ class MockAudio {
 global.Audio = MockAudio as any;
 
 describe('Audio System', () => {
+  let audioManager: AudioManager;
+  
   beforeEach(() => {
     localStorageMock.clear();
     vi.clearAllMocks();
+    audioManager = new AudioManager();
   });
 
   describe('Property 29: Mute Toggle', () => {
@@ -60,18 +63,20 @@ describe('Audio System', () => {
         fc.property(
           fc.boolean(),
           (initialMuted) => {
+            const manager = new AudioManager();
+            
             // Set initial muted state
-            setMuted(initialMuted);
+            manager.setMuted(initialMuted);
             
             // Get state before toggle
-            const beforeToggle = getAudioSettings().muted;
+            const beforeToggle = manager.getAudioSettings().muted;
             expect(beforeToggle).toBe(initialMuted);
             
             // Toggle mute
-            toggleMute();
+            manager.toggleMute();
             
             // Get state after toggle
-            const afterToggle = getAudioSettings().muted;
+            const afterToggle = manager.getAudioSettings().muted;
             
             // Verify muted state flipped
             expect(afterToggle).toBe(!beforeToggle);
@@ -88,17 +93,19 @@ describe('Audio System', () => {
           fc.boolean(),
           fc.integer({ min: 1, max: 10 }),
           (initialMuted, toggleCount) => {
+            const manager = new AudioManager();
+            
             // Set initial state
-            setMuted(initialMuted);
+            manager.setMuted(initialMuted);
             
             // Toggle multiple times
             for (let i = 0; i < toggleCount; i++) {
-              toggleMute();
+              manager.toggleMute();
             }
             
             // After even number of toggles, should be back to initial state
             // After odd number of toggles, should be opposite of initial state
-            const finalMuted = getAudioSettings().muted;
+            const finalMuted = manager.getAudioSettings().muted;
             const expectedMuted = toggleCount % 2 === 0 ? initialMuted : !initialMuted;
             
             expect(finalMuted).toBe(expectedMuted);
@@ -115,11 +122,13 @@ describe('Audio System', () => {
         fc.property(
           fc.float({ min: 0, max: 1, noNaN: true }),
           (volume) => {
+            const manager = new AudioManager();
+            
             // Set volume
-            setVolume(volume);
+            manager.setVolume(volume);
             
             // Get audio settings
-            const settings = getAudioSettings();
+            const settings = manager.getAudioSettings();
             
             // Verify volume was set correctly
             expect(settings.volume).toBe(volume);
@@ -134,23 +143,31 @@ describe('Audio System', () => {
         fc.property(
           fc.float({ noNaN: true }),
           (volume) => {
+            const manager = new AudioManager();
+            
             // Set volume (may be outside valid range)
-            setVolume(volume);
+            manager.setVolume(volume);
             
             // Get audio settings
-            const settings = getAudioSettings();
+            const settings = manager.getAudioSettings();
             
             // Verify volume is clamped to [0, 1]
             expect(settings.volume).toBeGreaterThanOrEqual(0);
             expect(settings.volume).toBeLessThanOrEqual(1);
             
             // Verify clamping behavior
+            // Note: Use Math.abs to handle -0 vs +0 edge case
             if (volume < 0) {
-              expect(settings.volume).toBe(0);
+              expect(Math.abs(settings.volume)).toBe(0);
             } else if (volume > 1) {
               expect(settings.volume).toBe(1);
             } else {
-              expect(settings.volume).toBe(volume);
+              // For values in range, allow both -0 and +0 to be treated as 0
+              if (Object.is(volume, -0)) {
+                expect(Math.abs(settings.volume)).toBe(0);
+              } else {
+                expect(settings.volume).toBe(volume);
+              }
             }
           }
         ),
@@ -163,8 +180,10 @@ describe('Audio System', () => {
         fc.property(
           fc.float({ min: 0, max: 1, noNaN: true }),
           (volume) => {
+            const manager = new AudioManager();
+            
             // Set volume
-            setVolume(volume);
+            manager.setVolume(volume);
             
             // Load settings from storage
             const loadedSettings = storage.loadAudioSettings();
@@ -210,18 +229,20 @@ describe('Audio System', () => {
       global.Audio = FailingAudio as any;
       
       try {
+        const manager = new AudioManager();
+        
         // Attempt to initialize audio (should fail gracefully)
-        await initAudio();
+        await manager.init();
         
         // Game should continue - no exception thrown
         expect(true).toBe(true);
         
         // Attempting to play sound should not crash
-        expect(() => playSound('dig')).not.toThrow();
-        expect(() => playSound('goldPickup')).not.toThrow();
-        expect(() => playSound('death')).not.toThrow();
-        expect(() => playSound('levelComplete')).not.toThrow();
-        expect(() => playSound('uiClick')).not.toThrow();
+        expect(() => manager.playSound('dig')).not.toThrow();
+        expect(() => manager.playSound('goldPickup')).not.toThrow();
+        expect(() => manager.playSound('death')).not.toThrow();
+        expect(() => manager.playSound('levelComplete')).not.toThrow();
+        expect(() => manager.playSound('uiClick')).not.toThrow();
       } finally {
         // Restore original Audio
         global.Audio = originalAudio;
@@ -235,12 +256,14 @@ describe('Audio System', () => {
           fc.float({ min: 0, max: 1, noNaN: true }),
           fc.constantFrom('dig', 'goldPickup', 'death', 'levelComplete', 'uiClick'),
           (muted, volume, soundName) => {
+            const manager = new AudioManager();
+            
             // These operations should not crash even if audio failed to load
-            expect(() => setMuted(muted)).not.toThrow();
-            expect(() => setVolume(volume)).not.toThrow();
-            expect(() => toggleMute()).not.toThrow();
-            expect(() => playSound(soundName as any)).not.toThrow();
-            expect(() => getAudioSettings()).not.toThrow();
+            expect(() => manager.setMuted(muted)).not.toThrow();
+            expect(() => manager.setVolume(volume)).not.toThrow();
+            expect(() => manager.toggleMute()).not.toThrow();
+            expect(() => manager.playSound(soundName as any)).not.toThrow();
+            expect(() => manager.getAudioSettings()).not.toThrow();
           }
         ),
         { numRuns: 100 }
@@ -289,16 +312,18 @@ describe('Audio System', () => {
       global.Audio = PartiallyFailingAudio as any;
       
       try {
+        const manager = new AudioManager();
+        
         // Attempt to initialize audio (some files will fail)
-        await initAudio();
+        await manager.init();
         
         // Game should continue - no exception thrown
         expect(true).toBe(true);
         
         // All audio functions should still work
-        expect(() => playSound('dig')).not.toThrow();
-        expect(() => setMuted(true)).not.toThrow();
-        expect(() => setVolume(0.5)).not.toThrow();
+        expect(() => manager.playSound('dig')).not.toThrow();
+        expect(() => manager.setMuted(true)).not.toThrow();
+        expect(() => manager.setVolume(0.5)).not.toThrow();
       } finally {
         global.Audio = originalAudio;
       }

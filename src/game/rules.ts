@@ -108,7 +108,7 @@ export function checkPlayerEnemyCollision(state: GameStateData): GameStateData {
 
 /**
  * Kills the player and decrements lives.
- * If lives remain, schedules level restart.
+ * If lives remain, starts death timer for respawn.
  * If no lives remain, triggers game over.
  * Returns a new state object with player killed.
  * 
@@ -119,12 +119,13 @@ export function killPlayer(state: GameStateData): GameStateData {
   const newLives = state.lives - 1;
   
   if (newLives > 0) {
-    // Player has lives remaining, will restart level
+    // Player has lives remaining, start death timer for respawn
     return {
       ...state,
       player: {
         ...state.player,
-        isDead: true
+        isDead: true,
+        deathTimer: 0 // Start death timer
       },
       lives: newLives
     };
@@ -134,7 +135,8 @@ export function killPlayer(state: GameStateData): GameStateData {
       ...state,
       player: {
         ...state.player,
-        isDead: true
+        isDead: true,
+        deathTimer: 0
       },
       lives: 0,
       gameState: GameState.GameOver
