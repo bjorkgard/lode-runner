@@ -313,8 +313,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that failed sprite load doesn't crash rendering
     - _Requirements: 20.3_
 
-- [ ] 15. Particle system
-  - [ ] 15.1 Create `src/game/particles.ts` with particle functions
+- [x] 15. Particle system
+  - [x] 15.1 Create `src/game/particles.ts` with particle functions
     - Implement `initParticleSystem()` function
     - Implement `createGoldParticles(tilePos)` function
     - Implement `updateParticles(deltaTime)` function
@@ -322,13 +322,13 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Use object pooling for particles
     - _Requirements: 15.1, 15.2, 15.3_
   
-  - [ ] 15.2 Write property test for particle creation
+  - [x] 15.2 Write property test for particle creation
     - **Property 39: Gold Particle Creation**
     - **Validates: Requirements 15.1**
     - Test that gold collection creates particles
     - _Requirements: 15.1_
   
-  - [ ] 15.3 Write property test for particle lifecycle
+  - [x] 15.3 Write property test for particle lifecycle
     - **Property 40: Particle Movement and Fade**
     - **Property 41: Particle Removal**
     - **Validates: Requirements 15.2, 15.3**

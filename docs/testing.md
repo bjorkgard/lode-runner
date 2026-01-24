@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **205 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **216 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -41,12 +41,16 @@ Universal correctness properties validated across all inputs using fast-check.
 - Property 26: High Score Persistence Round-Trip - validates saving and loading high score returns same value
 - Property 27: Audio Settings Persistence Round-Trip - validates saving and loading audio settings returns same values
 - Property 28: Storage Failure Graceful Handling - validates storage failures return defaults without crashing
+- Property 29: Mute Toggle - validates toggling mute flips muted state
+- Property 30: Volume Setting - validates setting volume updates audio settings
+- Property 44: Audio Load Failure Resilience - validates failed audio load doesn't crash game
+- Property 45: Sprite Load Failure Resilience - validates sprite system remains functional regardless of load state
 
 ### Unit Tests
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 205 tests
+**Currently Implemented**: 216 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -59,10 +63,10 @@ Specific examples and edge cases for individual functions and modules.
 - Input handling validation (21 tests)
 - Storage system validation (15 tests)
 - Sprite system validation (8 tests)
+- Audio system validation (11 tests)
 
 **Planned**:
-- Storage persistence tests
-- Audio system tests
+- Particle system tests
 - Rendering tests
 
 ### Input Handling Suite (21 tests)
@@ -123,7 +127,8 @@ Full game flow validation (planned):
 | Input | 21 | ✅ Complete |
 | Storage | 15 | ✅ Complete |
 | Sprites | 8 | ✅ Complete |
-| Audio | 0 | ⏳ Pending |
+| Audio | 11 | ✅ Complete |
+| Particles | 0 | ⏳ Pending |
 | Rendering | 0 | ⏳ Pending |
 
 ## Test Suites
@@ -440,6 +445,29 @@ Comprehensive testing of sprite loading and animation management:
 - Property 45: Sprite Load Failure Resilience - validates sprite system remains functional regardless of load state
 - Property 45: resetSpriteSheets always succeeds - validates resetting multiple times never throws
 - Property 45: animation getters never throw - validates getting animations always returns valid data
+
+### Audio System Suite (11 tests)
+
+Comprehensive testing of sound effects and volume control:
+
+**Property 29: Mute Toggle Tests (2)**:
+- Toggling mute flips muted state
+- Multiple toggles alternate between muted and unmuted
+
+**Property 30: Volume Setting Tests (3)**:
+- Setting volume updates audio settings
+- Volume is clamped to valid range [0, 1]
+- Volume setting persists to storage
+
+**Property 44: Audio Load Failure Resilience Tests (3)**:
+- Failed audio load does not crash game
+- Audio system functions work without loaded assets
+- Partial audio load failure is handled gracefully
+
+**Audio System Functions (3)**:
+- initAudio loads audio settings from storage
+- playSound does nothing when muted
+- getAudioSettings returns current settings
 
 ## Running Tests
 

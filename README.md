@@ -1,10 +1,10 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-205%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-216%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
-![Progress](https://img.shields.io/badge/tasks-12%2F27%20complete-yellow)
+![Progress](https://img.shields.io/badge/tasks-15%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -74,7 +74,14 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Graceful fallback to colored rectangles if sprites fail to load
   - Animation state management with frame-based updates
   - 100% test coverage with property-based tests
-- **Test Infrastructure**: Comprehensive test suite with 205 passing tests
+- **Audio System**: Complete sound effects with volume control and mute toggle
+  - Sound effect playback for dig, gold pickup, death, level complete, and UI clicks
+  - Mute toggle functionality with persistence
+  - Volume control with clamping to valid range [0, 1]
+  - Graceful error handling for audio load failures
+  - Audio cloning for overlapping sounds
+  - 100% test coverage with property-based tests
+- **Test Infrastructure**: Comprehensive test suite with 216 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
@@ -82,11 +89,9 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Complete JSDoc documentation for all public APIs
 
 ### In Progress 🚧
-- **Audio System**: Sound effects with volume control and mute toggle (task 13)
+- **Particle System**: Visual effects for gold collection (task 15)
 
 ### Planned 📋
-- **Mobile Support**: Touch controls with responsive design
-- **Audio System**: Sound effects with volume control and mute toggle
 - **Particle Effects**: Visual feedback for gold collection
 - **Rendering System**: Canvas 2D rendering with sprite animations
 - **Game Engine**: Main game loop orchestration

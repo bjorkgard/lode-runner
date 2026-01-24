@@ -40,11 +40,13 @@ lode-runner/
 │   │   ├── input.test.ts         # ✅ Input handling tests (13 tests)
 │   │   ├── storage.ts            # ✅ localStorage persistence
 │   │   ├── storage.test.ts       # ✅ Storage system tests (15 tests)
+│   │   ├── sprites.ts            # ✅ Sprite/animation system
+│   │   ├── sprites.test.ts       # ✅ Sprite system tests (8 tests)
+│   │   ├── audio.ts              # ✅ Sound effects
+│   │   ├── audio.test.ts         # ✅ Audio system tests (11 tests)
 │   │   ├── engine.ts             # ⏳ Main game loop (planned)
 │   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
-│   │   ├── sprites.ts            # ⏳ Sprite/animation system (planned)
-│   │   ├── particles.ts          # ⏳ Particle effects (planned)
-│   │   └── audio.ts              # ⏳ Sound effects (planned)
+│   │   └── particles.ts          # ⏳ Particle effects (planned)
 │   ├── components/               # React components (planned)
 │   │   ├── CanvasGame.tsx       # ⏳ Canvas wrapper
 │   │   ├── HUD.tsx              # ⏳ Score/lives display
@@ -89,13 +91,13 @@ Pure TypeScript game engine, independent of React. Contains all game logic, phys
 - `rules.ts` - Win/loss conditions and level progression
 - `input.ts` - Keyboard and touch input handling
 - `storage.ts` - localStorage persistence for high scores and settings
+- `sprites.ts` - Sprite sheet loading and animation definitions
+- `audio.ts` - Sound effect management with volume control
 
 **Planned Modules**:
 - `engine.ts` - Main game loop with requestAnimationFrame
 - `render.ts` - Canvas 2D rendering
-- `sprites.ts` - Sprite sheet loading and animations
 - `particles.ts` - Particle effects system
-- `audio.ts` - Sound effect management
 
 ### `src/components/`
 React components for UI, menus, and mobile controls. Uses Tailwind CSS for styling.

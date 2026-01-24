@@ -568,6 +568,108 @@ interface SpriteSheets {
 }
 ```
 
+## Audio System API
+
+Functions for managing sound effects and volume control (implemented):
+
+### initAudio
+
+```typescript
+/**
+ * Initializes the audio system by loading all sound effects and audio settings.
+ * This should be called once at game startup.
+ * Includes error handling for audio load failures - game continues without audio if loading fails.
+ * 
+ * @returns Promise that resolves when audio initialization is complete
+ * 
+ * @example
+ * await initAudio();
+ * // Audio system ready (or gracefully degraded if loading failed)
+ */
+initAudio(): Promise<void>
+```
+
+### playSound
+
+```typescript
+/**
+ * Plays a sound effect by name.
+ * Does nothing if audio is not loaded or if audio is muted.
+ * Uses audio cloning to allow overlapping sounds.
+ * 
+ * @param soundName - Name of the sound to play ('dig', 'goldPickup', 'death', 'levelComplete', 'uiClick')
+ * 
+ * @example
+ * playSound('dig'); // Plays dig sound effect
+ * playSound('goldPickup'); // Plays gold collection sound
+ */
+playSound(soundName: 'dig' | 'goldPickup' | 'death' | 'levelComplete' | 'uiClick'): void
+```
+
+### setMuted
+
+```typescript
+/**
+ * Sets the muted state of the audio system.
+ * When muted, no sounds will play.
+ * Persists the setting to localStorage.
+ * 
+ * @param muted - True to mute audio, false to unmute
+ * 
+ * @example
+ * setMuted(true); // Mute all audio
+ * setMuted(false); // Unmute audio
+ */
+setMuted(muted: boolean): void
+```
+
+### setVolume
+
+```typescript
+/**
+ * Sets the volume level for all audio.
+ * Volume is clamped to the range [0, 1].
+ * Updates all loaded audio elements and persists the setting to localStorage.
+ * 
+ * @param volume - Volume level from 0.0 (silent) to 1.0 (full volume)
+ * 
+ * @example
+ * setVolume(0.7); // Set volume to 70%
+ * setVolume(0.0); // Silent (but not muted)
+ * setVolume(1.0); // Full volume
+ */
+setVolume(volume: number): void
+```
+
+### toggleMute
+
+```typescript
+/**
+ * Toggles the muted state of the audio system.
+ * If currently muted, unmutes. If currently unmuted, mutes.
+ * 
+ * @example
+ * toggleMute(); // Flip mute state
+ */
+toggleMute(): void
+```
+
+### getAudioSettings
+
+```typescript
+/**
+ * Gets the current audio settings.
+ * Useful for UI components that need to display current audio state.
+ * 
+ * @returns Current audio settings (muted state and volume)
+ * 
+ * @example
+ * const settings = getAudioSettings();
+ * console.log(`Muted: ${settings.muted}, Volume: ${settings.volume}`);
+ */
+getAudioSettings(): AudioSettings
+```
+
 ## Input API
 
 Functions for handling user input (implemented):
