@@ -412,8 +412,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Add buttons for New Game, Continue, Reset High Score, Resume, Quit
     - _Requirements: 16.1, 16.4, 16.5_
 
-- [ ] 22. React components - MobileControls
-  - [ ] 22.1 Create `src/components/MobileControls.tsx`
+- [x] 22. React components - MobileControls
+  - [x] 22.1 Create `src/components/MobileControls.tsx`
     - Implement MobileControls component with onInput callback
     - Detect touch device in useEffect
     - Render D-pad and action buttons only on touch devices
@@ -421,7 +421,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Use Tailwind CSS for responsive layout
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
   
-  - [ ] 22.2 Write property test for touch input mapping
+  - [x] 22.2 Write property test for touch input mapping
     - **Property 36: Touch Input Mapping**
     - **Validates: Requirements 13.5**
     - Test that touch events update input state

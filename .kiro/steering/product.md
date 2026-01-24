@@ -7,7 +7,7 @@ The game features 100 levels with progressive difficulty, enemy AI, property-bas
 ## Current Status
 
 - **Implementation Progress**: 18/27 tasks complete (66.7%)
-- **Test Coverage**: 269 passing tests (100% pass rate)
+- **Test Coverage**: 279 passing tests (100% pass rate)
 - **Completed Modules**: Type system, constants, level system, state management, physics system, animation system, error handling, digging system, AI system, game rules system, input handling system, storage system, sprite system, audio system, particle system, rendering system, game engine
 
 ## Documentation

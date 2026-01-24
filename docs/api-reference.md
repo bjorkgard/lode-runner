@@ -57,31 +57,156 @@ resetLevel(state: GameStateData): void
 
 ## Game Engine API
 
-The game engine will expose the following public methods (implementation in progress):
+The game engine orchestrates all game systems and manages the game loop (implemented):
+
+### GameEngine Class
 
 ```typescript
+/**
+ * Main game engine class that orchestrates all game systems.
+ * Manages the game loop, state updates, and rendering.
+ * 
+ * The engine follows a clear separation of concerns:
+ * - Game loop: requestAnimationFrame-based with delta time
+ * - Update phase: Processes input, physics, AI, rules
+ * - Render phase: Draws game state to canvas
+ * - Callbacks: Notifies React components of state changes
+ * - Managers: Encapsulated subsystems (input, audio, sprites, particles)
+ */
 class GameEngine {
+  // Callbacks for UI updates
+  public onScoreChange: ((score: number) => void) | null;
+  public onLivesChange: ((lives: number) => void) | null;
+  public onLevelChange: ((level: number) => void) | null;
+  public onGameStateChange: ((state: GameState) => void) | null;
+  
+  /**
+   * Creates a new game engine instance.
+   * Initializes all game systems and loads assets.
+   * 
+   * @param canvas - The HTML canvas element to render the game on
+   * 
+   * @example
+   * const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+   * const engine = new GameEngine(canvas);
+   */
   constructor(canvas: HTMLCanvasElement)
   
-  // Lifecycle methods
-  start(): void                    // Start game loop
-  stop(): void                     // Stop game loop
+  /**
+   * Starts the game loop.
+   * Begins updating and rendering the game at 60 FPS.
+   * 
+   * @example
+   * engine.start();
+   */
+  start(): void
   
-  // Game control methods
-  newGame(): void                  // Start new game from level 1
-  pauseGame(): void                // Pause current game
-  resumeGame(): void               // Resume paused game
-  resetHighScore(): void           // Clear high score from storage
+  /**
+   * Stops the game loop.
+   * Cancels the animation frame request and cleans up resources.
+   * 
+   * @example
+   * engine.stop();
+   */
+  stop(): void
   
-  // Callbacks for UI updates
-  onScoreChange?: (score: number) => void
-  onLivesChange?: (lives: number) => void
-  onLevelChange?: (level: number) => void
-  onGameStateChange?: (state: GameState) => void
+  /**
+   * Starts a new game.
+   * Resets to level 1 with 3 lives and transitions to Playing state.
+   * 
+   * @example
+   * engine.newGame();
+   */
+  newGame(): void
+  
+  /**
+   * Pauses the game.
+   * Transitions from Playing to Paused state.
+   * 
+   * @example
+   * engine.pauseGame();
+   */
+  pauseGame(): void
+  
+  /**
+   * Resumes the game from pause.
+   * Transitions from Paused to Playing state.
+   * 
+   * @example
+   * engine.resumeGame();
+   */
+  resumeGame(): void
+  
+  /**
+   * Resets the high score to 0.
+   * Clears the stored high score from localStorage.
+   * 
+   * @example
+   * engine.resetHighScore();
+   */
+  resetHighScore(): void
+  
+  /**
+   * Forwards touch input to the input manager.
+   * Allows mobile controls to simulate keyboard input.
+   * 
+   * @param direction - Input direction ('left', 'right', 'up', 'down', 'digLeft', 'digRight')
+   * @param pressed - Whether the input is pressed (true) or released (false)
+   * 
+   * @example
+   * // Touch button pressed
+   * engine.handleTouchInput('left', true);
+   * 
+   * // Touch button released
+   * engine.handleTouchInput('left', false);
+   */
+  handleTouchInput(direction: string, pressed: boolean): void
+  
+  /**
+   * Gets the current game state.
+   * Useful for debugging and testing.
+   * 
+   * @returns Current game state
+   * 
+   * @example
+   * const state = engine.getState();
+   * console.log(`Level: ${state.currentLevel}, Score: ${state.score}`);
+   */
+  getState(): GameStateData
+  
+  /**
+   * Gets the audio manager instance.
+   * Useful for UI components that need to control audio.
+   * 
+   * @returns Audio manager instance
+   * 
+   * @example
+   * const audioManager = engine.getAudioManager();
+   * audioManager.toggleMute();
+   */
+  getAudioManager(): AudioManager
+  
+  /**
+   * Cleans up all resources and event listeners.
+   * Should be called when the engine is no longer needed (e.g., component unmount).
+   * This is automatically called by stop(), but can be called explicitly for cleanup.
+   * 
+   * @example
+   * // In React useEffect cleanup
+   * useEffect(() => {
+   *   const engine = new GameEngine(canvasRef.current);
+   *   engine.start();
+   *   
+   *   return () => {
+   *     engine.cleanup();
+   *   };
+   * }, []);
+   */
+  cleanup(): void
 }
 ```
 
-## Level System API
+## State Management API
 
 Functions for managing game levels (implemented):
 

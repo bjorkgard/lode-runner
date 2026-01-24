@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **269 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **279 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -50,7 +50,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 269 tests
+**Currently Implemented**: 279 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -132,8 +132,9 @@ Full game flow validation (planned):
 | Sprites | 8 | ✅ Complete |
 | Audio | 11 | ✅ Complete |
 | Particles | 15 | ✅ Complete |
-| Rendering | 10 | ✅ Complete |
+| Rendering | 12 | ✅ Complete |
 | Engine | 8 | ✅ Complete |
+| **Total** | **279** | **100% Pass Rate** |
 
 ## Test Suites
 
@@ -517,7 +518,7 @@ Comprehensive testing of particle effects and object pooling:
 - Property 39: Gold Particle Creation - validates particle creation at any tile position
 - Property 40: Particle Lifecycle - validates particles move, fade, and are removed correctly
 
-### Rendering System Suite (10 tests)
+### Rendering System Suite (12 tests)
 
 Comprehensive testing of Canvas 2D rendering:
 
@@ -537,11 +538,15 @@ Comprehensive testing of Canvas 2D rendering:
 - Renders enemy at correct position
 - Uses current animation frame
 
-**renderSprite Tests (1)**:
+**renderSprite Tests (2)**:
 - Calculates correct source coordinates from frame index
+- Handles arbitrary frame indices without crashing
 
 **renderHoles Tests (1)**:
 - Renders hole regeneration progress overlay
+
+**Property-Based Tests (1)**:
+- Rendering functions never throw with valid inputs
 
 ### Game Engine Suite (8 tests)
 
