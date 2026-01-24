@@ -335,8 +335,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that particles move, fade, and are removed correctly
     - _Requirements: 15.2, 15.3_
 
-- [ ] 16. Rendering system
-  - [ ] 16.1 Create `src/game/render.ts` with rendering functions
+- [x] 16. Rendering system
+  - [x] 16.1 Create `src/game/render.ts` with rendering functions
     - Implement `renderGame(state, ctx)` function
     - Implement `renderTiles(tiles, ctx)` function
     - Implement `renderPlayer(player, ctx)` function

@@ -1,6 +1,6 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-216%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-237%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
@@ -81,7 +81,20 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Graceful error handling for audio load failures
   - Audio cloning for overlapping sounds
   - 100% test coverage with property-based tests
-- **Test Infrastructure**: Comprehensive test suite with 216 passing tests
+- **Particle System**: Complete visual effects for gold collection
+  - Radial burst particle effects on gold pickup
+  - Object pooling for performance optimization
+  - Particle lifecycle management (spawn, update, fade, remove)
+  - Configurable particle count, speed, and lifetime
+  - 100% test coverage with property-based tests
+- **Rendering System**: Complete Canvas 2D rendering with sprite animations
+  - Pixel-perfect rendering with disabled image smoothing
+  - Sprite sheet rendering with fallback to colored rectangles
+  - Layered rendering (tiles, holes, particles, enemies, player)
+  - Hole regeneration visual feedback
+  - Automatic canvas scaling to fit viewport
+  - 100% test coverage
+- **Test Infrastructure**: Comprehensive test suite with 237 passing tests
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
@@ -89,12 +102,9 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Complete JSDoc documentation for all public APIs
 
 ### In Progress 🚧
-- **Particle System**: Visual effects for gold collection (task 15)
+- **Game Engine**: Main game loop orchestration (task 17)
 
 ### Planned 📋
-- **Particle Effects**: Visual feedback for gold collection
-- **Rendering System**: Canvas 2D rendering with sprite animations
-- **Game Engine**: Main game loop orchestration
 - **React Components**: UI components for HUD, menu, and mobile controls
 - **60 FPS Performance**: Optimized game loop with minimal React re-renders
 

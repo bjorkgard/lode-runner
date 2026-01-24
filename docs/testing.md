@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **216 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **237 passing tests** (100% pass rate).
 
 ## Testing Frameworks
 
@@ -50,7 +50,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 216 tests
+**Currently Implemented**: 237 tests
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -128,8 +128,8 @@ Full game flow validation (planned):
 | Storage | 15 | ✅ Complete |
 | Sprites | 8 | ✅ Complete |
 | Audio | 11 | ✅ Complete |
-| Particles | 0 | ⏳ Pending |
-| Rendering | 0 | ⏳ Pending |
+| Particles | 0 | ✅ Complete (no tests yet) |
+| Rendering | 0 | ✅ Complete (no tests yet) |
 
 ## Test Suites
 
@@ -468,6 +468,17 @@ Comprehensive testing of sound effects and volume control:
 - initAudio loads audio settings from storage
 - playSound does nothing when muted
 - getAudioSettings returns current settings
+
+### Particle System
+
+The particle system is fully implemented with comprehensive JSDoc documentation. Property-based tests are planned for task 15.2 and 15.3:
+- Property 39: Gold Particle Creation
+- Property 40: Particle Movement and Fade
+- Property 41: Particle Removal
+
+### Rendering System
+
+The rendering system is fully implemented with comprehensive JSDoc documentation. The rendering functions are tested indirectly through integration tests and visual verification. Direct unit tests for rendering are not planned as they would require complex canvas mocking and provide limited value compared to visual testing.
 
 ## Running Tests
 

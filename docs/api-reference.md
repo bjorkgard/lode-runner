@@ -1183,6 +1183,261 @@ completeLevel(state: GameStateData): GameStateData
 restartLevel(state: GameStateData): GameStateData
 ```
 
+## Rendering System API
+
+Functions for rendering the game using Canvas 2D API (implemented):
+
+### renderGame
+
+```typescript
+/**
+ * Main rendering function that draws the entire game state to the canvas.
+ * Disables image smoothing for pixel-perfect rendering.
+ * 
+ * Render order (back to front):
+ * 1. Clear canvas (black background)
+ * 2. Tiles (level layout)
+ * 3. Holes (visual indication of regeneration)
+ * 4. Particles (gold pickup effects)
+ * 5. Enemies
+ * 6. Player (always on top)
+ * 
+ * @param state - Current game state containing all entities and tiles
+ * @param ctx - Canvas 2D rendering context to draw on
+ * 
+ * @example
+ * renderGame(gameState, canvasContext);
+ */
+renderGame(state: GameStateData, ctx: CanvasRenderingContext2D): void
+```
+
+### renderTiles
+
+```typescript
+/**
+ * Renders all tiles in the level grid.
+ * Skips empty tiles for performance.
+ * Uses sprite sheets if available, otherwise falls back to colored rectangles.
+ * 
+ * @param tiles - 2D array of tile types defining the level layout
+ * @param ctx - Canvas 2D rendering context
+ * @param spriteSheets - Loaded sprite sheets, or null for fallback rendering
+ * 
+ * @example
+ * renderTiles(state.tiles, ctx, getSpriteSheets());
+ */
+renderTiles(
+  tiles: TileType[][],
+  ctx: CanvasRenderingContext2D,
+  spriteSheets: SpriteSheets | null
+): void
+```
+
+### renderPlayer
+
+```typescript
+/**
+ * Renders the player character using sprite animation.
+ * Uses current animation state to determine which frame to display.
+ * Falls back to colored rectangle if sprites are unavailable.
+ * 
+ * @param player - Player entity with position and animation state
+ * @param ctx - Canvas 2D rendering context
+ * @param spriteSheets - Loaded sprite sheets, or null for fallback rendering
+ * 
+ * @example
+ * renderPlayer(state.player, ctx, getSpriteSheets());
+ */
+renderPlayer(
+  player: Player,
+  ctx: CanvasRenderingContext2D,
+  spriteSheets: SpriteSheets | null
+): void
+```
+
+### renderEnemy
+
+```typescript
+/**
+ * Renders an enemy character using sprite animation.
+ * Uses current animation state to determine which frame to display.
+ * Falls back to colored rectangle if sprites are unavailable.
+ * 
+ * @param enemy - Enemy entity with position and animation state
+ * @param ctx - Canvas 2D rendering context
+ * @param spriteSheets - Loaded sprite sheets, or null for fallback rendering
+ * 
+ * @example
+ * renderEnemy(enemy, ctx, getSpriteSheets());
+ */
+renderEnemy(
+  enemy: Enemy,
+  ctx: CanvasRenderingContext2D,
+  spriteSheets: SpriteSheets | null
+): void
+```
+
+### renderSprite
+
+```typescript
+/**
+ * Renders a single sprite from a sprite sheet.
+ * Calculates source coordinates based on frame index and sheet layout.
+ * 
+ * Sprite sheets are organized in a grid where frames are laid out left-to-right,
+ * top-to-bottom. The frame index determines which frame to draw.
+ * 
+ * @param ctx - Canvas 2D rendering context
+ * @param sheet - Sprite sheet containing the frame to render
+ * @param frameIndex - Index of the frame to render (0-based)
+ * @param x - X position in pixels where sprite should be drawn
+ * @param y - Y position in pixels where sprite should be drawn
+ * 
+ * @example
+ * renderSprite(ctx, spriteSheet, 0, 100, 100);
+ */
+renderSprite(
+  ctx: CanvasRenderingContext2D,
+  sheet: SpriteSheet,
+  frameIndex: number,
+  x: number,
+  y: number
+): void
+```
+
+### renderHoles
+
+```typescript
+/**
+ * Renders visual indication of holes and their regeneration progress.
+ * Draws a semi-transparent brown overlay that becomes more opaque as the hole regenerates.
+ * 
+ * @param holes - Array of active holes with regeneration timers
+ * @param ctx - Canvas 2D rendering context
+ * 
+ * @example
+ * renderHoles(state.holes, ctx);
+ */
+renderHoles(holes: Hole[], ctx: CanvasRenderingContext2D): void
+```
+
+## Particle System API
+
+Functions for creating and managing visual effects (implemented):
+
+### initParticleSystem
+
+```typescript
+/**
+ * Initializes the particle system by creating the object pool.
+ * Should be called once at game startup before any particles are created.
+ * 
+ * Uses object pooling to avoid allocating/deallocating particles during gameplay,
+ * which prevents garbage collection pauses and improves performance.
+ * 
+ * @example
+ * initParticleSystem(); // Call once at game start
+ */
+initParticleSystem(): void
+```
+
+### createGoldParticles
+
+```typescript
+/**
+ * Creates a burst of particles at the specified tile position.
+ * Used for gold collection visual effect.
+ * 
+ * Particles are emitted in a radial burst pattern with random velocities.
+ * Each particle has a random lifetime and fades out over time.
+ * 
+ * @param tilePos - Position in tile coordinates where particles should spawn
+ * 
+ * @example
+ * createGoldParticles({ x: 5, y: 10 }); // Create particles at tile (5, 10)
+ */
+createGoldParticles(tilePos: Position): void
+```
+
+### updateParticles
+
+```typescript
+/**
+ * Updates all active particles by advancing their positions and lifetimes.
+ * Removes expired particles and returns them to the pool.
+ * 
+ * Should be called once per frame with the time elapsed since last frame.
+ * 
+ * @param deltaTime - Time elapsed since last update in seconds
+ * 
+ * @example
+ * updateParticles(0.016); // ~60 FPS
+ */
+updateParticles(deltaTime: number): void
+```
+
+### renderParticles
+
+```typescript
+/**
+ * Renders all active particles to the canvas context.
+ * Particles fade out as they approach their maximum lifetime.
+ * 
+ * Should be called once per frame during the render phase.
+ * 
+ * @param ctx - Canvas 2D rendering context to draw particles on
+ * 
+ * @example
+ * renderParticles(canvasContext);
+ */
+renderParticles(ctx: CanvasRenderingContext2D): void
+```
+
+### getActiveParticleCount
+
+```typescript
+/**
+ * Gets the current number of active particles.
+ * Useful for testing and debugging.
+ * 
+ * @returns Number of particles currently being updated and rendered
+ * 
+ * @example
+ * const count = getActiveParticleCount();
+ * console.log(`Active particles: ${count}`);
+ */
+getActiveParticleCount(): number
+```
+
+### getPoolSize
+
+```typescript
+/**
+ * Gets the current number of particles available in the pool.
+ * Useful for testing and debugging.
+ * 
+ * @returns Number of particles available for reuse
+ * 
+ * @example
+ * const poolSize = getPoolSize();
+ * console.log(`Pool size: ${poolSize}`);
+ */
+getPoolSize(): number
+```
+
+### clearParticles
+
+```typescript
+/**
+ * Clears all active particles and returns them to the pool.
+ * Useful for testing and level transitions.
+ * 
+ * @example
+ * clearParticles(); // Clear all particles
+ */
+clearParticles(): void
+```
+
 ## Type Definitions
 
 ### Enums
