@@ -7,6 +7,7 @@ interface CanvasGameProps {
   onLivesChange: (lives: number) => void;
   onLevelChange: (level: number) => void;
   onGameStateChange: (state: GameState) => void;
+  onEngineReady?: (engine: GameEngine) => void;
 }
 
 /**
@@ -20,7 +21,8 @@ export function CanvasGame({
   onScoreChange,
   onLivesChange,
   onLevelChange,
-  onGameStateChange
+  onGameStateChange,
+  onEngineReady
 }: CanvasGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
@@ -37,6 +39,11 @@ export function CanvasGame({
     engine.onLivesChange = onLivesChange;
     engine.onLevelChange = onLevelChange;
     engine.onGameStateChange = onGameStateChange;
+    
+    // Notify parent that engine is ready
+    if (onEngineReady) {
+      onEngineReady(engine);
+    }
     
     // Start game loop
     engine.start();
@@ -56,7 +63,7 @@ export function CanvasGame({
       engine.stop();
       window.removeEventListener('resize', handleResize);
     };
-  }, [onScoreChange, onLivesChange, onLevelChange, onGameStateChange]);
+  }, [onScoreChange, onLivesChange, onLevelChange, onGameStateChange, onEngineReady]);
   
   return (
     <canvas

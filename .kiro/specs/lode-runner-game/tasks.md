@@ -427,8 +427,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Test that touch events update input state
     - _Requirements: 13.5_
 
-- [ ] 23. Main App integration
-  - [ ] 23.1 Update `src/App.tsx` to integrate all components
+- [x] 23. Main App integration
+  - [x] 23.1 Update `src/App.tsx` to integrate all components
     - Import all components (CanvasGame, HUD, Menu, MobileControls)
     - Manage game state in React (score, lives, level, timer, gameState, muted)
     - Wire up all callbacks between components and engine
@@ -436,7 +436,7 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Use Tailwind CSS for layout
     - _Requirements: 17.1, 17.2_
   
-  - [ ] 23.2 Update `src/index.css` with Tailwind directives
+  - [x] 23.2 Update `src/index.css` with Tailwind directives
     - Add @tailwind base, components, utilities
     - Add any custom global styles
     - _Requirements: 16.6_

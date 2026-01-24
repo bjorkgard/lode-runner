@@ -37,25 +37,32 @@ lode-runner/
 │   │   ├── rules.ts              # ✅ Win/loss conditions
 │   │   ├── rules.test.ts         # ✅ Game rules tests (13 tests)
 │   │   ├── input.ts              # ✅ Keyboard/touch input
-│   │   ├── input.test.ts         # ✅ Input handling tests (13 tests)
+│   │   ├── input.test.ts         # ✅ Input handling tests (21 tests)
 │   │   ├── storage.ts            # ✅ localStorage persistence
 │   │   ├── storage.test.ts       # ✅ Storage system tests (15 tests)
 │   │   ├── sprites.ts            # ✅ Sprite/animation system
 │   │   ├── sprites.test.ts       # ✅ Sprite system tests (8 tests)
 │   │   ├── audio.ts              # ✅ Sound effects
 │   │   ├── audio.test.ts         # ✅ Audio system tests (11 tests)
-│   │   ├── engine.ts             # ⏳ Main game loop (planned)
-│   │   ├── render.ts             # ⏳ Canvas 2D rendering (planned)
-│   │   └── particles.ts          # ⏳ Particle effects (planned)
-│   ├── components/               # React components (planned)
-│   │   ├── CanvasGame.tsx       # ⏳ Canvas wrapper
-│   │   ├── HUD.tsx              # ⏳ Score/lives display
-│   │   ├── Menu.tsx             # ⏳ Menus and screens
-│   │   └── MobileControls.tsx   # ⏳ Touch controls
+│   │   ├── particles.ts          # ✅ Particle effects
+│   │   ├── particles.test.ts     # ✅ Particle system tests (15 tests)
+│   │   ├── render.ts             # ✅ Canvas 2D rendering
+│   │   ├── render.test.ts        # ✅ Rendering system tests (12 tests)
+│   │   ├── engine.ts             # ✅ Main game loop
+│   │   └── engine.test.ts        # ✅ Game engine tests (8 tests)
+│   ├── components/               # React components
+│   │   ├── CanvasGame.tsx       # ✅ Canvas wrapper
+│   │   ├── CanvasGame.test.tsx  # ✅ CanvasGame tests (8 tests)
+│   │   ├── HUD.tsx              # ✅ Score/lives display
+│   │   ├── HUD.test.tsx         # ✅ HUD tests (6 tests)
+│   │   ├── Menu.tsx             # ✅ Menus and screens
+│   │   └── MobileControls.tsx   # ✅ Touch controls
+│   │       └── MobileControls.test.tsx # ✅ MobileControls tests (5 tests)
 │   ├── test/                     # Test setup
 │   │   ├── setup.ts             # ✅ Vitest configuration
-│   │   └── setup.test.ts        # ✅ Setup validation tests
-│   ├── App.tsx                   # Root component
+│   │   ├── setup.test.ts        # ✅ Setup validation tests (5 tests)
+│   │   └── helpers.ts           # ✅ Test helper functions
+│   ├── App.tsx                   # ✅ Root component
 │   └── main.tsx                  # Entry point
 ├── public/
 │   └── assets/                   # Game assets
@@ -93,14 +100,23 @@ Pure TypeScript game engine, independent of React. Contains all game logic, phys
 - `storage.ts` - localStorage persistence for high scores and settings
 - `sprites.ts` - Sprite sheet loading and animation definitions
 - `audio.ts` - Sound effect management with volume control
+- `particles.ts` - Particle effects system with object pooling
+- `render.ts` - Canvas 2D rendering with sprite animations
+- `engine.ts` - Main game loop with requestAnimationFrame
 
 **Planned Modules**:
-- `engine.ts` - Main game loop with requestAnimationFrame
-- `render.ts` - Canvas 2D rendering
-- `particles.ts` - Particle effects system
+None - all core game modules are complete!
 
 ### `src/components/`
 React components for UI, menus, and mobile controls. Uses Tailwind CSS for styling.
+
+**Implemented Components**:
+- `CanvasGame.tsx` - Canvas wrapper with engine initialization and resize handling
+- `HUD.tsx` - Score, lives, level, timer, and mute toggle display
+- `Menu.tsx` - Main menu, pause menu, game over, and victory screens
+- `MobileControls.tsx` - Touch controls with automatic device detection
+
+All components include comprehensive JSDoc documentation.
 
 ### `src/test/`
 Test configuration and setup files for Vitest and jsdom.
