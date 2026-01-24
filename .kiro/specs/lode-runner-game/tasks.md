@@ -346,8 +346,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Disable image smoothing for pixel-perfect rendering
     - _Requirements: 14.1, 14.2, 14.3_
 
-- [ ] 17. Game engine orchestration
-  - [ ] 17.1 Create `src/game/engine.ts` with GameEngine class
+- [x] 17. Game engine orchestration
+  - [x] 17.1 Create `src/game/engine.ts` with GameEngine class
     - Implement constructor that initializes all systems
     - Implement `start()` method to begin game loop
     - Implement `stop()` method to stop game loop
@@ -358,13 +358,13 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Add callbacks for UI updates: onScoreChange, onLivesChange, onLevelChange, onGameStateChange
     - _Requirements: 1.1, 1.3, 1.4, 17.2, 17.3, 17.4, 17.5_
   
-  - [ ] 17.2 Write property test for paused state immutability
+  - [x] 17.2 Write property test for paused state immutability
     - **Property 1: Paused State Immutability**
     - **Validates: Requirements 1.4**
     - Test that paused game doesn't update state
     - _Requirements: 1.4_
   
-  - [ ] 17.3 Write unit tests for state transitions
+  - [x] 17.3 Write unit tests for state transitions
     - Test pause state transition
     - Test resume state transition
     - Test new game state transition

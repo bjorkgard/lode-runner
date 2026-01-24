@@ -1,6 +1,6 @@
 # Testing Strategy
 
-The project uses a comprehensive testing approach with **237 passing tests** (100% pass rate).
+The project uses a comprehensive testing approach with **249 passing tests, 1 failing** (99.6% pass rate).
 
 ## Testing Frameworks
 
@@ -50,7 +50,7 @@ Universal correctness properties validated across all inputs using fast-check.
 
 Specific examples and edge cases for individual functions and modules.
 
-**Currently Implemented**: 237 tests
+**Currently Implemented**: 249 tests (1 failing)
 - Test setup validation (5 tests)
 - Level system validation (28 tests)
 - State management validation (18 tests)
@@ -64,6 +64,9 @@ Specific examples and edge cases for individual functions and modules.
 - Storage system validation (15 tests)
 - Sprite system validation (8 tests)
 - Audio system validation (11 tests)
+- Particle system validation (15 tests)
+- Rendering system validation (10 tests)
+- Game engine validation (8 tests)
 
 **Planned**:
 - Particle system tests
@@ -127,9 +130,10 @@ Full game flow validation (planned):
 | Input | 21 | ✅ Complete |
 | Storage | 15 | ✅ Complete |
 | Sprites | 8 | ✅ Complete |
-| Audio | 11 | ✅ Complete |
-| Particles | 0 | ✅ Complete (no tests yet) |
-| Rendering | 0 | ✅ Complete (no tests yet) |
+| Audio | 11 | ✅ Complete (1 failing) |
+| Particles | 15 | ✅ Complete |
+| Rendering | 10 | ✅ Complete |
+| Engine | 8 | ✅ Complete |
 
 ## Test Suites
 
@@ -479,6 +483,88 @@ The particle system is fully implemented with comprehensive JSDoc documentation.
 ### Rendering System
 
 The rendering system is fully implemented with comprehensive JSDoc documentation. The rendering functions are tested indirectly through integration tests and visual verification. Direct unit tests for rendering are not planned as they would require complex canvas mocking and provide limited value compared to visual testing.
+
+### Particle System Suite (15 tests)
+
+Comprehensive testing of particle effects and object pooling:
+
+**initParticleSystem Tests (2)**:
+- Initializes particle pool with correct size
+- Pool particles have default values
+
+**createGoldParticles Tests (3)**:
+- Creates particles at tile position
+- Creates 8-12 particles per burst
+- Particles have radial velocity pattern
+
+**updateParticles Tests (3)**:
+- Updates particle positions based on velocity
+- Increments particle life
+- Removes expired particles and returns to pool
+
+**renderParticles Tests (2)**:
+- Renders all active particles
+- Applies fade-out based on particle life
+
+**Utility Function Tests (2)**:
+- getActiveParticleCount returns correct count
+- getPoolSize returns correct count
+
+**clearParticles Tests (1)**:
+- Clears all active particles
+
+**Property-Based Tests (2)**:
+- Property 39: Gold Particle Creation - validates particle creation at any tile position
+- Property 40: Particle Lifecycle - validates particles move, fade, and are removed correctly
+
+### Rendering System Suite (10 tests)
+
+Comprehensive testing of Canvas 2D rendering:
+
+**renderGame Tests (2)**:
+- Disables image smoothing for pixel-perfect rendering
+- Renders in correct order (tiles, holes, particles, enemies, player)
+
+**renderTiles Tests (2)**:
+- Renders all non-empty tiles
+- Uses sprite sheets when available, fallback otherwise
+
+**renderPlayer Tests (2)**:
+- Renders player at correct position
+- Uses current animation frame
+
+**renderEnemy Tests (2)**:
+- Renders enemy at correct position
+- Uses current animation frame
+
+**renderSprite Tests (1)**:
+- Calculates correct source coordinates from frame index
+
+**renderHoles Tests (1)**:
+- Renders hole regeneration progress overlay
+
+### Game Engine Suite (8 tests)
+
+Comprehensive testing of game loop orchestration:
+
+**GameEngine Constructor Tests (2)**:
+- Initializes with canvas reference
+- Sets up all game systems
+
+**Game Loop Tests (2)**:
+- start() begins requestAnimationFrame loop
+- stop() cancels animation frame
+
+**Update Tests (2)**:
+- update() calls all system update functions
+- Paused state prevents updates
+
+**Public API Tests (2)**:
+- newGame() initializes new game state
+- pauseGame() and resumeGame() toggle pause state
+
+**Property-Based Tests (0)**:
+- Property 1: Paused State Immutability (implemented in engine.test.ts)
 
 ## Running Tests
 

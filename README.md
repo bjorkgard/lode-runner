@@ -1,10 +1,10 @@
 # Lode Runner Browser Game
 
-![Tests](https://img.shields.io/badge/tests-237%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-249%20passing-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61dafb)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646cff)
-![Progress](https://img.shields.io/badge/tasks-15%2F27%20complete-yellow)
+![Progress](https://img.shields.io/badge/tasks-17%2F27%20complete-yellow)
 
 A browser-based recreation of the classic Lode Runner game built with React 19, TypeScript 5.9, and Canvas 2D rendering. Features 100 levels, enemy AI, property-based testing, and mobile touch controls.
 
@@ -94,19 +94,28 @@ A browser-based recreation of the classic Lode Runner game built with React 19, 
   - Hole regeneration visual feedback
   - Automatic canvas scaling to fit viewport
   - 100% test coverage
-- **Test Infrastructure**: Comprehensive test suite with 237 passing tests
+- **Game Engine**: Main game loop orchestration with requestAnimationFrame
+  - 60 FPS game loop with delta time calculations
+  - Orchestrates all game systems (physics, AI, rules, input, digging)
+  - Public API for game control (start, stop, pause, resume, new game)
+  - Callbacks for UI updates (score, lives, level, game state changes)
+  - Paused state immutability validation
+  - Complete JSDoc documentation
+- **Test Infrastructure**: Comprehensive test suite with 249 passing tests (1 failing)
   - Property-based testing with fast-check
   - Unit tests for all implemented modules
   - Canvas, localStorage, and Audio API mocks
-  - 100% pass rate across all test suites
+  - 99.6% pass rate across all test suites
   - Complete JSDoc documentation for all public APIs
 
 ### In Progress 🚧
-- **Game Engine**: Main game loop orchestration (task 17)
+- **React Components**: UI components for HUD, menu, and mobile controls (task 19-22)
 
 ### Planned 📋
-- **React Components**: UI components for HUD, menu, and mobile controls
-- **60 FPS Performance**: Optimized game loop with minimal React re-renders
+- **React Integration**: Complete App.tsx integration with all components
+- **Asset Creation**: Sprite sheets and sound effects
+- **Level Completion**: Remaining 90 levels
+- **Final Testing**: Integration tests and manual testing
 
 ## Quick Start
 
