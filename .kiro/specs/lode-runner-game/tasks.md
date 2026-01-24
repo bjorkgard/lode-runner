@@ -373,8 +373,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
 - [x] 18. Checkpoint - Engine complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 19. React components - CanvasGame
-  - [ ] 19.1 Create `src/components/CanvasGame.tsx`
+- [x] 19. React components - CanvasGame
+  - [x] 19.1 Create `src/components/CanvasGame.tsx`
     - Implement CanvasGame component with canvas ref
     - Initialize GameEngine in useEffect
     - Set up engine callbacks to update React state
@@ -383,13 +383,13 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Clean up engine on unmount
     - _Requirements: 14.4, 19.1, 19.4_
   
-  - [ ] 19.2 Write property test for canvas aspect ratio
+  - [x] 19.2 Write property test for canvas aspect ratio
     - **Property 37: Canvas Aspect Ratio Maintenance**
     - **Validates: Requirements 14.4**
     - Test that canvas maintains 28:16 aspect ratio
     - _Requirements: 14.4_
   
-  - [ ] 19.3 Write property test for canvas resize
+  - [x] 19.3 Write property test for canvas resize
     - **Property 38: Canvas Resize Recalculation**
     - **Validates: Requirements 19.4**
     - Test that resize events update canvas dimensions
