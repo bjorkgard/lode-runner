@@ -404,8 +404,8 @@ Each task builds on previous work, with checkpoints to ensure stability. Propert
     - Use responsive Tailwind classes
     - _Requirements: 16.2, 16.3_
 
-- [ ] 21. React components - Menu
-  - [ ] 21.1 Create `src/components/Menu.tsx`
+- [x] 21. React components - Menu
+  - [x] 21.1 Create `src/components/Menu.tsx`
     - Implement Menu component with props for gameState, finalScore, callbacks
     - Render different menus based on gameState (Menu, Paused, GameOver, Victory)
     - Use Tailwind CSS for styling
